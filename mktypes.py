@@ -65,7 +65,7 @@ def GetCommandArgs(options):
 
 def CreateTagsFile(config):
 	print "Generating Tags"
-	os.system('ctags.exe %s %s' % (config['CTAGS_OPTIONS'], config['CTAGS_FILES']))
+	os.system('ctags %s %s' % (config['CTAGS_OPTIONS'], config['CTAGS_FILES']))
 
 def GetLanguageParameters(lang):
 	params = {}
@@ -92,7 +92,7 @@ def GetLanguageParameters(lang):
 def CreateTypesFile(config, Parameters):
 	outfile = 'types_%s.vim' % Parameters['suffix']
 	print "Generating " + outfile
-	ctags_cmd = 'ctags.exe %s --languages=%s -o- %s' % \
+	ctags_cmd = 'ctags %s --languages=%s -o- %s' % \
 			(config['CTAGS_OPTIONS'], Parameters['language'], config['CTAGS_FILES'])
 	p = os.popen(ctags_cmd, "r")
 
