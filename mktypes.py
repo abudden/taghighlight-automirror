@@ -26,6 +26,8 @@ r'''
 field_trim = re.compile(r'ctags_[pF]')
 field_keyword = re.compile(r'syntax keyword (?P<kind>ctags_\w) (?P<keyword>.*)')
 
+ctags_exe = 'ctags'
+
 class GlobDirectoryWalker:
     # a forward iterator that traverses a directory tree
 
@@ -57,15 +59,16 @@ def GetCommandArgs(options):
 	Configuration = {}
 	if options.recurse:
 		Configuration['CTAGS_OPTIONS'] = '--recurse'
-		Configuration['CTAGS_FILES'] = '.'
+		Configuration['CTAGS_FILES'] = ['.']
 	else:
 		Configuration['CTAGS_OPTIONS'] = ''
-		Configuration['CTAGS_FILES'] = '*'
+		Configuration['CTAGS_FILES'] = glob.glob('*')
 	return Configuration
 
 def CreateTagsFile(config):
 	print "Generating Tags"
-	os.system('ctags %s %s' % (config['CTAGS_OPTIONS'], config['CTAGS_FILES']))
+	ctags_cmd = '%s %s %s' % (ctags_exe, config['CTAGS_OPTIONS'], " ".join(config['CTAGS_FILES']))
+	os.system(ctags_cmd)
 
 def GetLanguageParameters(lang):
 	params = {}
@@ -92,8 +95,8 @@ def GetLanguageParameters(lang):
 def CreateTypesFile(config, Parameters):
 	outfile = 'types_%s.vim' % Parameters['suffix']
 	print "Generating " + outfile
-	ctags_cmd = 'ctags %s --languages=%s -o- %s' % \
-			(config['CTAGS_OPTIONS'], Parameters['language'], config['CTAGS_FILES'])
+	ctags_cmd = '%s %s --languages=%s -o- %s' % \
+			(ctags_exe, config['CTAGS_OPTIONS'], Parameters['language'], " ".join(config['CTAGS_FILES']))
 	p = os.popen(ctags_cmd, "r")
 
 	ctags_entries = []
@@ -186,7 +189,15 @@ def main():
 			default=False,
 			dest="recurse",
 			help="Recurse into subdirectories")
+	parser.add_option('--ctags-dir',
+			action='store',
+			default='.',
+			dest='ctags_dir',
+			type='string',
+			help='CTAGS Executable Directory')
 	options, remainder = parser.parse_args()
+	global ctags_exe
+	ctags_exe = options.ctags_dir + '/' + 'ctags'
 
 	Configuration = GetCommandArgs(options)
 	CreateTagsFile(Configuration)
