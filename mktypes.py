@@ -113,6 +113,10 @@ def CreateTypesFile(config, Parameters):
 	ctags_entries = dict.fromkeys(ctags_entries).keys()
 	# Sort the list
 	ctags_entries.sort()
+
+	if len(ctags_entries) == 0:
+		print "No tags found"
+		return
 	
 	keywordDict = {}
 	for line in ctags_entries:
@@ -157,7 +161,7 @@ def CreateTypesFile(config, Parameters):
 	vimtypes_entries.append('hi link ctags_v Variable')
 
 	try:
-		fh = open(outfile, 'w')
+		fh = open(outfile, 'wb')
 	except IOError:
 		sys.stderr.write("ERROR: Couldn't create %s\n" % (outfile))
 		sys.exit(1)
