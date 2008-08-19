@@ -96,7 +96,7 @@ def GetLanguageParameters(lang):
 	elif lang == 'python':
 		params['language'] = 'python'
 		params['suffix'] = 'py'
-		params['inames'] = '*.py'
+		params['inames'] = '*.py*'
 		params['iskeyword'] = '@,48-57,_,192-255'
 	elif lang == 'ruby':
 		params['language'] = 'ruby'
@@ -175,7 +175,7 @@ def IsValidKeyword(keyword, iskeyword):
 	
 
 
-def CreateTypesFile(config, Parameters, CheckKeywords = False):
+def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = False):
 	outfile = 'types_%s.vim' % Parameters['suffix']
 	print "Generating " + outfile
 	ctags_cmd = '%s %s --languages=%s -o- %s' % \
@@ -215,7 +215,20 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False):
 	matchEntries = []
 	vimtypes_entries = []
 	patternCharacters = "/@#':"
-	for thisType in sorted(keywordDict.keys()):
+	charactersToEscape = '\\' + '~[]*.$^'
+	UsedTypes = [
+			'ctags_c', 'ctags_d', 'ctags_e', 'ctags_f',
+			'ctags_g', 'ctags_m', 'ctags_s', 'ctags_t',
+			'ctags_u', 'ctags_v'
+			]
+
+	allTypes = sorted(keywordDict.keys())
+	# Classes have priority, so list last
+	allTypes.reverse()
+	for thisType in allTypes:
+		if thisType not in UsedTypes:
+			continue
+
 		keystarter = 'syntax keyword ' + thisType
 		keycommand = keystarter
 		for keyword in keywordDict[thisType]:
@@ -231,7 +244,10 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False):
 
 					for patChar in patternCharacters:
 						if keyword.find(patChar) == -1:
-							matchEntries.append('syn match ' + thisType + ' ' + patChar + keyword + patChar)
+							escapedKeyword = keyword
+							for ch in charactersToEscape:
+								escapedKeyword = escapedKeyword.replace(ch, '\\' + ch)
+							matchEntries.append('syntax match ' + thisType + ' ' + patChar + escapedKeyword + patChar)
 							matchDone = True
 							break
 
@@ -242,7 +258,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False):
 
 
 			if keyword.lower() in vim_synkeyword_arguments:
-				matchEntries.append('syn match ' + thisType + ' /' + keyword + '/')
+				matchEntries.append('syntax match ' + thisType + ' /' + keyword + '/')
 				continue
 
 			temp = keycommand + " " + keyword
@@ -253,13 +269,15 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False):
 		if keycommand != keystarter:
 			vimtypes_entries.append(keycommand)
 	
-	# Essentially a uniq() function
-	matchEntries = dict.fromkeys(matchEntries).keys()
-	# Sort the list
-	matchEntries.sort()
+	if not SkipMatches:
+		# Essentially a uniq() function
+		matchEntries = dict.fromkeys(matchEntries).keys()
+		# Sort the list
+		matchEntries.sort()
 
-	for thisMatch in matchEntries:
-		vimtypes_entries.append(thisMatch)
+		vimtypes_entries.append('')
+		for thisMatch in matchEntries:
+			vimtypes_entries.append(thisMatch)
 
 	vimtypes_entries.append('')
 	vimtypes_entries.append('" Class')
@@ -337,6 +355,11 @@ def main():
 			default=False,
 			dest='check_keywords',
 			help='Check validity of keywords (much slower)')
+	parser.add_option('--skip-matches',
+			action='store_true',
+			default=False,
+			dest='skip_matches',
+			help='Skip syntax match // items (to speed up file loading time)')
 
 	options, remainder = parser.parse_args()
 	global ctags_exe
@@ -354,7 +377,7 @@ def main():
 		Parameters = GetLanguageParameters(language)
 		if not CheckFilePresence(options.recurse, Parameters['inames']):
 			continue
-		CreateTypesFile(Configuration, Parameters, options.check_keywords)
+		CreateTypesFile(Configuration, Parameters, options.check_keywords, options.skip_matches)
 	
 	# Don't do anything new here apart from generating types as it will not
 	# run with --skip-types
