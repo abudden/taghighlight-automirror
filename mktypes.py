@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import sys
 import optparse
 import re
 import fnmatch
@@ -25,6 +26,21 @@ r'''
 
 field_trim = re.compile(r'ctags_[pF]')
 field_keyword = re.compile(r'syntax keyword (?P<kind>ctags_\w) (?P<keyword>.*)')
+
+vim_synkeyword_arguments = [
+		'contains',
+		'oneline',
+		'fold',
+		'display',
+		'extend',
+		'contained',
+		'containedin',
+		'nextgroup',
+		'transparent',
+		'skipwhite',
+		'skipnl',
+		'skipempty'
+		]
 
 ctags_exe = 'ctags'
 
@@ -76,23 +92,90 @@ def GetLanguageParameters(lang):
 		params['language'] = 'c,c++,c#'
 		params['suffix'] = 'c'
 		params['inames'] = '*.[ch]*'
+		params['iskeyword'] = '@,48-57,_,192-255'
 	elif lang == 'python':
 		params['language'] = 'python'
 		params['suffix'] = 'py'
 		params['inames'] = '*.py'
+		params['iskeyword'] = '@,48-57,_,192-255'
 	elif lang == 'ruby':
 		params['language'] = 'ruby'
 		params['suffix'] = 'ruby'
 		params['inames'] = '*.rb'
+		params['iskeyword'] = '@,48-57,_,192-255'
 	elif lang == 'vhdl':
 		params['language'] = 'vhdl'
 		params['suffix'] = 'vhdl'
 		params['inames'] = '*.vhd*'
+		params['iskeyword'] = '@,48-57,_,192-255'
 	else:
 		raise AttributeError('Language not recognised %s' % lang)
 	return params
 
-def CreateTypesFile(config, Parameters):
+def GenerateValidKeywordRange(iskeyword):
+	ValidKeywordSets = iskeyword.split(',')
+	rangeMatcher = re.compile('^(?P<from>(?:\d+|\S))-(?P<to>(?:\d+|\S))$')
+	falseRangeMatcher = re.compile('^^(?P<from>(?:\d+|\S))-(?P<to>(?:\d+|\S))$')
+	validList = []
+	for valid in ValidKeywordSets:
+		m = rangeMatcher.match(valid)
+		fm = falseRangeMatcher.match(valid)
+		if valid == '@':
+			for ch in [chr(i) for i in range(0,256)]:
+				if ch.isalpha():
+					validList.append(ch)
+		elif m is not None:
+			# We have a range of ascii values
+			if m.group('from').isdigit():
+				rangeFrom = int(m.group('from'))
+			else:
+				rangeFrom = ord(m.group('from'))
+
+			if m.group('to').isdigit():
+				rangeTo = int(m.group('to'))
+			else:
+				rangeTo = ord(m.group('to'))
+
+			validRange = range(rangeFrom, rangeTo+1)
+			for ch in [chr(i) for i in validRange]:
+				validList.append(ch)
+
+		elif fm is not None:
+			# We have a range of ascii values: remove them!
+			if fm.group('from').isdigit():
+				rangeFrom = int(fm.group('from'))
+			else:
+				rangeFrom = ord(fm.group('from'))
+
+			if fm.group('to').isdigit():
+				rangeTo = int(fm.group('to'))
+			else:
+				rangeTo = ord(fm.group('to'))
+
+			validRange = range(rangeFrom, rangeTo+1)
+			for ch in [chr(i) for i in validRange]:
+				for i in range(validList.count(ch)):
+					validList.remove(ch)
+
+		elif len(valid) == 1:
+			# Just a char
+			validList.append(valid)
+
+		else:
+			raise ValueError('Unrecognised iskeyword part: ' + valid)
+
+	return validList
+
+
+def IsValidKeyword(keyword, iskeyword):
+	for char in keyword:
+		if not char in iskeyword:
+			return False
+	return True
+	
+
+
+def CreateTypesFile(config, Parameters, CheckKeywords = False):
 	outfile = 'types_%s.vim' % Parameters['suffix']
 	print "Generating " + outfile
 	ctags_cmd = '%s %s --languages=%s -o- %s' % \
@@ -125,18 +208,58 @@ def CreateTypesFile(config, Parameters):
 			if not keywordDict.has_key(m.group('kind')):
 				keywordDict[m.group('kind')] = []
 			keywordDict[m.group('kind')].append(m.group('keyword'))
+
+	if CheckKeywords:
+		iskeyword = GenerateValidKeywordRange(Parameters['iskeyword'])
 	
+	matchEntries = []
 	vimtypes_entries = []
+	patternCharacters = "/@#':"
 	for thisType in sorted(keywordDict.keys()):
 		keystarter = 'syntax keyword ' + thisType
 		keycommand = keystarter
 		for keyword in keywordDict[thisType]:
-			temp = keycommand + " " + '"' + keyword + '"'
+			if CheckKeywords:
+				# In here we should check that the keyword only matches
+				# vim's \k parameter (which will be different for different
+				# languages).  This is quite slow so is turned off by
+				# default; however, it is useful for some things where the
+				# default generated file contains a lot of rubbish.  It may
+				# be worth optimising IsValidKeyword at some point.
+				if not IsValidKeyword(keyword, iskeyword):
+					matchDone = False
+
+					for patChar in patternCharacters:
+						if keyword.find(patChar) == -1:
+							matchEntries.append('syn match ' + thisType + ' ' + patChar + keyword + patChar)
+							matchDone = True
+							break
+
+					if not matchDone:
+						print "Skipping keyword '" + keyword + "'"
+
+					continue
+
+
+			if keyword.lower() in vim_synkeyword_arguments:
+				matchEntries.append('syn match ' + thisType + ' /' + keyword + '/')
+				continue
+
+			temp = keycommand + " " + keyword
 			if len(temp) >= 512:
 				vimtypes_entries.append(keycommand)
 				keycommand = keystarter
-			keycommand = keycommand + " " + '"' + keyword + '"'
-		vimtypes_entries.append(keycommand)
+			keycommand = keycommand + " " + keyword
+		if keycommand != keystarter:
+			vimtypes_entries.append(keycommand)
+	
+	# Essentially a uniq() function
+	matchEntries = dict.fromkeys(matchEntries).keys()
+	# Sort the list
+	matchEntries.sort()
+
+	for thisMatch in matchEntries:
+		vimtypes_entries.append(thisMatch)
 
 	vimtypes_entries.append('')
 	vimtypes_entries.append('" Class')
@@ -199,20 +322,42 @@ def main():
 			dest='ctags_dir',
 			type='string',
 			help='CTAGS Executable Directory')
+	parser.add_option('--skip-tags',
+			action="store_false",
+			default=True,
+			dest="generate_tags",
+			help="Skip generation of tags file")
+	parser.add_option('--skip-types',
+			action="store_false",
+			default=True,
+			dest="generate_types",
+			help="Skip generation of types files")
+	parser.add_option('--check-keywords',
+			action='store_true',
+			default=False,
+			dest='check_keywords',
+			help='Check validity of keywords (much slower)')
+
 	options, remainder = parser.parse_args()
 	global ctags_exe
 	ctags_exe = options.ctags_dir + '/' + 'ctags'
 
 	Configuration = GetCommandArgs(options)
-	CreateTagsFile(Configuration)
+
+	if options.generate_tags:
+		CreateTagsFile(Configuration)
+
+	if not options.generate_types:
+		return
 
 	for language in ['c', 'python', 'ruby', 'vhdl']:
 		Parameters = GetLanguageParameters(language)
 		if not CheckFilePresence(options.recurse, Parameters['inames']):
 			continue
-		CreateTypesFile(Configuration, Parameters)
+		CreateTypesFile(Configuration, Parameters, options.check_keywords)
 	
-
+	# Don't do anything new here apart from generating types as it will not
+	# run with --skip-types
 
 if __name__ == "__main__":
 	main()
