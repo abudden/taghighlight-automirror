@@ -128,14 +128,14 @@ def CreateTypesFile(config, Parameters):
 	
 	vimtypes_entries = []
 	for thisType in sorted(keywordDict.keys()):
-		keystarter = "syntax keyword " + thisType
+		keystarter = 'syntax keyword ' + thisType
 		keycommand = keystarter
 		for keyword in keywordDict[thisType]:
-			temp = keycommand + " " + keyword
+			temp = keycommand + " " + '"' + keyword + '"'
 			if len(temp) >= 512:
 				vimtypes_entries.append(keycommand)
 				keycommand = keystarter
-			keycommand = keycommand + " " + keyword
+			keycommand = keycommand + " " + '"' + keyword + '"'
 		vimtypes_entries.append(keycommand)
 
 	vimtypes_entries.append('')
