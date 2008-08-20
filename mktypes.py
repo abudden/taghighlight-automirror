@@ -298,8 +298,8 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 	vimtypes_entries.append('hi link ctags_t Type')
 	vimtypes_entries.append('" Union Name')
 	vimtypes_entries.append('hi link ctags_u Union')
-	vimtypes_entries.append('" Variable')
-	vimtypes_entries.append('hi link ctags_v Variable')
+	vimtypes_entries.append('" Global Variable')
+	vimtypes_entries.append('hi link ctags_v GlobalVariable')
 
 	try:
 		fh = open(outfile, 'wb')
