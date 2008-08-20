@@ -103,6 +103,11 @@ def GetLanguageParameters(lang):
 		params['suffix'] = 'ruby'
 		params['inames'] = '*.rb'
 		params['iskeyword'] = '@,48-57,_,192-255'
+	elif lang == 'perl':
+		params['language'] = 'perl'
+		params['suffix'] = 'pl'
+		params['inames'] = '*.p[lm]'
+		params['iskeyword'] = '@,48-57,_,192-255'
 	elif lang == 'vhdl':
 		params['language'] = 'vhdl'
 		params['suffix'] = 'vhdl'
@@ -373,7 +378,7 @@ def main():
 	if not options.generate_types:
 		return
 
-	for language in ['c', 'python', 'ruby', 'vhdl']:
+	for language in ['c', 'perl', 'python', 'ruby', 'vhdl']:
 		Parameters = GetLanguageParameters(language)
 		if not CheckFilePresence(options.recurse, Parameters['inames']):
 			continue
