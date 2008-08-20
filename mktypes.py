@@ -223,8 +223,8 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 	charactersToEscape = '\\' + '~[]*.$^'
 	UsedTypes = [
 			'ctags_c', 'ctags_d', 'ctags_e', 'ctags_f',
-			'ctags_g', 'ctags_m', 'ctags_s', 'ctags_t',
-			'ctags_u', 'ctags_v'
+			'ctags_g', 'ctags_m', 'ctags_p', 'ctags_s',
+			'ctags_t', 'ctags_u', 'ctags_v'
 			]
 
 	allTypes = sorted(keywordDict.keys())
@@ -293,6 +293,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 	vimtypes_entries.append('hi link ctags_e Enumerator')
 	vimtypes_entries.append('" Function or method')
 	vimtypes_entries.append('hi link ctags_f Function')
+	vimtypes_entries.append('hi link ctags_p Function')
 	vimtypes_entries.append('" Enumeration name')
 	vimtypes_entries.append('hi link ctags_g EnumerationName')
 	vimtypes_entries.append('" Member (of structure or class)')
