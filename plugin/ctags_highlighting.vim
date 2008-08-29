@@ -1,12 +1,12 @@
-" type_highlighting.vim
+" ctags_highlighting
 "   Author: A. S. Budden
 "   Date:   29 Aug 2008
 "   Version: 1
 
-if &cp || exists("g:loaded_type_highlighting")
+if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
-let g:loaded_type_highlighting = 1
+let g:loaded_ctags_highlighting = 1
 
 if !exists('g:VIMFILESDIR')
 	if has("unix")
@@ -69,7 +69,19 @@ func! UpdateTypesFile(recurse)
 	let syscmd = ' --ctags-dir='
 
 	if has("win32")
-		let ctags_exe = split(globpath(&rtp, "ctags.exe"))[0]
+		let path = substitute($PATH, ';', ',', 'g')
+		let ctags_exe_list = split(globpath(path, 'ctags.exe'))
+		if len(ctags_exe_list) > 0
+			let ctags_exe = ctags_exe_list[0]
+		else
+			let ctags_exe = ''
+		endif
+
+		" If ctags is not in the path, look for it in vimfiles/
+		if !filereadable(ctags_exe)
+			let ctags_exe = split(globpath(&rtp, "ctags.exe"))[0]
+		endif
+
 		if filereadable(ctags_exe)
 			let ctags_path = escape(fnamemodify(ctags_exe, ':p:h'),' \')
 		else
