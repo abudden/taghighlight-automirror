@@ -45,31 +45,31 @@ vim_synkeyword_arguments = [
 ctags_exe = 'ctags'
 
 class GlobDirectoryWalker:
-    # a forward iterator that traverses a directory tree
+	# a forward iterator that traverses a directory tree
 
-    def __init__(self, directory, pattern="*"):
-        self.stack = [directory]
-        self.pattern = pattern
-        self.files = []
-        self.index = 0
+	def __init__(self, directory, pattern="*"):
+		self.stack = [directory]
+		self.pattern = pattern
+		self.files = []
+		self.index = 0
 
-    def __getitem__(self, index):
-        while 1:
-            try:
-                file = self.files[self.index]
-                self.index = self.index + 1
-            except IndexError:
-                # pop next directory from stack
-                self.directory = self.stack.pop()
-                self.files = os.listdir(self.directory)
-                self.index = 0
-            else:
-                # got a filename
-                fullname = os.path.join(self.directory, file)
-                if os.path.isdir(fullname) and not os.path.islink(fullname):
-                    self.stack.append(fullname)
-                if fnmatch.fnmatch(file, self.pattern):
-                    return fullname
+	def __getitem__(self, index):
+		while 1:
+			try:
+				file = self.files[self.index]
+				self.index = self.index + 1
+			except IndexError:
+				# pop next directory from stack
+				self.directory = self.stack.pop()
+				self.files = os.listdir(self.directory)
+				self.index = 0
+			else:
+				# got a filename
+				fullname = os.path.join(self.directory, file)
+				if os.path.isdir(fullname) and not os.path.islink(fullname):
+					self.stack.append(fullname)
+				if fnmatch.fnmatch(file, self.pattern):
+					return fullname
 
 def GetCommandArgs(options):
 	Configuration = {}
@@ -306,6 +306,12 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 	vimtypes_entries.append('hi link ctags_u Union')
 	vimtypes_entries.append('" Global Variable')
 	vimtypes_entries.append('hi link ctags_v GlobalVariable')
+
+	if Parameters['suffix'] in ['c',]:
+		vimtypes_entries.append('')
+		vimtypes_entries.append('syn cluster cCurlyGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
+		vimtypes_entries.append('syn cluster cParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
+		vimtypes_entries.append('syn cluster cCppParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
 
 	try:
 		fh = open(outfile, 'wb')
