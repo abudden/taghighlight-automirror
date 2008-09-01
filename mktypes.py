@@ -219,6 +219,9 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 	
 	matchEntries = []
 	vimtypes_entries = []
+
+	vimtypes_entries.append('syn clear ctags_c ctags_d ctags_e ctags_f ctags_p ctags_g ctags_m ctags_s ctags_t ctags_u ctags_v')
+
 	patternCharacters = "/@#':"
 	charactersToEscape = '\\' + '~[]*.$^'
 	UsedTypes = [
@@ -309,6 +312,8 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 
 	if Parameters['suffix'] in ['c',]:
 		vimtypes_entries.append('')
+		vimtypes_entries.append('syn cluster cBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
+		vimtypes_entries.append('syn cluster cCppBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
 		vimtypes_entries.append('syn cluster cCurlyGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
 		vimtypes_entries.append('syn cluster cParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
 		vimtypes_entries.append('syn cluster cCppParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
