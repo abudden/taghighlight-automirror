@@ -220,7 +220,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 	matchEntries = []
 	vimtypes_entries = []
 
-	vimtypes_entries.append('syn clear ctags_c ctags_d ctags_e ctags_f ctags_p ctags_g ctags_m ctags_s ctags_t ctags_u ctags_v')
+	vimtypes_entries.append('silent! syn clear ctags_c ctags_d ctags_e ctags_f ctags_p ctags_g ctags_m ctags_s ctags_t ctags_u ctags_v')
 
 	patternCharacters = "/@#':"
 	charactersToEscape = '\\' + '~[]*.$^'

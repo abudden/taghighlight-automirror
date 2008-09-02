@@ -37,6 +37,7 @@ command! -bang UpdateTypesFile call UpdateTypesFile(<bang>0)
 autocmd BufRead,BufNewFile *.[ch]   call ReadTypes('c')
 autocmd BufRead,BufNewFile *.[ch]pp call ReadTypes('c')
 autocmd BufRead,BufNewFile *.py     call ReadTypes('py')
+autocmd BufRead,BufNewFile *.pyw    call ReadTypes('py')
 autocmd BufRead,BufNewFile *.rb     call ReadTypes('ruby')
 autocmd BufRead,BufNewFile *.vhd*   call ReadTypes('vhdl')
 
@@ -52,6 +53,33 @@ function! ReadTypes(suffix)
 	let fname = 'types_' . a:suffix . '.vim'
 	if filereadable(fname)
 		exe 'so ' . fname
+	endif
+
+	" Open default source files
+	if index(expand('<afile>:e'), ['cpp', 'h', 'hpp']) != -1
+		" This is a C++ source file
+		if search('^\s*#include\s\+<wx/', 'nc', 30)
+			if filereadable(g:wxTypesFile)
+				execute 'so ' . g:wxTypesFile
+			endif
+			execute 'setlocal tags+=' . g:wxTagsFile
+		endif
+
+		if search('^\s*#include\s\+<q', 'nc', 30)
+			if filereadable(g:qtTypesFile)
+				execute 'so ' . g:qtTypesFile
+			endif
+			execute 'setlocal tags+=' . g:qtTagsFile
+		endif
+	elseif index(expand('<afile>:e'), ['py', 'pyw']) != -1
+		" This is a python source file
+
+		if search('^\s*import\s\+wx', 'nc', 30)
+			if filereadable(g:wxPyTypesFile)
+				execute 'so ' . g:wxPyTypesFile
+			endif
+			execute 'setlocal tags+=' . g:wxPyTagsFile
+		endif
 	endif
 endfunction
 
