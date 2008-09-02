@@ -56,7 +56,7 @@ function! ReadTypes(suffix)
 	endif
 
 	" Open default source files
-	if index(expand('<afile>:e'), ['cpp', 'h', 'hpp']) != -1
+	if index(['cpp', 'h', 'hpp'], expand('<afile>:e')) != -1
 		" This is a C++ source file
 		if search('^\s*#include\s\+<wx/', 'nc', 30)
 			if filereadable(g:wxTypesFile)
@@ -71,7 +71,7 @@ function! ReadTypes(suffix)
 			endif
 			execute 'setlocal tags+=' . g:qtTagsFile
 		endif
-	elseif index(expand('<afile>:e'), ['py', 'pyw']) != -1
+	elseif index['py', 'pyw'], (expand('<afile>:e')) != -1
 		" This is a python source file
 
 		if search('^\s*import\s\+wx', 'nc', 30)
