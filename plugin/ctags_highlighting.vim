@@ -71,7 +71,7 @@ function! ReadTypes(suffix)
 			endif
 			execute 'setlocal tags+=' . g:qtTagsFile
 		endif
-	elseif index['py', 'pyw'], (expand('<afile>:e')) != -1
+	elseif index(['py', 'pyw'], expand('<afile>:e')) != -1
 		" This is a python source file
 
 		if search('^\s*import\s\+wx', 'nc', 30)
