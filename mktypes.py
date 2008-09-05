@@ -31,12 +31,6 @@ field_trim = re.compile(r'ctags_[pF]')
 field_keyword = re.compile(r'syntax keyword (?P<kind>ctags_\w) (?P<keyword>.*)')
 field_const = re.compile(r'\bconst\b')
 
-CLineCatcher      = re.compile(r'^.*?\t[^\t]*\.(?P<extension>[ch]\w*)\t')
-PythonLineCatcher = re.compile(r'^.*?\t[^\t]*\.(?P<extension>pyw?)\t')
-RubyLineCatcher   = re.compile(r'^.*?\t[^\t]*\.(?P<extension>rb)\t')
-PerlLineCatcher   = re.compile(r'^.*?\t[^\t]*\.(?P<extension>p[lm])\t')
-VHDLLineCatcher   = re.compile(r'^.*?\t[^\t]*\.(?P<extension>vhdl?)\t')
-
 vim_synkeyword_arguments = [
 		'contains',
 		'oneline',
@@ -86,31 +80,25 @@ def CreateTagsFile(config):
 def GetLanguageParameters(lang):
 	params = {}
 	if lang == 'c':
-		params['language'] = 'c,c++,c#'
 		params['suffix'] = 'c'
+		params['extensions'] = r'[ch]\w*'
 		params['iskeyword'] = '@,48-57,_,192-255'
-		params['lineCatcher'] = CLineCatcher
 	elif lang == 'python':
-		params['language'] = 'python'
 		params['suffix'] = 'py'
+		params['extensions'] = r'pyw?'
 		params['iskeyword'] = '@,48-57,_,192-255'
-		params['lineCatcher'] = PythonLineCatcher
 	elif lang == 'ruby':
-		params['language'] = 'ruby'
 		params['suffix'] = 'ruby'
+		params['extensions'] = 'rb'
 		params['iskeyword'] = '@,48-57,_,192-255'
-		params['lineCatcher'] = RubyLineCatcher
 	elif lang == 'perl':
-		params['language'] = 'perl'
 		params['suffix'] = 'pl'
+		params['extensions'] = r'p[lm]'
 		params['iskeyword'] = '@,48-57,_,192-255'
-		params['lineCatcher'] = PerlLineCatcher
 	elif lang == 'vhdl':
-		params['language'] = 'vhdl'
 		params['suffix'] = 'vhdl'
-		params['inames'] = '*.vhd*'
+		params['extensions'] = r'vhdl?'
 		params['iskeyword'] = '@,48-57,_,192-255'
-		params['lineCatcher'] = VHDLLineCatcher
 	else:
 		raise AttributeError('Language not recognised %s' % lang)
 	return params
@@ -180,9 +168,8 @@ def IsValidKeyword(keyword, iskeyword):
 def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = False, ParseConstants = False):
 	outfile = 'types_%s.vim' % Parameters['suffix']
 	print "Generating " + outfile
-	ctags_cmd = '%s %s --languages=%s -o- %s' % \
-			(ctags_exe, config['CTAGS_OPTIONS'], Parameters['language'], " ".join(config['CTAGS_FILES']))
-	lineMatcher = Parameters['lineCatcher']
+	lineMatcher = re.compile(r'^.*?\t[^\t]*\.(?P<extension>' + Parameters['extensions'] + ')\t')
+
 	#p = os.popen(ctags_cmd, "r")
 	p = open('tags', "r")
 

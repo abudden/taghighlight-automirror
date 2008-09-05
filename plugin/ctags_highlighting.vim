@@ -36,6 +36,7 @@ command! -bang UpdateTypesFile call UpdateTypesFile(<bang>0)
 " load the types_*.vim highlighting file, if it exists
 autocmd BufRead,BufNewFile *.[ch]   call ReadTypes('c')
 autocmd BufRead,BufNewFile *.[ch]pp call ReadTypes('c')
+autocmd BufRead,BufNewFile *.p[lm]  call ReadTypes('pl')
 autocmd BufRead,BufNewFile *.py     call ReadTypes('py')
 autocmd BufRead,BufNewFile *.pyw    call ReadTypes('py')
 autocmd BufRead,BufNewFile *.rb     call ReadTypes('ruby')
