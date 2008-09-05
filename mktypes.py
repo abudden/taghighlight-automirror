@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+# Author: A. S. Budden
+# Date:   5 Sep 2008
+# Version: 0.2
 import os
 import sys
 import optparse
@@ -28,6 +31,12 @@ field_trim = re.compile(r'ctags_[pF]')
 field_keyword = re.compile(r'syntax keyword (?P<kind>ctags_\w) (?P<keyword>.*)')
 field_const = re.compile(r'\bconst\b')
 
+CLineCatcher      = re.compile(r'^.*?\t[^\t]*\.(?P<extension>[ch]\w*)\t')
+PythonLineCatcher = re.compile(r'^.*?\t[^\t]*\.(?P<extension>pyw?)\t')
+RubyLineCatcher   = re.compile(r'^.*?\t[^\t]*\.(?P<extension>rb)\t')
+PerlLineCatcher   = re.compile(r'^.*?\t[^\t]*\.(?P<extension>p[lm])\t')
+VHDLLineCatcher   = re.compile(r'^.*?\t[^\t]*\.(?P<extension>vhdl?)\t')
+
 vim_synkeyword_arguments = [
 		'contains',
 		'oneline',
@@ -45,32 +54,16 @@ vim_synkeyword_arguments = [
 
 ctags_exe = 'ctags'
 
-class GlobDirectoryWalker:
-	# a forward iterator that traverses a directory tree
-
-	def __init__(self, directory, pattern="*"):
-		self.stack = [directory]
-		self.pattern = pattern
-		self.files = []
-		self.index = 0
-
-	def __getitem__(self, index):
-		while 1:
-			try:
-				file = self.files[self.index]
-				self.index = self.index + 1
-			except IndexError:
-				# pop next directory from stack
-				self.directory = self.stack.pop()
-				self.files = os.listdir(self.directory)
-				self.index = 0
-			else:
-				# got a filename
-				fullname = os.path.join(self.directory, file)
-				if os.path.isdir(fullname) and not os.path.islink(fullname):
-					self.stack.append(fullname)
-				if fnmatch.fnmatch(file, self.pattern):
-					return fullname
+# Used for timing a function; from http://www.daniweb.com/code/snippet368.html
+import time
+def print_timing(func):
+	def wrapper(*arg):
+		t1 = time.time()
+		res = func(*arg)
+		t2 = time.time()
+		print '%s took %0.3f ms' % (func.func_name, (t2-t1)*1000.0)
+		return res
+	return wrapper
 
 def GetCommandArgs(options):
 	Configuration = {}
@@ -80,8 +73,11 @@ def GetCommandArgs(options):
 	else:
 		Configuration['CTAGS_OPTIONS'] = ''
 		Configuration['CTAGS_FILES'] = glob.glob('*')
+	if not options.include_docs:
+		Configuration['CTAGS_OPTIONS'] += r" --exclude=./docs --exclude=.\docs --exclude='./docs' --exclude='.\docs'"
 	return Configuration
 
+#@print_timing
 def CreateTagsFile(config):
 	print "Generating Tags"
 	ctags_cmd = '%s %s %s' % (ctags_exe, config['CTAGS_OPTIONS'], " ".join(config['CTAGS_FILES']))
@@ -92,28 +88,29 @@ def GetLanguageParameters(lang):
 	if lang == 'c':
 		params['language'] = 'c,c++,c#'
 		params['suffix'] = 'c'
-		params['inames'] = '*.[ch]*'
 		params['iskeyword'] = '@,48-57,_,192-255'
+		params['lineCatcher'] = CLineCatcher
 	elif lang == 'python':
 		params['language'] = 'python'
 		params['suffix'] = 'py'
-		params['inames'] = '*.py*'
 		params['iskeyword'] = '@,48-57,_,192-255'
+		params['lineCatcher'] = PythonLineCatcher
 	elif lang == 'ruby':
 		params['language'] = 'ruby'
 		params['suffix'] = 'ruby'
-		params['inames'] = '*.rb'
 		params['iskeyword'] = '@,48-57,_,192-255'
+		params['lineCatcher'] = RubyLineCatcher
 	elif lang == 'perl':
 		params['language'] = 'perl'
 		params['suffix'] = 'pl'
-		params['inames'] = '*.p[lm]'
 		params['iskeyword'] = '@,48-57,_,192-255'
+		params['lineCatcher'] = PerlLineCatcher
 	elif lang == 'vhdl':
 		params['language'] = 'vhdl'
 		params['suffix'] = 'vhdl'
 		params['inames'] = '*.vhd*'
 		params['iskeyword'] = '@,48-57,_,192-255'
+		params['lineCatcher'] = VHDLLineCatcher
 	else:
 		raise AttributeError('Language not recognised %s' % lang)
 	return params
@@ -179,20 +176,25 @@ def IsValidKeyword(keyword, iskeyword):
 			return False
 	return True
 	
-
-
+#@print_timing
 def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = False, ParseConstants = False):
 	outfile = 'types_%s.vim' % Parameters['suffix']
 	print "Generating " + outfile
 	ctags_cmd = '%s %s --languages=%s -o- %s' % \
 			(ctags_exe, config['CTAGS_OPTIONS'], Parameters['language'], " ".join(config['CTAGS_FILES']))
-	p = os.popen(ctags_cmd, "r")
+	lineMatcher = Parameters['lineCatcher']
+	#p = os.popen(ctags_cmd, "r")
+	p = open('tags', "r")
 
 	ctags_entries = []
 	while 1:
 		line = p.readline()
 		if not line:
 			break
+
+		if not lineMatcher.match(line):
+			continue
+
 		m = field_processor.match(line.strip())
 		if m is not None:
 			vimmed_line = 'syntax keyword ctags_' + m.group('kind') + ' ' + m.group('keyword')
@@ -203,6 +205,8 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 
 			if not field_trim.match(vimmed_line):
 				ctags_entries.append(vimmed_line)
+	
+	p.close()
 	
 	# Essentially a uniq() function
 	ctags_entries = dict.fromkeys(ctags_entries).keys()
@@ -343,15 +347,6 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 	finally:
 		fh.close()
 
-
-def CheckFilePresence(recurse, inames):
-	if recurse:
-		fileList = [fname for fname in GlobDirectoryWalker('.', inames)]
-	else:
-		fileList = glob.glob(inames)
-
-	return (len(fileList) > 0)
-
 def main():
 	import optparse
 	parser = optparse.OptionParser()
@@ -366,16 +361,11 @@ def main():
 			dest='ctags_dir',
 			type='string',
 			help='CTAGS Executable Directory')
-	parser.add_option('--skip-tags',
-			action="store_false",
-			default=True,
-			dest="generate_tags",
-			help="Skip generation of tags file")
-	parser.add_option('--skip-types',
-			action="store_false",
-			default=True,
-			dest="generate_types",
-			help="Skip generation of types files")
+	parser.add_option('--include-docs',
+			action='store_true',
+			default=False,
+			dest='include_docs',
+			help='Include docs directory (stripped by default for speed)')
 	parser.add_option('--check-keywords',
 			action='store_true',
 			default=False,
@@ -398,21 +388,12 @@ def main():
 
 	Configuration = GetCommandArgs(options)
 
-	if options.generate_tags:
-		CreateTagsFile(Configuration)
-
-	if not options.generate_types:
-		return
+	CreateTagsFile(Configuration)
 
 	for language in ['c', 'perl', 'python', 'ruby', 'vhdl']:
 		Parameters = GetLanguageParameters(language)
-		if not CheckFilePresence(options.recurse, Parameters['inames']):
-			continue
 		CreateTypesFile(Configuration, Parameters, options.check_keywords, options.skip_matches, options.parse_constants)
 	
-	# Don't do anything new here apart from generating types as it will not
-	# run with --skip-types
-
 if __name__ == "__main__":
 	main()
 
