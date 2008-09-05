@@ -8,24 +8,25 @@ import glob
 
 field_processor = re.compile(
 r'''
-	^                # Start of the line
-	(?P<keyword>.*?) # Capture the first field: everything up to the first tab
-	\t               # Field separator: a tab character
-	.*?              # Second field (uncaptured): everything up to the next tab
-	\t               # Field separator: a tab character
-	(.*?)            # Any character at all, but as few as necessary (i.e. catch everything up to the ;")
-	;"               # The end of the search specifier (see http://ctags.sourceforge.net/FORMAT)
-	(?=\t)           # There MUST be a tab character after the ;", but we want to match it with zero width
-	.*\t             # There can be other fields before "kind", so catch them here.
-			         # Also catch the tab character from the previous line as there MUST be a tab before the field
-	(kind:)?         # This is the "kind" field; "kind:" is optional
-	(?P<kind>\w)     # The kind is a single character: catch it
-	(\t|$)           # It must be followed either by a tab or by the end of the line
-	.*               # If it is followed by a tab, soak up the rest of the line; replace with the syntax keyword line
+	^                 # Start of the line
+	(?P<keyword>.*?)  # Capture the first field: everything up to the first tab
+	\t                # Field separator: a tab character
+	.*?               # Second field (uncaptured): everything up to the next tab
+	\t                # Field separator: a tab character
+	(?P<search>.*?)   # Any character at all, but as few as necessary (i.e. catch everything up to the ;")
+	;"                # The end of the search specifier (see http://ctags.sourceforge.net/FORMAT)
+	(?=\t)            # There MUST be a tab character after the ;", but we want to match it with zero width
+	.*\t              # There can be other fields before "kind", so catch them here.
+			          # Also catch the tab character from the previous line as there MUST be a tab before the field
+	(kind:)?          # This is the "kind" field; "kind:" is optional
+	(?P<kind>\w)      # The kind is a single character: catch it
+	(\t|$)            # It must be followed either by a tab or by the end of the line
+	.*                # If it is followed by a tab, soak up the rest of the line; replace with the syntax keyword line
 ''', re.VERBOSE)
 
 field_trim = re.compile(r'ctags_[pF]')
 field_keyword = re.compile(r'syntax keyword (?P<kind>ctags_\w) (?P<keyword>.*)')
+field_const = re.compile(r'\bconst\b')
 
 vim_synkeyword_arguments = [
 		'contains',
@@ -180,7 +181,7 @@ def IsValidKeyword(keyword, iskeyword):
 	
 
 
-def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = False):
+def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = False, ParseConstants = False):
 	outfile = 'types_%s.vim' % Parameters['suffix']
 	print "Generating " + outfile
 	ctags_cmd = '%s %s --languages=%s -o- %s' % \
@@ -192,10 +193,16 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 		line = p.readline()
 		if not line:
 			break
-		vimmed_line = field_processor.sub(r'syntax keyword ctags_\g<kind> \g<keyword>', line.strip())
+		m = field_processor.match(line.strip())
+		if m is not None:
+			vimmed_line = 'syntax keyword ctags_' + m.group('kind') + ' ' + m.group('keyword')
 
-		if not field_trim.match(vimmed_line):
-			ctags_entries.append(vimmed_line)
+			if ParseConstants and (Parameters['suffix'] == 'c') and (m.group('kind') == 'v'):
+				if field_const.search(m.group('search')) is not None:
+					vimmed_line = vimmed_line.replace('ctags_v', 'ctags_k')
+
+			if not field_trim.match(vimmed_line):
+				ctags_entries.append(vimmed_line)
 	
 	# Essentially a uniq() function
 	ctags_entries = dict.fromkeys(ctags_entries).keys()
@@ -226,8 +233,8 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 	charactersToEscape = '\\' + '~[]*.$^'
 	UsedTypes = [
 			'ctags_c', 'ctags_d', 'ctags_e', 'ctags_f',
-			'ctags_g', 'ctags_m', 'ctags_p', 'ctags_s',
-			'ctags_t', 'ctags_u', 'ctags_v'
+			'ctags_g', 'ctags_k', 'ctags_m', 'ctags_p',
+			'ctags_s', 'ctags_t', 'ctags_u', 'ctags_v'
 			]
 
 	allTypes = sorted(keywordDict.keys())
@@ -307,16 +314,18 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 	vimtypes_entries.append('hi link ctags_t Type')
 	vimtypes_entries.append('" Union Name')
 	vimtypes_entries.append('hi link ctags_u Union')
+	vimtypes_entries.append('" Global Constant')
+	vimtypes_entries.append('hi link ctags_k GlobalConstant')
 	vimtypes_entries.append('" Global Variable')
 	vimtypes_entries.append('hi link ctags_v GlobalVariable')
 
 	if Parameters['suffix'] in ['c',]:
 		vimtypes_entries.append('')
-		vimtypes_entries.append('syn cluster cBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
-		vimtypes_entries.append('syn cluster cCppBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
-		vimtypes_entries.append('syn cluster cCurlyGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
-		vimtypes_entries.append('syn cluster cParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
-		vimtypes_entries.append('syn cluster cCppParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
+		vimtypes_entries.append('syn cluster cBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
+		vimtypes_entries.append('syn cluster cCppBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
+		vimtypes_entries.append('syn cluster cCurlyGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
+		vimtypes_entries.append('syn cluster cParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
+		vimtypes_entries.append('syn cluster cCppParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
 
 	try:
 		fh = open(outfile, 'wb')
@@ -377,6 +386,11 @@ def main():
 			default=False,
 			dest='skip_matches',
 			help='Skip syntax match // items (to speed up file loading time)')
+	parser.add_option('--analyse-constants',
+			action='store_true',
+			default=False,
+			dest='parse_constants',
+			help='Treat constants as separate entries (Experimental)')
 
 	options, remainder = parser.parse_args()
 	global ctags_exe
@@ -394,7 +408,7 @@ def main():
 		Parameters = GetLanguageParameters(language)
 		if not CheckFilePresence(options.recurse, Parameters['inames']):
 			continue
-		CreateTypesFile(Configuration, Parameters, options.check_keywords, options.skip_matches)
+		CreateTypesFile(Configuration, Parameters, options.check_keywords, options.skip_matches, options.parse_constants)
 	
 	# Don't do anything new here apart from generating types as it will not
 	# run with --skip-types

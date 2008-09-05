@@ -135,7 +135,7 @@ func! UpdateTypesFile(recurse)
 		let syscmd .= ' -r'
 	endif
 
-	let syscmd .= ' --check-keywords'
+	let syscmd .= ' --check-keywords --analyse-constants'
 
 	let sysoutput = system(sysroot . syscmd) 
 	if sysoutput =~ 'python.*is not recognized as an internal or external command'
