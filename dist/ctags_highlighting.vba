@@ -159,7 +159,7 @@ func! UpdateTypesFile(recurse)
 endfunc
 
 mktypes.py	[[[1
-386
+388
 #!/usr/bin/env python
 # Author: A. S. Budden
 # Date:   5 Sep 2008
@@ -474,11 +474,13 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 
 	if Parameters['suffix'] in ['c',]:
 		vimtypes_entries.append('')
-		vimtypes_entries.append('syn cluster cBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
-		vimtypes_entries.append('syn cluster cCppBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
-		vimtypes_entries.append('syn cluster cCurlyGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
-		vimtypes_entries.append('syn cluster cParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
-		vimtypes_entries.append('syn cluster cCppParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
+		vimtypes_entries.append("if exists('b:hlrainbow')")
+		vimtypes_entries.append('\tsyn cluster cBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
+		vimtypes_entries.append('\tsyn cluster cCppBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
+		vimtypes_entries.append('\tsyn cluster cCurlyGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
+		vimtypes_entries.append('\tsyn cluster cParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
+		vimtypes_entries.append('\tsyn cluster cCppParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
+		vimtypes_entries.append('endif')
 
 	try:
 		fh = open(outfile, 'wb')
@@ -554,7 +556,7 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 types_qt4.vim	[[[1
-1944
+1946
 syntax keyword ctags_v ActiveMask ActiveMask2 ActiveMaskEnd AnimateBusyProgressBar AnimateProgressBar Argv0 BMP_BITFIELDS BMP_FILEHDR_SIZE BMP_OLD BMP_OS2 BMP_RGB BMP_RLE4 BMP_RLE8 BMP_WIN Begi BlockSize BroadcastInterval BrushRole BufferSize COLNAMESIZE ClientTimeout ColorRole ConnectTimeout DIRECT_CONNECTION_ONLY DataSize Default DefaultCenterX DefaultCenterY DefaultScale EOS EmptyCapture EndGamePieces ErrorMS Esc Esc_Ascii Esc_CHARS Esc_JISX0201_Kana Esc_JISX0201_Latin Esc_JISX0208_1978
 syntax keyword ctags_v Esc_JISX0208_1983 Esc_JISX0212 Esc_SEQ FTC_Image_Cache_Lookup FTC_SBit_Cache_Lookup Free_Pos_Call_Table Free_Subst_Call_Table FullHeaderSize GXV_Mort_IndicScript_Msg HBClearMask HBITMAP HBRUSH HCTX HDC HFONT HICON HINSTANCE HMGR HMONITOR HPALETTE HPBUFFERARB HPEN HRGN HWND HWTHOOK IEnumInputContext IEnumRegisterWordW INV_TIMER IO_AbortError IO_Async IO_Combined IO_ConnectError IO_Direct IO_FatalError IO_Ok IO_Open IO_OpenError IO_Raw IO_ReadError IO_ResourceError IO_Sequential
 syntax keyword ctags_v IO_StateMask IO_TimeOutError IO_TypeMask IO_UnspecifiedError IO_WriteError IdRole InftyLen InftyRep IniCaseSensitivity Instruct_Dispatch ItemSize JPTextCodecs KRTextCodecs KeepAliveInterval KeyTbl LBCarryMask LENS_EXTENT Load_Pos_Call_Table Load_Subst_Call_Table Lookup_Pos_Call_Table Lookup_Subst_Call_Table LowerYear MAX_THREAD_STORAGE MYWM_TASKBARCREATED MagicComment MagicLength MaxBlocksInMultiMode MaxBlocksInProgress MaxBufferSize MaxCandidates MaxConnectionPerPeer MaxConnections
@@ -2494,13 +2496,15 @@ hi link ctags_u Union
 " Global Variable
 hi link ctags_v GlobalVariable
 
-syn cluster cCppBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
-syn cluster cBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
-syn cluster cCurlyGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
-syn cluster cParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
-syn cluster cCppParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
+if exists('b:hlrainbow')
+	syn cluster cCppBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
+	syn cluster cBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
+	syn cluster cCurlyGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
+	syn cluster cParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
+	syn cluster cCppParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
+endif
 types_wx.vim	[[[1
-627
+629
 syntax keyword ctags_v BadFileSizeType DB_DATA_TYPE_BLOB DB_DATA_TYPE_DATE DB_DATA_TYPE_FLOAT DB_DATA_TYPE_INTEGER DB_DATA_TYPE_MEMO DB_DATA_TYPE_VARCHAR DB_DEL_KEYFIELDS DB_DEL_MATCHING DB_DEL_WHERE DB_GRANT_ALL DB_GRANT_DELETE DB_GRANT_INSERT DB_GRANT_SELECT DB_GRANT_UPDATE DB_MAX_COLUMN_NAME_LEN DB_MAX_ERROR_HISTORY DB_MAX_ERROR_MSG_LEN DB_MAX_STATEMENT_LEN DB_MAX_TABLE_NAME_LEN DB_MAX_WHERE_CLAUSE_LEN DB_PATH_MAX DB_SELECT_KEYFIELDS DB_SELECT_MATCHING DB_SELECT_STATEMENT DB_SELECT_WHERE
 syntax keyword ctags_v DB_TYPE_NAME_LEN DB_UPD_KEYFIELDS DB_UPD_WHERE DB_WHERE_KEYFIELDS DB_WHERE_MATCHING DEFAULT_CURSOR DISABLE_VIEW Debug Error FatalError HMONITOR Info IntMustBeExactly4Bytes Message NSApplication NSBitmapImageRep NSBox NSButton NSColor NSColorPanel NSControl NSCursor NSEvent NSFontPanel NSImage NSLayoutManager NSMenu NSMenuExtra NSMenuItem NSMutableArray NSNotification NSObject NSPanel NSScrollView NSSound NSStatusItem NSString NSTableColumn NSTableView NSTextContainer NSTextField
 syntax keyword ctags_v NSTextStorage NSThread NSView NSWindow PtrMustBeExactly4Bytes QUERY_ONLY ROWID SizeTMustBeExactly4Bytes Status SysError Verbose Warning Wchar_tMustBeExactly2Bytes sizeof value wxALPHA_OPAQUE wxALPHA_TRANSPARENT wxAboutDialogInfo wxAcceleratorEntry wxAcceleratorTable wxAccessible wxAnimation wxApp wxAppConsole wxAppTraits wxArrayInt wxArrayString wxArtProviderCache wxArtProvidersList wxAuiFloatingFrame wxAuiMDIChildFrame wxAuiMDIClientWindow wxAuiMDIParentFrame wxBitmap wxBitmapButton
@@ -3123,13 +3127,15 @@ hi link ctags_u Union
 " Global Variable
 hi link ctags_v GlobalVariable
 
-syn cluster cCppBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
-syn cluster cBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
-syn cluster cCurlyGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
-syn cluster cParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
-syn cluster cCppParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
+if exists('b:hlrainbow')
+	syn cluster cCppBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
+	syn cluster cBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
+	syn cluster cCurlyGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
+	syn cluster cParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
+	syn cluster cCppParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
+endif
 types_wxpy.vim	[[[1
-600
+596
 syntax keyword ctags_c A1 A2 ANIHandler AbortEvent AbortedException AboutDialog AboutDialogInfo AboutService AcDemoApp AcceleratorEntry AcceleratorTable ActivateEvent ActiveXEvent ActiveXWindow AlphaPixelData AlphaPixelData_Accessor AnalogClock AnalogClockWindow Animation AnimationBase AnimationCtrl AnimationCtrlBase Anonymous Any App AppEventHandlerMixin AppEventManager AppFrame AppearancePanel Arrow ArrowHead ArrowLine ArtProvider Attribute AttributeAttribute AttributePanel AuiDefaultDockArt
 syntax keyword ctags_c AuiDefaultTabArt AuiDockArt AuiDockInfo AuiDockUIPart AuiFloatingFrame AuiMDIChildFrame AuiMDIClientWindow AuiMDIParentFrame AuiManager AuiManagerEvent AuiNotebook AuiNotebookEvent AuiNotebookPage AuiPaneButton AuiPaneInfo AuiSimpleTabArt AuiTabArt AuiTabContainer AuiTabContainerButton AuiTabCtrl AutoBufferedPaintDC AutoCompService B1 B2 BBox BMPHandler BPArt Bar BaseComboTreeBox BaseMaskedComboBox BaseMaskedTextCtrl BasePopupFrame BasicTreeModel Bitmap BitmapAttribute BitmapBuffer
 syntax keyword ctags_c BitmapButton BitmapComboBox BitmapDataObject BitmapProvider BitmapShape BookCtrlBase BookCtrlBaseEvent BoundMethodWeakref Box BoxSizer BrokenStr Brush BrushList Buffer BufferedDC BufferedPaintDC BuildRenamers BusyCursor BusyInfo Button ButtonInfo ButtonPanel ButtonPanelText ButtonTreeCtrlPanel C1 C2 CCellEditor CDATAAttribute CLSID CMenuBar CPPFileSystemHandler CSheet CTextCellEditor CToolBar CURHandler CalDraw CalculateLayoutEvent CalenDlg Calendar CalendarCtrl CalendarDateAttr
@@ -3726,7 +3732,3 @@ hi link ctags_t Type
 hi link ctags_u Union
 " Global Variable
 hi link ctags_v GlobalVariable
-
-syn cluster cCurlyGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
-syn cluster cParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
-syn cluster cCppParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v
