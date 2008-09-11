@@ -312,7 +312,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 
 	if Parameters['suffix'] in ['c',]:
 		vimtypes_entries.append('')
-		vimtypes_entries.append("if exists('b:hlrainbow')")
+		vimtypes_entries.append("if exists('b:hlrainbow') && !exists('g:nohlrainbow')")
 		vimtypes_entries.append('\tsyn cluster cBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
 		vimtypes_entries.append('\tsyn cluster cCppBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
 		vimtypes_entries.append('\tsyn cluster cCurlyGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
@@ -370,6 +370,12 @@ def main():
 			default=False,
 			dest='parse_constants',
 			help='Treat constants as separate entries (Experimental)')
+	parser.add_option('--include-language',
+			action='append',
+			dest='languages',
+			type='string',
+			default=[],
+			help='Only include specified languages')
 
 	options, remainder = parser.parse_args()
 	global ctags_exe
@@ -379,7 +385,14 @@ def main():
 
 	CreateTagsFile(Configuration)
 
-	for language in ['c', 'perl', 'python', 'ruby', 'vhdl']:
+	full_language_list = ['c', 'perl', 'python', 'ruby', 'vhdl']
+	if len(options.languages) == 0:
+		# Include all languages
+		language_list = full_language_list
+	else:
+		language_list = [i for i in full_language_list if i in options.languages]
+
+	for language in language_list:
 		Parameters = GetLanguageParameters(language)
 		CreateTypesFile(Configuration, Parameters, options.check_keywords, options.skip_matches, options.parse_constants)
 	

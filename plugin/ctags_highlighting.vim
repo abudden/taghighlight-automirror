@@ -132,11 +132,24 @@ func! UpdateTypesFile(recurse)
 
 	let syscmd .= ctags_path
 	
-	if a:recurse == 1
-		let syscmd .= ' -r'
+	if exists('b:TypesFileRecurse')
+		if b:TypesFileRecurse == 1
+			let syscmd .= ' -r'
+		endif
+	else
+		if a:recurse == 1
+			let syscmd .= ' -r'
+		endif
+	endif
+
+	if exists('b:TypesFileLanguages')
+		for lang in b:TypesFileLanguages
+			let syscmd .= ' --include-language=' . lang
+		endfor
 	endif
 
 	let syscmd .= ' --check-keywords --analyse-constants'
+
 
 	let sysoutput = system(sysroot . syscmd) 
 	if sysoutput =~ 'python.*is not recognized as an internal or external command'
