@@ -71,19 +71,35 @@ def GetCommandArgs(options):
 		Configuration['CTAGS_OPTIONS'] += r" --exclude=./docs --exclude=.\docs --exclude='./docs' --exclude='.\docs'"
 	return Configuration
 
+key_regexp = re.compile('^(?P<keyword>.*?)\t(?P<remainder>.*\t(?P<kind>[a-zA-Z])(?:\t|$).*)')
+
+def ctags_key(ctags_line):
+	match = key_regexp.match(ctags_line)
+	if match is None:
+		return ctags_line
+	return match.group('keyword') + match.group('kind') + match.group('remainder')
+
+
 #@print_timing
 def CreateTagsFile(config):
 	print "Generating Tags"
 	ctags_cmd = '%s %s %s' % (ctags_exe, config['CTAGS_OPTIONS'], " ".join(config['CTAGS_FILES']))
 	os.system(ctags_cmd)
+
 	# Now remove the local variables to make the file smaller
-	import fileinput
 	localRegexp = re.compile(r'\tl\b')
-	for line in fileinput.input('tags', inplace=1):
-		if localRegexp.search(line) is not None:
-			continue
-		else:
-			print line,
+	tagFile = open('tags', 'r')
+	tagLines = [line.strip() for line in tagFile
+			if localRegexp.search(line) is None]
+	tagFile.close()
+
+	# Also sort the file a bit better (tag, then kind, then filename)
+	tagLines.sort(key=ctags_key)
+
+	tagFile = open('tags', 'w')
+	for line in tagLines:
+		tagFile.write(line + "\n")
+	tagFile.close()
 
 def GetLanguageParameters(lang):
 	params = {}
