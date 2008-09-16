@@ -62,10 +62,10 @@ def print_timing(func):
 def GetCommandArgs(options):
 	Configuration = {}
 	if options.recurse:
-		Configuration['CTAGS_OPTIONS'] = '--recurse'
+		Configuration['CTAGS_OPTIONS'] = '--recurse --c-kinds=+l'
 		Configuration['CTAGS_FILES'] = ['.']
 	else:
-		Configuration['CTAGS_OPTIONS'] = ''
+		Configuration['CTAGS_OPTIONS'] = '--c-kinds=+l'
 		Configuration['CTAGS_FILES'] = glob.glob('*')
 	if not options.include_docs:
 		Configuration['CTAGS_OPTIONS'] += r" --exclude=./docs --exclude=.\docs --exclude='./docs' --exclude='.\docs'"
