@@ -76,6 +76,14 @@ def CreateTagsFile(config):
 	print "Generating Tags"
 	ctags_cmd = '%s %s %s' % (ctags_exe, config['CTAGS_OPTIONS'], " ".join(config['CTAGS_FILES']))
 	os.system(ctags_cmd)
+	# Now remove the local variables to make the file smaller
+	import fileinput
+	localRegexp = re.compile(r'\tl\b')
+	for line in fileinput.input('tags', inplace=1):
+		if localRegexp.search(line) is not None:
+			continue
+		else:
+			print line,
 
 def GetLanguageParameters(lang):
 	params = {}
