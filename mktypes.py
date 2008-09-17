@@ -115,6 +115,10 @@ def GetLanguageParameters(lang):
 		params['suffix'] = 'ruby'
 		params['extensions'] = 'rb'
 		params['iskeyword'] = '@,48-57,_,192-255'
+	elif lang == 'java':
+		params['suffix'] = 'java'
+		params['extensions'] = 'java'
+		params['iskeyword'] = '@,48-57,_,192-255'
 	elif lang == 'perl':
 		params['suffix'] = 'pl'
 		params['extensions'] = r'p[lm]'
@@ -409,7 +413,7 @@ def main():
 
 	CreateTagsFile(Configuration)
 
-	full_language_list = ['c', 'perl', 'python', 'ruby', 'vhdl']
+	full_language_list = ['c', 'java', 'perl', 'python', 'ruby', 'vhdl']
 	if len(options.languages) == 0:
 		# Include all languages
 		language_list = full_language_list
