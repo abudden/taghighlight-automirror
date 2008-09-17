@@ -1,5 +1,5 @@
 plugin/ctags_highlighting.vim	[[[1
-158
+171
 finish
 " ctags_highlighting
 "   Author: A. S. Budden
@@ -135,11 +135,24 @@ func! UpdateTypesFile(recurse)
 
 	let syscmd .= ctags_path
 	
-	if a:recurse == 1
-		let syscmd .= ' -r'
+	if exists('b:TypesFileRecurse')
+		if b:TypesFileRecurse == 1
+			let syscmd .= ' -r'
+		endif
+	else
+		if a:recurse == 1
+			let syscmd .= ' -r'
+		endif
+	endif
+
+	if exists('b:TypesFileLanguages')
+		for lang in b:TypesFileLanguages
+			let syscmd .= ' --include-language=' . lang
+		endfor
 	endif
 
 	let syscmd .= ' --check-keywords --analyse-constants'
+
 
 	let sysoutput = system(sysroot . syscmd) 
 	if sysoutput =~ 'python.*is not recognized as an internal or external command'
@@ -159,7 +172,7 @@ func! UpdateTypesFile(recurse)
 endfunc
 
 mktypes.py	[[[1
-388
+425
 #!/usr/bin/env python
 # Author: A. S. Budden
 # Date:   5 Sep 2008
@@ -224,20 +237,44 @@ def print_timing(func):
 def GetCommandArgs(options):
 	Configuration = {}
 	if options.recurse:
-		Configuration['CTAGS_OPTIONS'] = '--recurse'
+		Configuration['CTAGS_OPTIONS'] = '--recurse --c-kinds=+l'
 		Configuration['CTAGS_FILES'] = ['.']
 	else:
-		Configuration['CTAGS_OPTIONS'] = ''
+		Configuration['CTAGS_OPTIONS'] = '--c-kinds=+l'
 		Configuration['CTAGS_FILES'] = glob.glob('*')
 	if not options.include_docs:
 		Configuration['CTAGS_OPTIONS'] += r" --exclude=./docs --exclude=.\docs --exclude='./docs' --exclude='.\docs'"
 	return Configuration
+
+key_regexp = re.compile('^(?P<keyword>.*?)\t(?P<remainder>.*\t(?P<kind>[a-zA-Z])(?:\t|$).*)')
+
+def ctags_key(ctags_line):
+	match = key_regexp.match(ctags_line)
+	if match is None:
+		return ctags_line
+	return match.group('keyword') + match.group('kind') + match.group('remainder')
+
 
 #@print_timing
 def CreateTagsFile(config):
 	print "Generating Tags"
 	ctags_cmd = '%s %s %s' % (ctags_exe, config['CTAGS_OPTIONS'], " ".join(config['CTAGS_FILES']))
 	os.system(ctags_cmd)
+
+	# Now remove the local variables to make the file smaller
+	localRegexp = re.compile(r'\tl\b')
+	tagFile = open('tags', 'r')
+	tagLines = [line.strip() for line in tagFile
+			if localRegexp.search(line) is None]
+	tagFile.close()
+
+	# Also sort the file a bit better (tag, then kind, then filename)
+	tagLines.sort(key=ctags_key)
+
+	tagFile = open('tags', 'w')
+	for line in tagLines:
+		tagFile.write(line + "\n")
+	tagFile.close()
 
 def GetLanguageParameters(lang):
 	params = {}
@@ -474,7 +511,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 
 	if Parameters['suffix'] in ['c',]:
 		vimtypes_entries.append('')
-		vimtypes_entries.append("if exists('b:hlrainbow')")
+		vimtypes_entries.append("if exists('b:hlrainbow') && !exists('g:nohlrainbow')")
 		vimtypes_entries.append('\tsyn cluster cBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
 		vimtypes_entries.append('\tsyn cluster cCppBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
 		vimtypes_entries.append('\tsyn cluster cCurlyGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
@@ -532,6 +569,12 @@ def main():
 			default=False,
 			dest='parse_constants',
 			help='Treat constants as separate entries (Experimental)')
+	parser.add_option('--include-language',
+			action='append',
+			dest='languages',
+			type='string',
+			default=[],
+			help='Only include specified languages')
 
 	options, remainder = parser.parse_args()
 	global ctags_exe
@@ -541,7 +584,14 @@ def main():
 
 	CreateTagsFile(Configuration)
 
-	for language in ['c', 'perl', 'python', 'ruby', 'vhdl']:
+	full_language_list = ['c', 'perl', 'python', 'ruby', 'vhdl']
+	if len(options.languages) == 0:
+		# Include all languages
+		language_list = full_language_list
+	else:
+		language_list = [i for i in full_language_list if i in options.languages]
+
+	for language in language_list:
 		Parameters = GetLanguageParameters(language)
 		CreateTypesFile(Configuration, Parameters, options.check_keywords, options.skip_matches, options.parse_constants)
 	
