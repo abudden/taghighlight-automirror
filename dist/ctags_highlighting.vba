@@ -1,6 +1,8 @@
+" Vimball Archiver by Charles E. Campbell, Jr., Ph.D.
+UseVimball
+finish
 plugin/ctags_highlighting.vim	[[[1
 171
-finish
 " ctags_highlighting
 "   Author: A. S. Budden
 "   Date:   29 Aug 2008
@@ -40,6 +42,7 @@ command! -bang UpdateTypesFile call UpdateTypesFile(<bang>0)
 autocmd BufRead,BufNewFile *.[ch]   call ReadTypes('c')
 autocmd BufRead,BufNewFile *.[ch]pp call ReadTypes('c')
 autocmd BufRead,BufNewFile *.p[lm]  call ReadTypes('pl')
+autocmd BufRead,BufNewFile *.java   call ReadTypes('java')
 autocmd BufRead,BufNewFile *.py     call ReadTypes('py')
 autocmd BufRead,BufNewFile *.pyw    call ReadTypes('py')
 autocmd BufRead,BufNewFile *.rb     call ReadTypes('ruby')
@@ -172,7 +175,7 @@ func! UpdateTypesFile(recurse)
 endfunc
 
 mktypes.py	[[[1
-425
+429
 #!/usr/bin/env python
 # Author: A. S. Budden
 # Date:   5 Sep 2008
@@ -289,6 +292,10 @@ def GetLanguageParameters(lang):
 	elif lang == 'ruby':
 		params['suffix'] = 'ruby'
 		params['extensions'] = 'rb'
+		params['iskeyword'] = '@,48-57,_,192-255'
+	elif lang == 'java':
+		params['suffix'] = 'java'
+		params['extensions'] = 'java'
 		params['iskeyword'] = '@,48-57,_,192-255'
 	elif lang == 'perl':
 		params['suffix'] = 'pl'
@@ -584,7 +591,7 @@ def main():
 
 	CreateTagsFile(Configuration)
 
-	full_language_list = ['c', 'perl', 'python', 'ruby', 'vhdl']
+	full_language_list = ['c', 'java', 'perl', 'python', 'ruby', 'vhdl']
 	if len(options.languages) == 0:
 		# Include all languages
 		language_list = full_language_list
