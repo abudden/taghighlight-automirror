@@ -151,6 +151,44 @@ func! UpdateTypesFile(recurse)
 
 	let syscmd .= ' --check-keywords --analyse-constants'
 
+	if exists('g:CheckForCScopeFiles')
+		let syscmd .= ' --build-cscopedb-if-filelist'
+		let syscmd .= ' --cscope-dir=' 
+		if has("win32")
+			let path = substitute($PATH, ';', ',', 'g')
+			let cscope_exe_list = split(globpath(path, 'cscope.exe'))
+			if len(cscope_exe_list) > 0
+				let cscope_exe = cscope_exe_list[0]
+			else
+				let cscope_exe = ''
+			endif
+
+			" If cscope is not in the path, look for it in
+			" vimfiles/extra_source/cscope_win
+			if !filereadable(cscope_exe)
+				let cscope_exe = split(globpath(&rtp, "extra_source/cscope_win/cscope.exe"))[0]
+			endif
+
+			if filereadable(cscope_exe)
+				let cscope_path = escape(fnamemodify(cscope_exe, ':p:h'),' \')
+			else
+				throw "Cannot find cscope"
+			endif
+		else
+			let path = substitute($PATH, ':', ',', 'g')
+			if has("win32unix")
+				let cscope_exe = split(globpath(path, 'cscope.exe'))[0]
+			else
+				let cscope_exe = split(globpath(path, 'cscope'))[0]
+			endif
+			if filereadable(cscope_exe)
+				let cscope_path = fnamemodify(cscope_exe, ':p:h')
+			else
+				throw "Cannot find cscope"
+			endif
+		endif
+		let syscmd .= cscope_path
+	endif
 
 	let sysoutput = system(sysroot . syscmd) 
 	if sysoutput =~ 'python.*is not recognized as an internal or external command'

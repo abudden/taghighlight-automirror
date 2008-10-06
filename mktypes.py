@@ -47,6 +47,7 @@ vim_synkeyword_arguments = [
 		]
 
 ctags_exe = 'ctags'
+cscope_exe = 'cscope'
 
 # Used for timing a function; from http://www.daniweb.com/code/snippet368.html
 import time
@@ -79,6 +80,22 @@ def ctags_key(ctags_line):
 		return ctags_line
 	return match.group('keyword') + match.group('kind') + match.group('remainder')
 
+def CreateCScopeFile(options):
+	cscope_options = '-b'
+	run_cscope = False
+
+	if options.build_cscopedb:
+		run_cscope = True
+	
+	if os.path.exists('cscope.files'):
+		if options.build_cscopedb_if_filelist:
+			run_cscope = True
+	else:
+		cscope_options += 'R'
+
+	if run_cscope:
+		print "Spawning cscope"
+		os.spawnl(os.P_NOWAIT, cscope_exe, 'cscope', cscope_options)
 
 #@print_timing
 def CreateTagsFile(config):
@@ -404,13 +421,35 @@ def main():
 			type='string',
 			default=[],
 			help='Only include specified languages')
+	parser.add_option('--build-cscopedb',
+			action='store_true',
+			default=False,
+			dest='build_cscopedb',
+			help="Also build a cscope database")
+	parser.add_option('--build-cscopedb-if-filelist',
+			action='store_true',
+			default=False,
+			dest='build_cscopedb_if_filelist',
+			help="Also build a cscope database if cscope.files exists")
+	parser.add_option('--cscope-dir',
+			action='store',
+			default=None,
+			dest='cscope_dir',
+			type='string',
+			help='CSCOPE Executable Directory')
 
 	options, remainder = parser.parse_args()
 	global ctags_exe
 	ctags_exe = options.ctags_dir + '/' + 'ctags'
+	global cscope_exe
+	if options.cscope_dir is not None:
+		cscope_exe = options.cscope_dir + '/' + 'cscope'
+	else:
+		cscope_exe = "cscope"
 
 	Configuration = GetCommandArgs(options)
 
+	CreateCScopeFile(options)
 	CreateTagsFile(Configuration)
 
 	full_language_list = ['c', 'java', 'perl', 'python', 'ruby', 'vhdl']
