@@ -44,6 +44,19 @@ autocmd BufRead,BufNewFile *.rb     call ReadTypes('ruby')
 autocmd BufRead,BufNewFile *.vhd*   call ReadTypes('vhdl')
 
 function! ReadTypes(suffix)
+	if exists('b:NoTypeParsing')
+		return
+	endif
+	if exists('g:TypeParsingSkipList')
+		let basename = expand('<afile>:p:t')
+		let fullname = expand('<afile>:p')
+		if index(g:TypeParsingSkipList, basename) != -1
+			return
+		endif
+		if index(g:TypeParsingSkipList, fullname) != -1
+			return
+		endif
+	endif
 	let fname = expand('<afile>:p:h') . '/types_' . a:suffix . '.vim'
 	if filereadable(fname)
 		exe 'so ' . fname
