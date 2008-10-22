@@ -48,6 +48,8 @@ autocmd BufRead,BufNewFile *.pyw    call ReadTypes('py')
 autocmd BufRead,BufNewFile *.rb     call ReadTypes('ruby')
 autocmd BufRead,BufNewFile *.vhd*   call ReadTypes('vhdl')
 
+command! ReadTypes call ReadTypesAutoDetect()
+
 function! ReadTypesAutoDetect()
 	let extension = expand('%:e')
 	let extensionLookup = 
