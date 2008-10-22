@@ -31,7 +31,12 @@ let g:qtTagsFile = g:VIMFILESDIR . 'tags_qt4'
 let g:wxPyTagsFile = g:VIMFILESDIR . 'tags_wxpy'
 
 " Update types & tags - called with a ! recurses
-command! -bang UpdateTypesFile call UpdateTypesFile(<bang>0)
+command! -bang UpdateTypesFile silent call UpdateTypesFile(<bang>0) | 
+			\ let s:SavedTabNr = tabpagenr() |
+			\ let s:SavedWinNr = winnr() |
+			\ silent tabdo windo call ReadTypesAutoDetect() |
+			\ silent exe 'tabn ' . s:SavedTabNr |
+			\ silent exe s:SavedTabNr . "wincmd w"
 
 " load the types_*.vim highlighting file, if it exists
 autocmd BufRead,BufNewFile *.[ch]   call ReadTypes('c')
@@ -43,7 +48,31 @@ autocmd BufRead,BufNewFile *.pyw    call ReadTypes('py')
 autocmd BufRead,BufNewFile *.rb     call ReadTypes('ruby')
 autocmd BufRead,BufNewFile *.vhd*   call ReadTypes('vhdl')
 
+function! ReadTypesAutoDetect()
+	let extension = expand('%:e')
+	let extensionLookup = 
+				\ {
+				\     '[ch]\(pp\)\?' : "c",
+				\     'p[lm]'        : "pl",
+				\     'java'         : "java",
+				\     'pyw\?'        : "py",
+				\     'rb'           : "ruby",
+				\     'vhdl\?'       : "vhdl",
+				\ }
+
+	for key in keys(extensionLookup)
+		let regex = '^' . key . '$'
+		if extension =~ regex
+			call ReadTypes(extensionLookup[key])
+			"			echo 'Loading types for ' . extensionLookup[key] . ' files'
+			continue
+		endif
+	endfor
+endfunction
+
 function! ReadTypes(suffix)
+	let savedView = winsaveview()
+
 	if exists('b:NoTypeParsing')
 		return
 	endif
@@ -73,6 +102,7 @@ function! ReadTypes(suffix)
 	" Open default source files
 	if index(['cpp', 'h', 'hpp'], expand('<afile>:e')) != -1
 		" This is a C++ source file
+		call cursor(1,1)
 		if search('^\s*#include\s\+<wx/', 'nc', 30)
 			if filereadable(g:wxTypesFile)
 				execute 'so ' . g:wxTypesFile
@@ -80,6 +110,7 @@ function! ReadTypes(suffix)
 			execute 'setlocal tags+=' . g:wxTagsFile
 		endif
 
+		call cursor(1,1)
 		if search('^\s*#include\s\+<q', 'nc', 30)
 			if filereadable(g:qtTypesFile)
 				execute 'so ' . g:qtTypesFile
@@ -89,6 +120,7 @@ function! ReadTypes(suffix)
 	elseif index(['py', 'pyw'], expand('<afile>:e')) != -1
 		" This is a python source file
 
+		call cursor(1,1)
 		if search('^\s*import\s\+wx', 'nc', 30)
 			if filereadable(g:wxPyTypesFile)
 				execute 'so ' . g:wxPyTypesFile
