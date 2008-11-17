@@ -2,7 +2,7 @@
 UseVimball
 finish
 plugin/ctags_highlighting.vim	[[[1
-171
+256
 " ctags_highlighting
 "   Author: A. S. Budden
 "   Date:   29 Aug 2008
@@ -36,7 +36,12 @@ let g:qtTagsFile = g:VIMFILESDIR . 'tags_qt4'
 let g:wxPyTagsFile = g:VIMFILESDIR . 'tags_wxpy'
 
 " Update types & tags - called with a ! recurses
-command! -bang UpdateTypesFile call UpdateTypesFile(<bang>0)
+command! -bang UpdateTypesFile silent call UpdateTypesFile(<bang>0) | 
+			\ let s:SavedTabNr = tabpagenr() |
+			\ let s:SavedWinNr = winnr() |
+			\ silent tabdo windo call ReadTypesAutoDetect() |
+			\ silent exe 'tabn ' . s:SavedTabNr |
+			\ silent exe s:SavedTabNr . "wincmd w"
 
 " load the types_*.vim highlighting file, if it exists
 autocmd BufRead,BufNewFile *.[ch]   call ReadTypes('c')
@@ -48,7 +53,46 @@ autocmd BufRead,BufNewFile *.pyw    call ReadTypes('py')
 autocmd BufRead,BufNewFile *.rb     call ReadTypes('ruby')
 autocmd BufRead,BufNewFile *.vhd*   call ReadTypes('vhdl')
 
+command! ReadTypes call ReadTypesAutoDetect()
+
+function! ReadTypesAutoDetect()
+	let extension = expand('%:e')
+	let extensionLookup = 
+				\ {
+				\     '[ch]\(pp\)\?' : "c",
+				\     'p[lm]'        : "pl",
+				\     'java'         : "java",
+				\     'pyw\?'        : "py",
+				\     'rb'           : "ruby",
+				\     'vhdl\?'       : "vhdl",
+				\ }
+
+	for key in keys(extensionLookup)
+		let regex = '^' . key . '$'
+		if extension =~ regex
+			call ReadTypes(extensionLookup[key])
+			"			echo 'Loading types for ' . extensionLookup[key] . ' files'
+			continue
+		endif
+	endfor
+endfunction
+
 function! ReadTypes(suffix)
+	let savedView = winsaveview()
+
+	if exists('b:NoTypeParsing')
+		return
+	endif
+	if exists('g:TypeParsingSkipList')
+		let basename = expand('<afile>:p:t')
+		let fullname = expand('<afile>:p')
+		if index(g:TypeParsingSkipList, basename) != -1
+			return
+		endif
+		if index(g:TypeParsingSkipList, fullname) != -1
+			return
+		endif
+	endif
 	let fname = expand('<afile>:p:h') . '/types_' . a:suffix . '.vim'
 	if filereadable(fname)
 		exe 'so ' . fname
@@ -65,6 +109,7 @@ function! ReadTypes(suffix)
 	" Open default source files
 	if index(['cpp', 'h', 'hpp'], expand('<afile>:e')) != -1
 		" This is a C++ source file
+		call cursor(1,1)
 		if search('^\s*#include\s\+<wx/', 'nc', 30)
 			if filereadable(g:wxTypesFile)
 				execute 'so ' . g:wxTypesFile
@@ -72,6 +117,7 @@ function! ReadTypes(suffix)
 			execute 'setlocal tags+=' . g:wxTagsFile
 		endif
 
+		call cursor(1,1)
 		if search('^\s*#include\s\+<q', 'nc', 30)
 			if filereadable(g:qtTypesFile)
 				execute 'so ' . g:qtTypesFile
@@ -81,6 +127,7 @@ function! ReadTypes(suffix)
 	elseif index(['py', 'pyw'], expand('<afile>:e')) != -1
 		" This is a python source file
 
+		call cursor(1,1)
 		if search('^\s*import\s\+wx', 'nc', 30)
 			if filereadable(g:wxPyTypesFile)
 				execute 'so ' . g:wxPyTypesFile
@@ -156,6 +203,44 @@ func! UpdateTypesFile(recurse)
 
 	let syscmd .= ' --check-keywords --analyse-constants'
 
+	if exists('g:CheckForCScopeFiles')
+		let syscmd .= ' --build-cscopedb-if-filelist'
+		let syscmd .= ' --cscope-dir=' 
+		if has("win32")
+			let path = substitute($PATH, ';', ',', 'g')
+			let cscope_exe_list = split(globpath(path, 'cscope.exe'))
+			if len(cscope_exe_list) > 0
+				let cscope_exe = cscope_exe_list[0]
+			else
+				let cscope_exe = ''
+			endif
+
+			" If cscope is not in the path, look for it in
+			" vimfiles/extra_source/cscope_win
+			if !filereadable(cscope_exe)
+				let cscope_exe = split(globpath(&rtp, "extra_source/cscope_win/cscope.exe"))[0]
+			endif
+
+			if filereadable(cscope_exe)
+				let cscope_path = escape(fnamemodify(cscope_exe, ':p:h'),' \')
+			else
+				throw "Cannot find cscope"
+			endif
+		else
+			let path = substitute($PATH, ':', ',', 'g')
+			if has("win32unix")
+				let cscope_exe = split(globpath(path, 'cscope.exe'))[0]
+			else
+				let cscope_exe = split(globpath(path, 'cscope'))[0]
+			endif
+			if filereadable(cscope_exe)
+				let cscope_path = fnamemodify(cscope_exe, ':p:h')
+			else
+				throw "Cannot find cscope"
+			endif
+		endif
+		let syscmd .= cscope_path
+	endif
 
 	let sysoutput = system(sysroot . syscmd) 
 	if sysoutput =~ 'python.*is not recognized as an internal or external command'
@@ -175,7 +260,7 @@ func! UpdateTypesFile(recurse)
 endfunc
 
 mktypes.py	[[[1
-429
+468
 #!/usr/bin/env python
 # Author: A. S. Budden
 # Date:   5 Sep 2008
@@ -225,6 +310,7 @@ vim_synkeyword_arguments = [
 		]
 
 ctags_exe = 'ctags'
+cscope_exe = 'cscope'
 
 # Used for timing a function; from http://www.daniweb.com/code/snippet368.html
 import time
@@ -257,6 +343,22 @@ def ctags_key(ctags_line):
 		return ctags_line
 	return match.group('keyword') + match.group('kind') + match.group('remainder')
 
+def CreateCScopeFile(options):
+	cscope_options = '-b'
+	run_cscope = False
+
+	if options.build_cscopedb:
+		run_cscope = True
+	
+	if os.path.exists('cscope.files'):
+		if options.build_cscopedb_if_filelist:
+			run_cscope = True
+	else:
+		cscope_options += 'R'
+
+	if run_cscope:
+		print "Spawning cscope"
+		os.spawnl(os.P_NOWAIT, cscope_exe, 'cscope', cscope_options)
 
 #@print_timing
 def CreateTagsFile(config):
@@ -582,13 +684,35 @@ def main():
 			type='string',
 			default=[],
 			help='Only include specified languages')
+	parser.add_option('--build-cscopedb',
+			action='store_true',
+			default=False,
+			dest='build_cscopedb',
+			help="Also build a cscope database")
+	parser.add_option('--build-cscopedb-if-filelist',
+			action='store_true',
+			default=False,
+			dest='build_cscopedb_if_filelist',
+			help="Also build a cscope database if cscope.files exists")
+	parser.add_option('--cscope-dir',
+			action='store',
+			default=None,
+			dest='cscope_dir',
+			type='string',
+			help='CSCOPE Executable Directory')
 
 	options, remainder = parser.parse_args()
 	global ctags_exe
 	ctags_exe = options.ctags_dir + '/' + 'ctags'
+	global cscope_exe
+	if options.cscope_dir is not None:
+		cscope_exe = options.cscope_dir + '/' + 'cscope'
+	else:
+		cscope_exe = "cscope"
 
 	Configuration = GetCommandArgs(options)
 
+	CreateCScopeFile(options)
 	CreateTagsFile(Configuration)
 
 	full_language_list = ['c', 'java', 'perl', 'python', 'ruby', 'vhdl']
