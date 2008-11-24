@@ -31,7 +31,7 @@ let g:qtTagsFile = g:VIMFILESDIR . 'tags_qt4'
 let g:wxPyTagsFile = g:VIMFILESDIR . 'tags_wxpy'
 
 " Update types & tags - called with a ! recurses
-command! -bang UpdateTypesFile silent call UpdateTypesFile(<bang>0) | 
+command! -bang -bar UpdateTypesFile silent call UpdateTypesFile(<bang>0) | 
 			\ let s:SavedTabNr = tabpagenr() |
 			\ let s:SavedWinNr = winnr() |
 			\ silent tabdo windo call ReadTypesAutoDetect() |
