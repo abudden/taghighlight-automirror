@@ -69,7 +69,7 @@ def GetCommandArgs(options):
 		Configuration['CTAGS_OPTIONS'] = '--c-kinds=+l'
 		Configuration['CTAGS_FILES'] = glob.glob('*')
 	if not options.include_docs:
-		Configuration['CTAGS_OPTIONS'] += r" --exclude=./docs --exclude=.\docs --exclude='./docs' --exclude='.\docs'"
+		Configuration['CTAGS_OPTIONS'] += r" --exclude=docs --exclude=Documentation"
 	return Configuration
 
 key_regexp = re.compile('^(?P<keyword>.*?)\t(?P<remainder>.*\t(?P<kind>[a-zA-Z])(?:\t|$).*)')
@@ -98,9 +98,19 @@ def CreateCScopeFile(options):
 		os.spawnl(os.P_NOWAIT, cscope_exe, 'cscope', cscope_options)
 
 #@print_timing
-def CreateTagsFile(config):
+def CreateTagsFile(config, languages):
 	print "Generating Tags"
-	ctags_cmd = '%s %s %s' % (ctags_exe, config['CTAGS_OPTIONS'], " ".join(config['CTAGS_FILES']))
+	
+	if 'c' in languages:
+		languages.append('c++')
+
+	ctags_cmd = '%s %s %s %s' % (ctags_exe, config['CTAGS_OPTIONS'], "--languages=" + ",".join(languages), " ".join(config['CTAGS_FILES']))
+
+#	fh = open('ctags_cmd.txt', 'w')
+#	fh.write(ctags_cmd)
+#	fh.write('\n')
+#	fh.close()
+
 	os.system(ctags_cmd)
 
 	# Now remove the local variables to make the file smaller
@@ -273,9 +283,29 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 			'ctags_s', 'ctags_t', 'ctags_u', 'ctags_v'
 			]
 
-	allTypes = sorted(keywordDict.keys())
-	# Classes have priority, so list last
-	allTypes.reverse()
+	# Specified highest priority first
+	Priority = [
+			'ctags_c', 'ctags_d', 'ctags_t',
+			'ctags_p', 'ctags_f', 'ctags_e',
+			'ctags_g', 'ctags_k', 'ctags_v',
+			'ctags_u', 'ctags_m', 'ctags_s',
+			]
+
+	# Reverse the list as highest priority should be last!
+	Priority.reverse()
+
+	typeList = sorted(keywordDict.keys())
+
+	# Reorder type list according to sort order
+	allTypes = []
+	for thisType in Priority:
+		if thisType in typeList:
+			allTypes.append(thisType)
+			typeList.remove(thisType)
+	for thisType in typeList:
+		allTypes.append(thisType)
+#	print allTypes
+
 	for thisType in allTypes:
 		if thisType not in UsedTypes:
 			continue
@@ -450,7 +480,6 @@ def main():
 	Configuration = GetCommandArgs(options)
 
 	CreateCScopeFile(options)
-	CreateTagsFile(Configuration)
 
 	full_language_list = ['c', 'java', 'perl', 'python', 'ruby', 'vhdl']
 	if len(options.languages) == 0:
@@ -458,6 +487,8 @@ def main():
 		language_list = full_language_list
 	else:
 		language_list = [i for i in full_language_list if i in options.languages]
+
+	CreateTagsFile(Configuration, language_list)
 
 	for language in language_list:
 		Parameters = GetLanguageParameters(language)
