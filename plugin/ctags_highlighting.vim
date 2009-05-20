@@ -196,6 +196,12 @@ func! UpdateTypesFile(recurse)
 		endfor
 	endif
 
+	if exists('b:TypesFileIncludeLocals')
+		if b:TypesFileIncludeLocals == 1
+			let syscmd .= ' --include-locals'
+		endif
+	endif
+
 	let syscmd .= ' --check-keywords --analyse-constants'
 
 	if exists('g:CheckForCScopeFiles')
@@ -238,6 +244,7 @@ func! UpdateTypesFile(recurse)
 	endif
 
 	let sysoutput = system(sysroot . syscmd) 
+	echo sysroot . syscmd
 	if sysoutput =~ 'python.*is not recognized as an internal or external command'
 		let sysroot = g:VIMFILESDIR . 'extra_source/mktypes/dist/mktypes.exe'
 		let sysoutput = sysoutput . "\nUsing compiled mktypes\n" . system(sysroot . syscmd)

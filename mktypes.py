@@ -98,13 +98,14 @@ def CreateCScopeFile(options):
 		os.spawnl(os.P_NOWAIT, cscope_exe, 'cscope', cscope_options)
 
 #@print_timing
-def CreateTagsFile(config, languages):
+def CreateTagsFile(config, languages, options):
 	print "Generating Tags"
 	
-	if 'c' in languages:
-		languages.append('c++')
+	ctags_languages = languages[:]
+	if 'c' in ctags_languages:
+		ctags_languages.append('c++')
 
-	ctags_cmd = '%s %s %s %s' % (ctags_exe, config['CTAGS_OPTIONS'], "--languages=" + ",".join(languages), " ".join(config['CTAGS_FILES']))
+	ctags_cmd = '%s %s %s %s' % (ctags_exe, config['CTAGS_OPTIONS'], "--languages=" + ",".join(ctags_languages), " ".join(config['CTAGS_FILES']))
 
 #	fh = open('ctags_cmd.txt', 'w')
 #	fh.write(ctags_cmd)
@@ -114,11 +115,16 @@ def CreateTagsFile(config, languages):
 	os.system(ctags_cmd)
 
 	# Now remove the local variables to make the file smaller
-	localRegexp = re.compile(r'\tl\b')
-	tagFile = open('tags', 'r')
-	tagLines = [line.strip() for line in tagFile
-			if localRegexp.search(line) is None]
-	tagFile.close()
+	if options.include_locals:
+		tagFile = open('tags', 'r')
+		tagLines = [line.strip() for line in tagFile]
+		tagFile.close()
+	else:
+		localRegexp = re.compile(r'\tl\b')
+		tagFile = open('tags', 'r')
+		tagLines = [line.strip() for line in tagFile
+				if localRegexp.search(line) is None]
+		tagFile.close()
 
 	# Also sort the file a bit better (tag, then kind, then filename)
 	tagLines.sort(key=ctags_key)
@@ -220,13 +226,18 @@ def IsValidKeyword(keyword, iskeyword):
 	return True
 	
 #@print_timing
-def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = False, ParseConstants = False):
+def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = False, ParseConstants = False, IncludeLocals = False):
 	outfile = 'types_%s.vim' % Parameters['suffix']
 	print "Generating " + outfile
 	lineMatcher = re.compile(r'^.*?\t[^\t]*\.(?P<extension>' + Parameters['extensions'] + ')\t')
 
 	#p = os.popen(ctags_cmd, "r")
 	p = open('tags', "r")
+
+	if IncludeLocals:
+		LocalTagType = ',ctags_l'
+	else:
+		LocalTagType = ''
 
 	ctags_entries = []
 	while 1:
@@ -283,6 +294,11 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 			'ctags_s', 'ctags_t', 'ctags_u', 'ctags_v'
 			]
 
+	if IncludeLocals:
+		UsedTypes.append('ctags_l')
+		vimtypes_entries.append('silent! syn clear ctags_l')
+	
+
 	# Specified highest priority first
 	Priority = [
 			'ctags_c', 'ctags_d', 'ctags_t',
@@ -290,6 +306,9 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 			'ctags_g', 'ctags_k', 'ctags_v',
 			'ctags_u', 'ctags_m', 'ctags_s',
 			]
+
+	if IncludeLocals:
+		Priority.append('ctags_l')
 
 	# Reverse the list as highest priority should be last!
 	Priority.reverse()
@@ -385,14 +404,18 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 	vimtypes_entries.append('" Global Variable')
 	vimtypes_entries.append('hi link ctags_v GlobalVariable')
 
+	if IncludeLocals:
+		vimtypes_entries.append('" Local Variable')
+		vimtypes_entries.append('hi link ctags_l LocalVariable')
+
 	if Parameters['suffix'] in ['c',]:
 		vimtypes_entries.append('')
 		vimtypes_entries.append("if exists('b:hlrainbow') && !exists('g:nohlrainbow')")
-		vimtypes_entries.append('\tsyn cluster cBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
-		vimtypes_entries.append('\tsyn cluster cCppBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
-		vimtypes_entries.append('\tsyn cluster cCurlyGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
-		vimtypes_entries.append('\tsyn cluster cParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
-		vimtypes_entries.append('\tsyn cluster cCppParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v')
+		vimtypes_entries.append('\tsyn cluster cBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v' + LocalTagType)
+		vimtypes_entries.append('\tsyn cluster cCppBracketGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v' + LocalTagType)
+		vimtypes_entries.append('\tsyn cluster cCurlyGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v' + LocalTagType)
+		vimtypes_entries.append('\tsyn cluster cParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v' + LocalTagType)
+		vimtypes_entries.append('\tsyn cluster cCppParenGroup add=ctags_c,ctags_d,ctags_e,ctags_f,ctags_k,ctags_p,ctags_g,ctags_m,ctags_s,ctags_t,ctags_u,ctags_v' + LocalTagType)
 		vimtypes_entries.append('endif')
 
 	try:
@@ -467,6 +490,11 @@ def main():
 			dest='cscope_dir',
 			type='string',
 			help='CSCOPE Executable Directory')
+	parser.add_option('--include-locals',
+			action='store_true',
+			default=False,
+			dest='include_locals',
+			help='Include local variables in the database')
 
 	options, remainder = parser.parse_args()
 	global ctags_exe
@@ -488,11 +516,11 @@ def main():
 	else:
 		language_list = [i for i in full_language_list if i in options.languages]
 
-	CreateTagsFile(Configuration, language_list)
+	CreateTagsFile(Configuration, language_list, options)
 
 	for language in language_list:
 		Parameters = GetLanguageParameters(language)
-		CreateTypesFile(Configuration, Parameters, options.check_keywords, options.skip_matches, options.parse_constants)
+		CreateTypesFile(Configuration, Parameters, options.check_keywords, options.skip_matches, options.parse_constants, options.include_locals)
 	
 if __name__ == "__main__":
 	main()
