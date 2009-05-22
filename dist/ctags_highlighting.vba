@@ -2,11 +2,11 @@
 UseVimball
 finish
 plugin/ctags_highlighting.vim	[[[1
-263
+278
 " ctags_highlighting
 "   Author: A. S. Budden
-"   Date:   29 Aug 2008
-"   Version: 1
+"   Date:   22nd May 2009
+"   Version: r255
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
@@ -36,7 +36,14 @@ let g:qtTagsFile = g:VIMFILESDIR . 'tags_qt4'
 let g:wxPyTagsFile = g:VIMFILESDIR . 'tags_wxpy'
 
 " Update types & tags - called with a ! recurses
-command! -bang -bar UpdateTypesFile silent call UpdateTypesFile(<bang>0) | 
+command! -bang -bar UpdateTypesFile silent call UpdateTypesFile(<bang>0, 0) | 
+			\ let s:SavedTabNr = tabpagenr() |
+			\ let s:SavedWinNr = winnr() |
+			\ silent tabdo windo call ReadTypesAutoDetect() |
+			\ silent exe 'tabn ' . s:SavedTabNr |
+			\ silent exe s:SavedTabNr . "wincmd w"
+
+command! -bang -bar UpdateTypesFileOnly silent call UpdateTypesFile(<bang>0, 1) | 
 			\ let s:SavedTabNr = tabpagenr() |
 			\ let s:SavedWinNr = winnr() |
 			\ silent tabdo windo call ReadTypesAutoDetect() |
@@ -138,7 +145,7 @@ function! ReadTypes(suffix)
 endfunction
 
 
-func! UpdateTypesFile(recurse)
+func! UpdateTypesFile(recurse, skiptags)
 	let s:vrc = globpath(&rtp, "mktypes.py")
 
 	if type(s:vrc) == type("")
@@ -207,6 +214,14 @@ func! UpdateTypesFile(recurse)
 		endif
 	endif
 
+	if exists('b:TypesFileDoNotGenerateTags')
+		if b:TypesFileDoNotGenerateTags == 1
+			let syscmd .= ' --use-existing-tagfile'
+		endif
+	elseif a:skiptags == 1
+		let syscmd .= ' --use-existing-tagfile'
+	endif
+
 	let syscmd .= ' --check-keywords --analyse-constants'
 
 	if exists('g:CheckForCScopeFiles')
@@ -267,11 +282,11 @@ func! UpdateTypesFile(recurse)
 endfunc
 
 mktypes.py	[[[1
-527
+536
 #!/usr/bin/env python
 # Author: A. S. Budden
-# Date:   5 Sep 2008
-# Version: 0.2
+# Date:   22nd May 2009
+# Version: r255
 import os
 import sys
 import optparse
@@ -765,6 +780,11 @@ def main():
 			default=False,
 			dest='include_locals',
 			help='Include local variables in the database')
+	parser.add_option('--use-existing-tagfile',
+			action='store_true',
+			default=False,
+			dest='use_existing_tagfile',
+			help='Do not generate tags if a tag file already exists')
 
 	options, remainder = parser.parse_args()
 	global ctags_exe
@@ -786,7 +806,11 @@ def main():
 	else:
 		language_list = [i for i in full_language_list if i in options.languages]
 
-	CreateTagsFile(Configuration, language_list, options)
+	if options.use_existing_tagfile and not os.path.exists('tags'):
+		options.use_existing_tagfile = False
+
+	if not options.use_existing_tagfile:
+		CreateTagsFile(Configuration, language_list, options)
 
 	for language in language_list:
 		Parameters = GetLanguageParameters(language)

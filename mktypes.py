@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Author: A. S. Budden
-# Date:   5 Sep 2008
-# Version: 0.2
+# Date:   22nd May 2009
+# Version: r255
 import os
 import sys
 import optparse
@@ -495,6 +495,11 @@ def main():
 			default=False,
 			dest='include_locals',
 			help='Include local variables in the database')
+	parser.add_option('--use-existing-tagfile',
+			action='store_true',
+			default=False,
+			dest='use_existing_tagfile',
+			help='Do not generate tags if a tag file already exists')
 
 	options, remainder = parser.parse_args()
 	global ctags_exe
@@ -516,7 +521,11 @@ def main():
 	else:
 		language_list = [i for i in full_language_list if i in options.languages]
 
-	CreateTagsFile(Configuration, language_list, options)
+	if options.use_existing_tagfile and not os.path.exists('tags'):
+		options.use_existing_tagfile = False
+
+	if not options.use_existing_tagfile:
+		CreateTagsFile(Configuration, language_list, options)
 
 	for language in language_list:
 		Parameters = GetLanguageParameters(language)
