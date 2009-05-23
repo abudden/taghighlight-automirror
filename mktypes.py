@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Author: A. S. Budden
 # Date:   22nd May 2009
-# Version: r260
+# Version: r261
 import os
 import sys
 import optparse
@@ -91,7 +91,7 @@ def CreateCScopeFile(options):
 		run_cscope = True
 	
 	if os.path.exists('cscope.files'):
-		if options.build_cscopedb_if_filelist:
+		if options.build_cscopedb_if_file_exists:
 			run_cscope = True
 	else:
 		cscope_options += 'R'
@@ -439,7 +439,7 @@ def main():
 			help="Recurse into subdirectories")
 	parser.add_option('--ctags-dir',
 			action='store',
-			default='.',
+			default=None,
 			dest='ctags_dir',
 			type='string',
 			help='CTAGS Executable Directory')
@@ -447,12 +447,12 @@ def main():
 			action='store_true',
 			default=False,
 			dest='include_docs',
-			help='Include docs directory (stripped by default for speed)')
+			help='Include docs or Documentation directory (stripped by default for speed)')
 	parser.add_option('--do-not-check-keywords',
 			action='store_false',
 			default=True,
 			dest='check_keywords',
-			help='Don't check validity of keywords (for speed)')
+			help="Do not check validity of keywords (for speed)")
 	parser.add_option('--include-invalid-keywords-as-matches',
 			action='store_false',
 			default=True,
@@ -462,7 +462,7 @@ def main():
 			action='store_false',
 			default=True,
 			dest='parse_constants',
-			help='Don't treat constants as separate entries')
+			help="Do not treat constants as separate entries")
 	parser.add_option('--include-language',
 			action='append',
 			dest='languages',
@@ -474,10 +474,10 @@ def main():
 			default=False,
 			dest='build_cscopedb',
 			help="Also build a cscope database")
-	parser.add_option('--build-cscopedb-if-filelist',
+	parser.add_option('--build-cscopedb-if-cscope-file-exists',
 			action='store_true',
 			default=False,
-			dest='build_cscopedb_if_filelist',
+			dest='build_cscopedb_if_file_exists',
 			help="Also build a cscope database if cscope.files exists")
 	parser.add_option('--cscope-dir',
 			action='store',
@@ -494,16 +494,18 @@ def main():
 			action='store_true',
 			default=False,
 			dest='use_existing_tagfile',
-			help='Do not generate tags if a tag file already exists')
+			help="Do not generate tags if a tag file already exists")
 
 	options, remainder = parser.parse_args()
-	global ctags_exe
-	ctags_exe = options.ctags_dir + '/' + 'ctags'
-	global cscope_exe
+
+	if options.ctags_dir is not None:
+		global ctags_exe
+		ctags_exe = options.ctags_dir + '/' + 'ctags'
+
+
 	if options.cscope_dir is not None:
+		global cscope_exe
 		cscope_exe = options.cscope_dir + '/' + 'cscope'
-	else:
-		cscope_exe = "cscope"
 
 	Configuration = GetCommandArgs(options)
 

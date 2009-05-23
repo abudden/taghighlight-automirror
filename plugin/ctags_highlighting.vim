@@ -1,7 +1,7 @@
 " ctags_highlighting
 "   Author: A. S. Budden
 "   Date:   22nd May 2009
-"   Version: r260
+"   Version: r261
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
