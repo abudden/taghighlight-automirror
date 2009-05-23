@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Author: A. S. Budden
-# Date:   22nd May 2009
-# Version: r261
+# Date:   23rd May 2009
+# Version: r262
 import os
 import sys
 import optparse
@@ -62,6 +62,8 @@ def print_timing(func):
 
 def GetCommandArgs(options):
 	Configuration = {}
+	Configuration['CTAGS_OPTIONS'] = ''
+
 	if options.recurse:
 		Configuration['CTAGS_OPTIONS'] = '--recurse'
 		if options.include_locals:
