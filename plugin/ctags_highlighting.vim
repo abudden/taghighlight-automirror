@@ -1,7 +1,7 @@
 " ctags_highlighting
 "   Author: A. S. Budden
 "   Date:   22nd May 2009
-"   Version: r259
+"   Version: r260
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
@@ -203,9 +203,9 @@ func! UpdateTypesFile(recurse, skiptags)
 		endfor
 	endif
 
-	if exists('b:TypesFileSkipSynMatches')
-		if b:TypesFileSkipSynMatches == 1
-			let syscmd .= ' --skip-matches'
+	if exists('b:TypesFileIncludeSynMatches')
+		if b:TypesFileIncludeSynMatches == 1
+			let syscmd .= ' --include-invalid-keywords-as-matches'
 		endif
 	endif
 
@@ -222,8 +222,6 @@ func! UpdateTypesFile(recurse, skiptags)
 	elseif a:skiptags == 1
 		let syscmd .= ' --use-existing-tagfile'
 	endif
-
-	let syscmd .= ' --check-keywords --analyse-constants'
 
 	if exists('g:CheckForCScopeFiles')
 		let syscmd .= ' --build-cscopedb-if-filelist'

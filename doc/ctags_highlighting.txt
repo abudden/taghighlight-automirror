@@ -1,0 +1,20 @@
+*ctags_highlighting.txt*       Tag Highlighting        23rd May 2009
+
+Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
+	    Remove NOSPAM.
+Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
+	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
+	    ctags_highlighting.txt (see |copyright|) except use
+	    "ctags_highlighting" instead of "Vim".
+	    NO WARRANTY, EXPRESS OR IMPLIED. USE AT-YOUR-OWN-RISK.
+
+==============================================================================
+1. Contents	       *ctags_highlighting* *ctags_highlighting-contents* {{{1
+
+
+==============================================================================
+2. CTAGS Highlighting Manual		      *ctags_highlighting-manual* {{{1
+
+==============================================================================
+Modelines: {{{1
+ vim:tw=78:ts=8:ft=help:fdm=marker:

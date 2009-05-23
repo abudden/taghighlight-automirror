@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Author: A. S. Budden
 # Date:   22nd May 2009
-# Version: r259
+# Version: r260
 import os
 import sys
 import optparse
@@ -221,7 +221,7 @@ def IsValidKeyword(keyword, iskeyword):
 	return True
 	
 #@print_timing
-def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = False, ParseConstants = False, IncludeLocals = False):
+def CreateTypesFile(config, Parameters, options):
 	outfile = 'types_%s.vim' % Parameters['suffix']
 	print "Generating " + outfile
 	lineMatcher = re.compile(r'^.*?\t[^\t]*\.(?P<extension>' + Parameters['extensions'] + ')\t')
@@ -229,7 +229,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 	#p = os.popen(ctags_cmd, "r")
 	p = open('tags', "r")
 
-	if IncludeLocals:
+	if options.include_locals:
 		LocalTagType = ',ctags_l'
 	else:
 		LocalTagType = ''
@@ -247,7 +247,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 		if m is not None:
 			vimmed_line = 'syntax keyword ctags_' + m.group('kind') + ' ' + m.group('keyword')
 
-			if ParseConstants and (Parameters['suffix'] == 'c') and (m.group('kind') == 'v'):
+			if options.parse_constants and (Parameters['suffix'] == 'c') and (m.group('kind') == 'v'):
 				if field_const.search(m.group('search')) is not None:
 					vimmed_line = vimmed_line.replace('ctags_v', 'ctags_k')
 
@@ -273,7 +273,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 				keywordDict[m.group('kind')] = []
 			keywordDict[m.group('kind')].append(m.group('keyword'))
 
-	if CheckKeywords:
+	if options.check_keywords:
 		iskeyword = GenerateValidKeywordRange(Parameters['iskeyword'])
 	
 	matchEntries = []
@@ -289,7 +289,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 			'ctags_s', 'ctags_t', 'ctags_u', 'ctags_v'
 			]
 
-	if IncludeLocals:
+	if options.include_locals:
 		UsedTypes.append('ctags_l')
 		vimtypes_entries.append('silent! syn clear ctags_l')
 	
@@ -302,7 +302,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 			'ctags_u', 'ctags_m', 'ctags_s',
 			]
 
-	if IncludeLocals:
+	if options.include_locals:
 		Priority.append('ctags_l')
 
 	# Reverse the list as highest priority should be last!
@@ -327,7 +327,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 		keystarter = 'syntax keyword ' + thisType
 		keycommand = keystarter
 		for keyword in keywordDict[thisType]:
-			if CheckKeywords:
+			if options.check_keywords:
 				# In here we should check that the keyword only matches
 				# vim's \k parameter (which will be different for different
 				# languages).  This is quite slow so is turned off by
@@ -342,7 +342,8 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 							escapedKeyword = keyword
 							for ch in charactersToEscape:
 								escapedKeyword = escapedKeyword.replace(ch, '\\' + ch)
-							matchEntries.append('syntax match ' + thisType + ' ' + patChar + escapedKeyword + patChar)
+							if not options.skip_matches:
+								matchEntries.append('syntax match ' + thisType + ' ' + patChar + escapedKeyword + patChar)
 							matchDone = True
 							break
 
@@ -364,15 +365,14 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 		if keycommand != keystarter:
 			vimtypes_entries.append(keycommand)
 	
-	if not SkipMatches:
-		# Essentially a uniq() function
-		matchEntries = dict.fromkeys(matchEntries).keys()
-		# Sort the list
-		matchEntries.sort()
+	# Essentially a uniq() function
+	matchEntries = dict.fromkeys(matchEntries).keys()
+	# Sort the list
+	matchEntries.sort()
 
-		vimtypes_entries.append('')
-		for thisMatch in matchEntries:
-			vimtypes_entries.append(thisMatch)
+	vimtypes_entries.append('')
+	for thisMatch in matchEntries:
+		vimtypes_entries.append(thisMatch)
 
 	vimtypes_entries.append('')
 	vimtypes_entries.append('" Class')
@@ -399,7 +399,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 	vimtypes_entries.append('" Global Variable')
 	vimtypes_entries.append('hi link ctags_v GlobalVariable')
 
-	if IncludeLocals:
+	if options.include_locals:
 		vimtypes_entries.append('" Local Variable')
 		vimtypes_entries.append('hi link ctags_l LocalVariable')
 
@@ -448,21 +448,21 @@ def main():
 			default=False,
 			dest='include_docs',
 			help='Include docs directory (stripped by default for speed)')
-	parser.add_option('--check-keywords',
-			action='store_true',
-			default=False,
+	parser.add_option('--do-not-check-keywords',
+			action='store_false',
+			default=True,
 			dest='check_keywords',
-			help='Check validity of keywords (much slower)')
-	parser.add_option('--skip-matches',
-			action='store_true',
-			default=False,
+			help='Don't check validity of keywords (for speed)')
+	parser.add_option('--include-invalid-keywords-as-matches',
+			action='store_false',
+			default=True,
 			dest='skip_matches',
-			help='Skip syntax match // items (to speed up file loading time)')
-	parser.add_option('--analyse-constants',
-			action='store_true',
-			default=False,
+			help='Include invalid keywords as regular expression matches (may slow it loading)')
+	parser.add_option('--do-not-analyse-constants',
+			action='store_false',
+			default=True,
 			dest='parse_constants',
-			help='Treat constants as separate entries (Experimental)')
+			help='Don't treat constants as separate entries')
 	parser.add_option('--include-language',
 			action='append',
 			dest='languages',
@@ -524,7 +524,7 @@ def main():
 
 	for language in language_list:
 		Parameters = GetLanguageParameters(language)
-		CreateTypesFile(Configuration, Parameters, options.check_keywords, options.skip_matches, options.parse_constants, options.include_locals)
+		CreateTypesFile(Configuration, Parameters, options)
 	
 if __name__ == "__main__":
 	main()
