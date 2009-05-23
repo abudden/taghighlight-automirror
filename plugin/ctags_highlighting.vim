@@ -203,6 +203,12 @@ func! UpdateTypesFile(recurse, skiptags)
 		endfor
 	endif
 
+	if exists('b:TypesFileSkipSynMatches')
+		if b:TypesFileSkipSynMatches == 1
+			let syscmd .= ' --skip-matches'
+		endif
+	endif
+
 	if exists('b:TypesFileIncludeLocals')
 		if b:TypesFileIncludeLocals == 1
 			let syscmd .= ' --include-locals'
