@@ -2,11 +2,11 @@
 UseVimball
 finish
 plugin/ctags_highlighting.vim	[[[1
-278
+284
 " ctags_highlighting
 "   Author: A. S. Budden
 "   Date:   22nd May 2009
-"   Version: r255
+"   Version: r259
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
@@ -208,6 +208,12 @@ func! UpdateTypesFile(recurse, skiptags)
 		endfor
 	endif
 
+	if exists('b:TypesFileSkipSynMatches')
+		if b:TypesFileSkipSynMatches == 1
+			let syscmd .= ' --skip-matches'
+		endif
+	endif
+
 	if exists('b:TypesFileIncludeLocals')
 		if b:TypesFileIncludeLocals == 1
 			let syscmd .= ' --include-locals'
@@ -282,11 +288,11 @@ func! UpdateTypesFile(recurse, skiptags)
 endfunc
 
 mktypes.py	[[[1
-536
+531
 #!/usr/bin/env python
 # Author: A. S. Budden
 # Date:   22nd May 2009
-# Version: r255
+# Version: r259
 import os
 import sys
 import optparse
@@ -348,10 +354,13 @@ def print_timing(func):
 def GetCommandArgs(options):
 	Configuration = {}
 	if options.recurse:
-		Configuration['CTAGS_OPTIONS'] = '--recurse --c-kinds=+l'
+		Configuration['CTAGS_OPTIONS'] = '--recurse'
+		if options.include_locals:
+			Configuration['CTAGS_OPTIONS'] += ' --c-kinds=+l'
 		Configuration['CTAGS_FILES'] = ['.']
 	else:
-		Configuration['CTAGS_OPTIONS'] = '--c-kinds=+l'
+		if options.include_locals:
+			Configuration['CTAGS_OPTIONS'] = '--c-kinds=+l'
 		Configuration['CTAGS_FILES'] = glob.glob('*')
 	if not options.include_docs:
 		Configuration['CTAGS_OPTIONS'] += r" --exclude=docs --exclude=Documentation"
@@ -399,17 +408,9 @@ def CreateTagsFile(config, languages, options):
 
 	os.system(ctags_cmd)
 
-	# Now remove the local variables to make the file smaller
-	if options.include_locals:
-		tagFile = open('tags', 'r')
-		tagLines = [line.strip() for line in tagFile]
-		tagFile.close()
-	else:
-		localRegexp = re.compile(r'\tl\b')
-		tagFile = open('tags', 'r')
-		tagLines = [line.strip() for line in tagFile
-				if localRegexp.search(line) is None]
-		tagFile.close()
+	tagFile = open('tags', 'r')
+	tagLines = [line.strip() for line in tagFile]
+	tagFile.close()
 
 	# Also sort the file a bit better (tag, then kind, then filename)
 	tagLines.sort(key=ctags_key)
