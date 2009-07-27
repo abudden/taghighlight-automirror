@@ -5,8 +5,8 @@ plugin/ctags_highlighting.vim	[[[1
 284
 " ctags_highlighting
 "   Author: A. S. Budden
-"   Date:   22nd May 2009
-"   Version: r259
+"   Date:   27th July 2009
+"   Version: r286
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
@@ -154,12 +154,12 @@ func! UpdateTypesFile(recurse, skiptags)
 		let mktypes_py_file = s:vrc[0]
 	endif
 
-	let sysroot = 'python ' . mktypes_py_file
+	let sysroot = 'python ' . shellescape(mktypes_py_file)
 	let syscmd = ' --ctags-dir='
 
 	if has("win32")
 		let path = substitute($PATH, ';', ',', 'g')
-		let ctags_exe_list = split(globpath(path, 'ctags.exe'))
+		let ctags_exe_list = split(globpath(path, 'ctags.exe'), '\n')
 		if len(ctags_exe_list) > 0
 			let ctags_exe = ctags_exe_list[0]
 		else
@@ -172,7 +172,7 @@ func! UpdateTypesFile(recurse, skiptags)
 		endif
 
 		if filereadable(ctags_exe)
-			let ctags_path = escape(fnamemodify(ctags_exe, ':p:h'),' \')
+			let ctags_path = shellescape(fnamemodify(ctags_exe, ':p:h'))
 		else
 			throw "Cannot find ctags"
 		endif
@@ -208,9 +208,9 @@ func! UpdateTypesFile(recurse, skiptags)
 		endfor
 	endif
 
-	if exists('b:TypesFileSkipSynMatches')
-		if b:TypesFileSkipSynMatches == 1
-			let syscmd .= ' --skip-matches'
+	if exists('b:TypesFileIncludeSynMatches')
+		if b:TypesFileIncludeSynMatches == 1
+			let syscmd .= ' --include-invalid-keywords-as-matches'
 		endif
 	endif
 
@@ -228,45 +228,45 @@ func! UpdateTypesFile(recurse, skiptags)
 		let syscmd .= ' --use-existing-tagfile'
 	endif
 
-	let syscmd .= ' --check-keywords --analyse-constants'
+	if exists('b:CheckForCScopeFiles')
+		if b:CheckForCScopeFiles == 1
+			let syscmd .= ' --build-cscopedb-if-filelist'
+			let syscmd .= ' --cscope-dir=' 
+			if has("win32")
+				let path = substitute($PATH, ';', ',', 'g')
+				let cscope_exe_list = split(globpath(path, 'cscope.exe'))
+				if len(cscope_exe_list) > 0
+					let cscope_exe = cscope_exe_list[0]
+				else
+					let cscope_exe = ''
+				endif
 
-	if exists('g:CheckForCScopeFiles')
-		let syscmd .= ' --build-cscopedb-if-filelist'
-		let syscmd .= ' --cscope-dir=' 
-		if has("win32")
-			let path = substitute($PATH, ';', ',', 'g')
-			let cscope_exe_list = split(globpath(path, 'cscope.exe'))
-			if len(cscope_exe_list) > 0
-				let cscope_exe = cscope_exe_list[0]
-			else
-				let cscope_exe = ''
-			endif
+				" If cscope is not in the path, look for it in
+				" vimfiles/extra_source/cscope_win
+				if !filereadable(cscope_exe)
+					let cscope_exe = split(globpath(&rtp, "extra_source/cscope_win/cscope.exe"))[0]
+				endif
 
-			" If cscope is not in the path, look for it in
-			" vimfiles/extra_source/cscope_win
-			if !filereadable(cscope_exe)
-				let cscope_exe = split(globpath(&rtp, "extra_source/cscope_win/cscope.exe"))[0]
-			endif
-
-			if filereadable(cscope_exe)
-				let cscope_path = escape(fnamemodify(cscope_exe, ':p:h'),' \')
+				if filereadable(cscope_exe)
+					let cscope_path = escape(fnamemodify(cscope_exe, ':p:h'),' \')
+				else
+					throw "Cannot find cscope"
+				endif
 			else
-				throw "Cannot find cscope"
+				let path = substitute($PATH, ':', ',', 'g')
+				if has("win32unix")
+					let cscope_exe = split(globpath(path, 'cscope.exe'))[0]
+				else
+					let cscope_exe = split(globpath(path, 'cscope'))[0]
+				endif
+				if filereadable(cscope_exe)
+					let cscope_path = fnamemodify(cscope_exe, ':p:h')
+				else
+					throw "Cannot find cscope"
+				endif
 			endif
-		else
-			let path = substitute($PATH, ':', ',', 'g')
-			if has("win32unix")
-				let cscope_exe = split(globpath(path, 'cscope.exe'))[0]
-			else
-				let cscope_exe = split(globpath(path, 'cscope'))[0]
-			endif
-			if filereadable(cscope_exe)
-				let cscope_path = fnamemodify(cscope_exe, ':p:h')
-			else
-				throw "Cannot find cscope"
-			endif
+			let syscmd .= cscope_path
 		endif
-		let syscmd .= cscope_path
 	endif
 
 	let sysoutput = system(sysroot . syscmd) 
@@ -288,17 +288,18 @@ func! UpdateTypesFile(recurse, skiptags)
 endfunc
 
 mktypes.py	[[[1
-531
+537
 #!/usr/bin/env python
 # Author: A. S. Budden
-# Date:   22nd May 2009
-# Version: r259
+# Date:   17th July 2009
+# Version: r286
 import os
 import sys
 import optparse
 import re
 import fnmatch
 import glob
+import subprocess
 
 field_processor = re.compile(
 r'''
@@ -353,6 +354,8 @@ def print_timing(func):
 
 def GetCommandArgs(options):
 	Configuration = {}
+	Configuration['CTAGS_OPTIONS'] = ''
+
 	if options.recurse:
 		Configuration['CTAGS_OPTIONS'] = '--recurse'
 		if options.include_locals:
@@ -382,7 +385,7 @@ def CreateCScopeFile(options):
 		run_cscope = True
 	
 	if os.path.exists('cscope.files'):
-		if options.build_cscopedb_if_filelist:
+		if options.build_cscopedb_if_file_exists:
 			run_cscope = True
 	else:
 		cscope_options += 'R'
@@ -406,7 +409,8 @@ def CreateTagsFile(config, languages, options):
 #	fh.write('\n')
 #	fh.close()
 
-	os.system(ctags_cmd)
+	#os.system(ctags_cmd)
+	subprocess.call(ctags_cmd, shell = (os.name != 'nt'))
 
 	tagFile = open('tags', 'r')
 	tagLines = [line.strip() for line in tagFile]
@@ -512,7 +516,7 @@ def IsValidKeyword(keyword, iskeyword):
 	return True
 	
 #@print_timing
-def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = False, ParseConstants = False, IncludeLocals = False):
+def CreateTypesFile(config, Parameters, options):
 	outfile = 'types_%s.vim' % Parameters['suffix']
 	print "Generating " + outfile
 	lineMatcher = re.compile(r'^.*?\t[^\t]*\.(?P<extension>' + Parameters['extensions'] + ')\t')
@@ -520,7 +524,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 	#p = os.popen(ctags_cmd, "r")
 	p = open('tags', "r")
 
-	if IncludeLocals:
+	if options.include_locals:
 		LocalTagType = ',ctags_l'
 	else:
 		LocalTagType = ''
@@ -538,7 +542,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 		if m is not None:
 			vimmed_line = 'syntax keyword ctags_' + m.group('kind') + ' ' + m.group('keyword')
 
-			if ParseConstants and (Parameters['suffix'] == 'c') and (m.group('kind') == 'v'):
+			if options.parse_constants and (Parameters['suffix'] == 'c') and (m.group('kind') == 'v'):
 				if field_const.search(m.group('search')) is not None:
 					vimmed_line = vimmed_line.replace('ctags_v', 'ctags_k')
 
@@ -564,7 +568,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 				keywordDict[m.group('kind')] = []
 			keywordDict[m.group('kind')].append(m.group('keyword'))
 
-	if CheckKeywords:
+	if options.check_keywords:
 		iskeyword = GenerateValidKeywordRange(Parameters['iskeyword'])
 	
 	matchEntries = []
@@ -580,7 +584,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 			'ctags_s', 'ctags_t', 'ctags_u', 'ctags_v'
 			]
 
-	if IncludeLocals:
+	if options.include_locals:
 		UsedTypes.append('ctags_l')
 		vimtypes_entries.append('silent! syn clear ctags_l')
 	
@@ -593,7 +597,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 			'ctags_u', 'ctags_m', 'ctags_s',
 			]
 
-	if IncludeLocals:
+	if options.include_locals:
 		Priority.append('ctags_l')
 
 	# Reverse the list as highest priority should be last!
@@ -618,7 +622,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 		keystarter = 'syntax keyword ' + thisType
 		keycommand = keystarter
 		for keyword in keywordDict[thisType]:
-			if CheckKeywords:
+			if options.check_keywords:
 				# In here we should check that the keyword only matches
 				# vim's \k parameter (which will be different for different
 				# languages).  This is quite slow so is turned off by
@@ -633,7 +637,8 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 							escapedKeyword = keyword
 							for ch in charactersToEscape:
 								escapedKeyword = escapedKeyword.replace(ch, '\\' + ch)
-							matchEntries.append('syntax match ' + thisType + ' ' + patChar + escapedKeyword + patChar)
+							if not options.skip_matches:
+								matchEntries.append('syntax match ' + thisType + ' ' + patChar + escapedKeyword + patChar)
 							matchDone = True
 							break
 
@@ -655,15 +660,14 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 		if keycommand != keystarter:
 			vimtypes_entries.append(keycommand)
 	
-	if not SkipMatches:
-		# Essentially a uniq() function
-		matchEntries = dict.fromkeys(matchEntries).keys()
-		# Sort the list
-		matchEntries.sort()
+	# Essentially a uniq() function
+	matchEntries = dict.fromkeys(matchEntries).keys()
+	# Sort the list
+	matchEntries.sort()
 
-		vimtypes_entries.append('')
-		for thisMatch in matchEntries:
-			vimtypes_entries.append(thisMatch)
+	vimtypes_entries.append('')
+	for thisMatch in matchEntries:
+		vimtypes_entries.append(thisMatch)
 
 	vimtypes_entries.append('')
 	vimtypes_entries.append('" Class')
@@ -690,7 +694,7 @@ def CreateTypesFile(config, Parameters, CheckKeywords = False, SkipMatches = Fal
 	vimtypes_entries.append('" Global Variable')
 	vimtypes_entries.append('hi link ctags_v GlobalVariable')
 
-	if IncludeLocals:
+	if options.include_locals:
 		vimtypes_entries.append('" Local Variable')
 		vimtypes_entries.append('hi link ctags_l LocalVariable')
 
@@ -730,7 +734,7 @@ def main():
 			help="Recurse into subdirectories")
 	parser.add_option('--ctags-dir',
 			action='store',
-			default='.',
+			default=None,
 			dest='ctags_dir',
 			type='string',
 			help='CTAGS Executable Directory')
@@ -738,22 +742,22 @@ def main():
 			action='store_true',
 			default=False,
 			dest='include_docs',
-			help='Include docs directory (stripped by default for speed)')
-	parser.add_option('--check-keywords',
-			action='store_true',
-			default=False,
+			help='Include docs or Documentation directory (stripped by default for speed)')
+	parser.add_option('--do-not-check-keywords',
+			action='store_false',
+			default=True,
 			dest='check_keywords',
-			help='Check validity of keywords (much slower)')
-	parser.add_option('--skip-matches',
-			action='store_true',
-			default=False,
+			help="Do not check validity of keywords (for speed)")
+	parser.add_option('--include-invalid-keywords-as-matches',
+			action='store_false',
+			default=True,
 			dest='skip_matches',
-			help='Skip syntax match // items (to speed up file loading time)')
-	parser.add_option('--analyse-constants',
-			action='store_true',
-			default=False,
+			help='Include invalid keywords as regular expression matches (may slow it loading)')
+	parser.add_option('--do-not-analyse-constants',
+			action='store_false',
+			default=True,
 			dest='parse_constants',
-			help='Treat constants as separate entries (Experimental)')
+			help="Do not treat constants as separate entries")
 	parser.add_option('--include-language',
 			action='append',
 			dest='languages',
@@ -765,10 +769,10 @@ def main():
 			default=False,
 			dest='build_cscopedb',
 			help="Also build a cscope database")
-	parser.add_option('--build-cscopedb-if-filelist',
+	parser.add_option('--build-cscopedb-if-cscope-file-exists',
 			action='store_true',
 			default=False,
-			dest='build_cscopedb_if_filelist',
+			dest='build_cscopedb_if_file_exists',
 			help="Also build a cscope database if cscope.files exists")
 	parser.add_option('--cscope-dir',
 			action='store',
@@ -785,16 +789,18 @@ def main():
 			action='store_true',
 			default=False,
 			dest='use_existing_tagfile',
-			help='Do not generate tags if a tag file already exists')
+			help="Do not generate tags if a tag file already exists")
 
 	options, remainder = parser.parse_args()
-	global ctags_exe
-	ctags_exe = options.ctags_dir + '/' + 'ctags'
-	global cscope_exe
+
+	if options.ctags_dir is not None:
+		global ctags_exe
+		ctags_exe = os.path.join(options.ctags_dir, 'ctags')
+
+
 	if options.cscope_dir is not None:
+		global cscope_exe
 		cscope_exe = options.cscope_dir + '/' + 'cscope'
-	else:
-		cscope_exe = "cscope"
 
 	Configuration = GetCommandArgs(options)
 
@@ -815,7 +821,7 @@ def main():
 
 	for language in language_list:
 		Parameters = GetLanguageParameters(language)
-		CreateTypesFile(Configuration, Parameters, options.check_keywords, options.skip_matches, options.parse_constants, options.include_locals)
+		CreateTypesFile(Configuration, Parameters, options)
 	
 if __name__ == "__main__":
 	main()
