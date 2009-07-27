@@ -1,7 +1,7 @@
 " ctags_highlighting
 "   Author: A. S. Budden
-"   Date:   23rd May 2009
-"   Version: r262
+"   Date:   27th July 2009
+"   Version: r286
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
@@ -149,12 +149,12 @@ func! UpdateTypesFile(recurse, skiptags)
 		let mktypes_py_file = s:vrc[0]
 	endif
 
-	let sysroot = 'python ' . mktypes_py_file
+	let sysroot = 'python ' . shellescape(mktypes_py_file)
 	let syscmd = ' --ctags-dir='
 
 	if has("win32")
 		let path = substitute($PATH, ';', ',', 'g')
-		let ctags_exe_list = split(globpath(path, 'ctags.exe'))
+		let ctags_exe_list = split(globpath(path, 'ctags.exe'), '\n')
 		if len(ctags_exe_list) > 0
 			let ctags_exe = ctags_exe_list[0]
 		else
@@ -167,7 +167,7 @@ func! UpdateTypesFile(recurse, skiptags)
 		endif
 
 		if filereadable(ctags_exe)
-			let ctags_path = escape(fnamemodify(ctags_exe, ':p:h'),' \')
+			let ctags_path = shellescape(fnamemodify(ctags_exe, ':p:h'))
 		else
 			throw "Cannot find ctags"
 		endif

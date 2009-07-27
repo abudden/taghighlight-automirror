@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # Author: A. S. Budden
-# Date:   23rd May 2009
-# Version: r262
+# Date:   17th July 2009
+# Version: r286
 import os
 import sys
 import optparse
 import re
 import fnmatch
 import glob
+import subprocess
 
 field_processor = re.compile(
 r'''
@@ -117,7 +118,8 @@ def CreateTagsFile(config, languages, options):
 #	fh.write('\n')
 #	fh.close()
 
-	os.system(ctags_cmd)
+	#os.system(ctags_cmd)
+	subprocess.call(ctags_cmd, shell = (os.name != 'nt'))
 
 	tagFile = open('tags', 'r')
 	tagLines = [line.strip() for line in tagFile]
@@ -502,7 +504,7 @@ def main():
 
 	if options.ctags_dir is not None:
 		global ctags_exe
-		ctags_exe = options.ctags_dir + '/' + 'ctags'
+		ctags_exe = os.path.join(options.ctags_dir, 'ctags')
 
 
 	if options.cscope_dir is not None:
