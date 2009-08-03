@@ -5,8 +5,8 @@ plugin/ctags_highlighting.vim	[[[1
 284
 " ctags_highlighting
 "   Author: A. S. Budden
-"   Date:   27th July 2009
-"   Version: r286
+"   Date:   3rd August 2009
+"   Version: r292
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
@@ -230,7 +230,7 @@ func! UpdateTypesFile(recurse, skiptags)
 
 	if exists('b:CheckForCScopeFiles')
 		if b:CheckForCScopeFiles == 1
-			let syscmd .= ' --build-cscopedb-if-filelist'
+			let syscmd .= ' --build-cscopedb-if-cscope-file-exists'
 			let syscmd .= ' --cscope-dir=' 
 			if has("win32")
 				let path = substitute($PATH, ';', ',', 'g')
@@ -291,8 +291,8 @@ mktypes.py	[[[1
 537
 #!/usr/bin/env python
 # Author: A. S. Budden
-# Date:   17th July 2009
-# Version: r286
+# Date:   3rd August 2009
+# Version: r292
 import os
 import sys
 import optparse
