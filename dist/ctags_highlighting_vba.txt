@@ -1,6 +1,3 @@
 plugin/ctags_highlighting.vim
 mktypes.py
 extra_source/mktypes/setup.py
-types_qt4.vim
-types_wx.vim
-types_wxpy.vim
