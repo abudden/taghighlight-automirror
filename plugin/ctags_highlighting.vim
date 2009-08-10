@@ -1,7 +1,7 @@
 " ctags_highlighting
 "   Author: A. S. Budden
-"   Date:   7th August 2009
-"   Version: r301
+"   Date:   10th August 2009
+"   Version: r302
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
@@ -54,6 +54,7 @@ autocmd BufRead,BufNewFile *.py     call ReadTypes('py')
 autocmd BufRead,BufNewFile *.pyw    call ReadTypes('py')
 autocmd BufRead,BufNewFile *.rb     call ReadTypes('ruby')
 autocmd BufRead,BufNewFile *.vhd*   call ReadTypes('vhdl')
+autocmd BufRead,BufNewFile *.php    call ReadTypes('php')
 
 command! ReadTypes call ReadTypesAutoDetect()
 
