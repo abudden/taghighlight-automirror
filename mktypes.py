@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-# Author: A. S. Budden
-# Date:   10th August 2009
-# Version: r302
+#  Author:  A. S. Budden
+## Date::   12th August 2009     ##
+## RevTag:: r308                 ##
+
 import os
 import sys
 import optparse

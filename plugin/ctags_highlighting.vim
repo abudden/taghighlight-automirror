@@ -1,7 +1,7 @@
 " ctags_highlighting
-"   Author: A. S. Budden
-"   Date:   10th August 2009
-"   Version: r302
+"   Author:  A. S. Budden
+"## Date::   12th August 2009        ##
+"## RevTag:: r308                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
