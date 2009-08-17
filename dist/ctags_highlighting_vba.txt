@@ -1,3 +1,4 @@
 plugin/ctags_highlighting.vim
 mktypes.py
 extra_source/mktypes/setup.py
+doc/ctags_highlighting.txt

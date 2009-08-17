@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   12th August 2009     ##
-## RevTag:: r308                 ##
+## Date::   17th August 2009     ##
+## RevTag:: r309                 ##
 
 import os
 import sys

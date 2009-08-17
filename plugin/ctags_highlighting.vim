@@ -1,7 +1,7 @@
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   12th August 2009        ##
-"## RevTag:: r308                    ##
+"## Date::   17th August 2009        ##
+"## RevTag:: r309                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
@@ -67,6 +67,7 @@ function! ReadTypesAutoDetect()
 				\     'java'         : "java",
 				\     'pyw\?'        : "py",
 				\     'rb'           : "ruby",
+				\     'php'          : "php",
 				\     'vhdl\?'       : "vhdl",
 				\ }
 
