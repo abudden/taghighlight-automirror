@@ -1,4 +1,4 @@
-*ctags_highlighting.txt*       Tag Highlighting        23rd May 2009
+*ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
