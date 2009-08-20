@@ -130,7 +130,7 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
     	LocalVariable   : Local Variable
 
     An example of how to highlight one of these would be to include the
-    following line in your colour scheme (see |highlight|):
+    following line in your colour scheme (see |:highlight|):
 >
 	hi Enumerator guifg="c000c0"
 <
@@ -180,10 +180,10 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 	   If this (buffer-local) variable is set to 1, more obscure matches
 	   are included in the syntax highlighter.  The standard highlighter
 	   only highlights tags that are made up of keyword characters (see
-	   |iskeyword|).  If this option is enabled, other tags are
-	   highlighted using |syn-match|.  Note however that this can
+	   |'iskeyword'|).  If this option is enabled, other tags are
+	   highlighted using |:syn-match|.  Note however that this can
 	   seriously slow your Vim down if there are a lot of matches
-	   (|syn-match| is much slower than |syn-keyword|).
+	   (|:syn-match| is much slower than |:syn-keyword|).
     
         b:TypesFileLanguages             *b:TypesFileLanguages*
     
@@ -300,7 +300,7 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
     
     - Tidy up the types files for wxWidgets, Qt and wxPython.
     
-    - The g:*File variables should use |globpath|.
+    - The g:*File variables should use |globpath()|.
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
