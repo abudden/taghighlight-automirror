@@ -2,11 +2,11 @@
 UseVimball
 finish
 plugin/ctags_highlighting.vim	[[[1
-292
+319
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   17th August 2009        ##
-"## RevTag:: r309                    ##
+"## Date::   14th September 2009     ##
+"## RevTag:: r321                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
@@ -21,6 +21,17 @@ if !exists('g:VIMFILESDIR')
 	if has("win32")
 		let g:VIMFILESDIR = $VIM . "/vimfiles/"
 	endif
+endif
+
+let g:DBG_None        = 0
+let g:DBG_Critical    = 1
+let g:DBG_Error       = 2
+let g:DBG_Warning     = 3
+let g:DBG_Status      = 4
+let g:DBG_Information = 5
+
+if !exists('g:CTagsHighlighterDebug')
+	let g:CTagsHighlighterDebug = g:DBG_None
 endif
 
 " These should only be included if editing a wx or qt file
@@ -41,14 +52,14 @@ command! -bang -bar UpdateTypesFile silent call UpdateTypesFile(<bang>0, 0) |
 			\ let s:SavedWinNr = winnr() |
 			\ silent tabdo windo call ReadTypesAutoDetect() |
 			\ silent exe 'tabn ' . s:SavedTabNr |
-			\ silent exe s:SavedTabNr . "wincmd w"
+			\ silent exe s:SavedWinNr . "wincmd w"
 
 command! -bang -bar UpdateTypesFileOnly silent call UpdateTypesFile(<bang>0, 1) | 
 			\ let s:SavedTabNr = tabpagenr() |
 			\ let s:SavedWinNr = winnr() |
 			\ silent tabdo windo call ReadTypesAutoDetect() |
 			\ silent exe 'tabn ' . s:SavedTabNr |
-			\ silent exe s:SavedTabNr . "wincmd w"
+			\ silent exe s:SavedWinNr . "wincmd w"
 
 " load the types_*.vim highlighting file, if it exists
 autocmd BufRead,BufNewFile *.[ch]   call ReadTypes('c')
@@ -152,9 +163,83 @@ function! ReadTypes(suffix)
 	endif
 endfunction
 
+func! s:Debug_Print(level, message)
+	if g:CTagsHighlighterDebug >= a:level
+		echomsg a:message
+	endif
+endfunc
+
+func! s:FindExePath(file)
+	if has("win32")
+		let short_file = fnamemodify(a:file . '.exe', '%:p:t')
+		let path = substitute($PATH, ';', ',', 'g')
+
+		call s:Debug_Print(g:DBG_Status, "Looking for " . short_file . " in " . path)
+
+		let file_exe_list = split(globpath(path, short_file), '\n')
+		if len(file_exe_list) > 0
+			call s:Debug_Print(g:DBG_Status, "Success.")
+			let file_exe = file_exe_list[0]
+		else
+			call s:Debug_Print(g:DBG_Status, "Not found.")
+			let file_exe = ''
+		endif
+
+		" If file is not in the path, look for it in vimfiles/
+		if !filereadable(file_exe)
+			call s:Debug_Print(g:DBG_Status, "Looking for " . a:file . " in " . &rtp)
+			let file_exe_list = split(globpath(&rtp, a:file . '.exe'))
+			if len(file_exe_list) > 0
+				call s:Debug_Print(g:DBG_Status, "Success.")
+				let file_exe = file_exe_list[0]
+			else
+				call s:Debug_Print(g:DBG_Status, "Not found.")
+			endif
+		endif
+
+		if filereadable(file_exe)
+			call s:Debug_Print(g:DBG_Status, "Success.")
+			let file_path = shellescape(fnamemodify(file_exe, ':p:h'))
+		else
+			call s:Debug_Print(g:DBG_Critical, "Could not find " . short_file)
+			throw "Cannot find file " . short_file
+		endif
+	else
+		let path = substitute($PATH, ':', ',', 'g')
+		if has("win32unix")
+			let short_file = fnamemodify(a:file . '.exe', '%:p:t')
+		else
+			let short_file = fnamemodify(a:file, '%:p:t')
+		endif
+
+		call s:Debug_Print(g:DBG_Status, "Looking for " . short_file . " in " . path)
+
+		let file_exe_list = split(globpath(path, short_file))
+
+		if len(file_exe_list) > 0
+			call s:Debug_Print(g:DBG_Status, "Success.")
+			let file_exe = file_exe_list[0]
+		else
+			call s:Debug_Print(g:DBG_Status, "Not found.")
+		endif
+
+		if filereadable(file_exe)
+			call s:Debug_Print(g:DBG_Status, "Success.")
+			let file_path = fnamemodify(file_exe, ':p:h')
+		else
+			call s:Debug_Print(g:DBG_Critical, "Could not find " . short_file)
+			throw "Cannot find file " . short_file
+		endif
+	endif
+
+	return file_path
+endfunc
+
 
 func! UpdateTypesFile(recurse, skiptags)
 	let s:vrc = globpath(&rtp, "mktypes.py")
+
+	call s:Debug_Print(g:DBG_Status, "Starting UpdateTypesFile")
 
 	if type(s:vrc) == type("")
 		let mktypes_py_file = s:vrc
@@ -165,38 +250,7 @@ func! UpdateTypesFile(recurse, skiptags)
 	let sysroot = 'python ' . shellescape(mktypes_py_file)
 	let syscmd = ' --ctags-dir='
 
-	if has("win32")
-		let path = substitute($PATH, ';', ',', 'g')
-		let ctags_exe_list = split(globpath(path, 'ctags.exe'), '\n')
-		if len(ctags_exe_list) > 0
-			let ctags_exe = ctags_exe_list[0]
-		else
-			let ctags_exe = ''
-		endif
-
-		" If ctags is not in the path, look for it in vimfiles/
-		if !filereadable(ctags_exe)
-			let ctags_exe = split(globpath(&rtp, "ctags.exe"))[0]
-		endif
-
-		if filereadable(ctags_exe)
-			let ctags_path = shellescape(fnamemodify(ctags_exe, ':p:h'))
-		else
-			throw "Cannot find ctags"
-		endif
-	else
-		let path = substitute($PATH, ':', ',', 'g')
-		if has("win32unix")
-			let ctags_exe = split(globpath(path, 'ctags.exe'))[0]
-		else
-			let ctags_exe = split(globpath(path, 'ctags'))[0]
-		endif
-		if filereadable(ctags_exe)
-			let ctags_path = fnamemodify(ctags_exe, ':p:h')
-		else
-			throw "Cannot find ctags"
-		endif
-	endif
+	let ctags_path = s:FindExePath('ctags')
 
 	let syscmd .= ctags_path
 	
@@ -240,39 +294,7 @@ func! UpdateTypesFile(recurse, skiptags)
 		if b:CheckForCScopeFiles == 1
 			let syscmd .= ' --build-cscopedb-if-cscope-file-exists'
 			let syscmd .= ' --cscope-dir=' 
-			if has("win32")
-				let path = substitute($PATH, ';', ',', 'g')
-				let cscope_exe_list = split(globpath(path, 'cscope.exe'))
-				if len(cscope_exe_list) > 0
-					let cscope_exe = cscope_exe_list[0]
-				else
-					let cscope_exe = ''
-				endif
-
-				" If cscope is not in the path, look for it in
-				" vimfiles/extra_source/cscope_win
-				if !filereadable(cscope_exe)
-					let cscope_exe = split(globpath(&rtp, "extra_source/cscope_win/cscope.exe"))[0]
-				endif
-
-				if filereadable(cscope_exe)
-					let cscope_path = escape(fnamemodify(cscope_exe, ':p:h'),' \')
-				else
-					throw "Cannot find cscope"
-				endif
-			else
-				let path = substitute($PATH, ':', ',', 'g')
-				if has("win32unix")
-					let cscope_exe = split(globpath(path, 'cscope.exe'))[0]
-				else
-					let cscope_exe = split(globpath(path, 'cscope'))[0]
-				endif
-				if filereadable(cscope_exe)
-					let cscope_path = fnamemodify(cscope_exe, ':p:h')
-				else
-					throw "Cannot find cscope"
-				endif
-			endif
+			let cscope_path = s:FindExePath('extra_source/cscope_win/cscope')
 			let syscmd .= cscope_path
 		endif
 	endif
@@ -286,6 +308,11 @@ func! UpdateTypesFile(recurse, skiptags)
 
 	echo sysoutput
 
+	if g:CTagsHighlighterDebug >= g:DBG_None
+		echomsg sysoutput
+		messages
+	endif
+
 
 
 	" There should be a try catch endtry
@@ -296,11 +323,11 @@ func! UpdateTypesFile(recurse, skiptags)
 endfunc
 
 mktypes.py	[[[1
-537
+922
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   17th August 2009     ##
-## RevTag:: r309                 ##
+## Date::   4th September 2009   ##
+## RevTag:: r320                 ##
 
 import os
 import sys
@@ -321,7 +348,7 @@ r'''
 	;"                # The end of the search specifier (see http://ctags.sourceforge.net/FORMAT)
 	(?=\t)            # There MUST be a tab character after the ;", but we want to match it with zero width
 	.*\t              # There can be other fields before "kind", so catch them here.
-			          # Also catch the tab character from the previous line as there MUST be a tab before the field
+	                  # Also catch the tab character from the previous line as there MUST be a tab before the field
 	(kind:)?          # This is the "kind" field; "kind:" is optional
 	(?P<kind>\w)      # The kind is a single character: catch it
 	(\t|$)            # It must be followed either by a tab or by the end of the line
@@ -413,10 +440,10 @@ def CreateTagsFile(config, languages, options):
 
 	ctags_cmd = '%s %s %s %s' % (ctags_exe, config['CTAGS_OPTIONS'], "--languages=" + ",".join(ctags_languages), " ".join(config['CTAGS_FILES']))
 
-#	fh = open('ctags_cmd.txt', 'w')
-#	fh.write(ctags_cmd)
-#	fh.write('\n')
-#	fh.close()
+#   fh = open('ctags_cmd.txt', 'w')
+#   fh.write(ctags_cmd)
+#   fh.write('\n')
+#   fh.close()
 
 	#os.system(ctags_cmd)
 	subprocess.call(ctags_cmd, shell = (os.name != 'nt'))
@@ -621,7 +648,7 @@ def CreateTypesFile(config, Parameters, options):
 			typeList.remove(thisType)
 	for thisType in typeList:
 		allTypes.append(thisType)
-#	print allTypes
+#   print allTypes
 
 	for thisType in allTypes:
 		if thisType not in UsedTypes:
@@ -830,10 +857,395 @@ def main():
 	for language in language_list:
 		Parameters = GetLanguageParameters(language)
 		CreateTypesFile(Configuration, Parameters, options)
+
+def GetKindList():
+	LanguageKinds = {}
+	LanguageKinds['asm'] = \
+	{
+		'd': 'CTagsDefinedName',
+		'l': 'CTagsLabel',
+		'm': 'CTagsMacro',
+		't': 'CTagsType',
+	}
+	LanguageKinds['asp'] = \
+	{
+		'c': 'CTagsConstant',
+		'f': 'CTagsFunction',
+		's': 'CTagsSubroutine',
+		'v': 'CTagsVariable',
+	}
+	LanguageKinds['awk'] = \
+	{
+		'f': 'CTagsFunction',
+	}
+	LanguageKinds['basic'] = \
+	{
+		'c': 'CTagsConstant',
+		'f': 'CTagsFunction',
+		'l': 'CTagsLabel',
+		't': 'CTagsType',
+		'v': 'CTagsVariable',
+		'g': 'CTagsEnumeration',
+	}
+	LanguageKinds['beta'] = \
+	{
+		'f': 'CTagsFragment',
+		'p': 'CTagsPattern',
+		's': 'CTagsSlot',
+		'v': 'CTagsVirtualPattern',
+	}
+	LanguageKinds['c'] = \
+	{
+		'c': 'CTagsClass',
+		'd': 'CTagsDefinedName',
+		'e': 'CTagsEnumerationValue',
+		'f': 'CTagsFunction',
+		'g': 'CTagsEnumeratorName',
+		'l': 'CTagsLocalVariable',
+		'm': 'CTagsMember',
+		'n': 'CTagsNamespace',
+		'p': 'CTagsFunction',
+		's': 'CTagsStructure',
+		't': 'CTagsType',
+		'u': 'CTagsUnion',
+		'v': 'CTagsGlobalVariable',
+		'x': 'CTagsExtern',
+	}
+	LanguageKinds['c++'] = \
+	{
+		'c': 'CTagsClass',
+		'd': 'CTagsDefinedName',
+		'e': 'CTagsEnumerator',
+		'f': 'CTagsFunction',
+		'g': 'CTagsEnumerationName',
+		'l': 'CTagsLocalVariable',
+		'm': 'CTagsMember',
+		'n': 'CTagsNamespace',
+		'p': 'CTagsFunction',
+		's': 'CTagsStructure',
+		't': 'CTagsType',
+		'u': 'CTagsUnion',
+		'v': 'CTagsGlobalVariable',
+		'x': 'CTagsExtern',
+	}
+	LanguageKinds['c#'] = \
+	{
+		'c': 'CTagsClass',
+		'd': 'CTagsDefinedName',
+		'e': 'CTagsEnumerator',
+		'E': 'CTagsEvent',
+		'f': 'CTagsField',
+		'g': 'CTagsEnumerationName',
+		'i': 'CTagsInterface',
+		'l': 'CTagsLocalVariable',
+		'm': 'CTagsMethod',
+		'n': 'CTagsNamespace',
+		'p': 'CTagsProperty',
+		's': 'CTagsStructure',
+		't': 'CTagsType',
+	}
+	LanguageKinds['cobol'] = \
+	{
+		'd': 'CTagsData',
+		'f': 'CTagsFileDescription',
+		'g': 'CTagsGroupItem',
+		'p': 'CTagsParagraph',
+		'P': 'CTagsProgram',
+		's': 'CTagsSection',
+	}
+	LanguageKinds['eiffel'] = \
+	{
+		'c': 'CTagsClass',
+		'f': 'CTagsFeature',
+		'l': 'CTagsEntity',
+	}
+	LanguageKinds['erlang'] = \
+	{
+		'd': 'CTagsDefinedName',
+		'f': 'CTagsFunction',
+		'm': 'CTagsModule',
+		'r': 'CTagsRecord',
+	}
+	LanguageKinds['fortran'] = \
+	{
+		'b': 'CTagsBlockData',
+		'c': 'CTagsCommonBlocks',
+		'e': 'CTagsEntryPoint',
+		'f': 'CTagsFunction',
+		'i': 'CTagsInterfaceComponent',
+		'k': 'CTagsTypeComponent',
+		'l': 'CTagsLabel',
+		'L': 'CTagsLocalVariable',
+		'm': 'CTagsModule',
+		'n': 'CTagsNamelist',
+		'p': 'CTagsProgram',
+		's': 'CTagsSubroutine',
+		't': 'CTagsType',
+		'v': 'CTagsGlobalVariable',
+	}
+	LanguageKinds['html'] = \
+	{
+		'a': 'CTagsAnchor',
+		'f': 'CTagsFunction',
+	}
+	LanguageKinds['java'] = \
+	{
+		'c': 'CTagsClass',
+		'e': 'CTagsEnumerationValue',
+		'f': 'CTagsField',
+		'g': 'CTagsEnumeratorName',
+		'i': 'CTagsInterface',
+		'l': 'CTagsLocalVariable',
+		'm': 'CTagsMethod',
+		'p': 'CTagsPackage',
+	}
+	LanguageKinds['javascript'] = \
+	{
+		'f': 'CTagsFunction',
+		'c': 'CTagsClass',
+		'm': 'CTagsMethod',
+		'p': 'CTagsProperty',
+		'v': 'CTagsGlobalVariable',
+	}
+	LanguageKinds['lisp'] = \
+	{
+		'f': 'CTagsFunction',
+	}
+	LanguageKinds['lua'] = \
+	{
+		'f': 'CTagsFunction',
+	}
+	LanguageKinds['make'] = \
+	{
+		'm': 'CTagsFunction',
+	}
+	LanguageKinds['pascal'] = \
+	{
+		'f': 'CTagsFunction',
+		'p': 'CTagsFunction',
+	}
+	LanguageKinds['perl'] = \
+	{
+		'c': 'CTagsGlobalConstant',
+		'f': 'CTagsFormat',
+		'l': 'CTagsLabel',
+		'p': 'CTagsPackage',
+		's': 'CTagsFunction',
+		'd': 'CTagsFunction',
+	}
+	LanguageKinds['php'] = \
+	{
+		'c': 'CTagsClass',
+		'i': 'CTagsInterface',
+		'd': 'CTagsGlobalConstant',
+		'f': 'CTagsFunction',
+		'v': 'CTagsGlobalVariable',
+		'j': 'CTagsFunction',
+	}
+	LanguageKinds['python'] = \
+	{
+		'c': 'CTagsClass',
+		'f': 'CTagsFunction',
+		'm': 'CTagsMember',
+		'v': 'CTagsGlobalVariable',
+	}
+	LanguageKinds['rexx'] = \
+	{
+		's': 'CTagsFunction',
+	}
+	LanguageKinds['ruby'] = \
+	{
+		'c': 'CTagsClass',
+		'f': 'CTagsMethod',
+		'm': 'CTagsModule',
+		'F': 'CTagsSingleton',
+	}
+	LanguageKinds['scheme'] = \
+	{
+		'f': 'CTagsFunction',
+		's': 'CTagsSet',
+	}
+	LanguageKinds['sh'] = \
+	{
+		'f': 'CTagsFunction',
+	}
+	LanguageKinds['slang'] = \
+	{
+		'f': 'CTagsFunction',
+		'n': 'CTagsNamespace',
+	}
+	LanguageKinds['sml'] = \
+	{
+		'e': 'CTagsException',
+		'f': 'CTagsFunction',
+		'c': 'CTagsFunctionObject',
+		's': 'CTagsSignature',
+		'r': 'CTagsStructure',
+		't': 'CTagsType',
+		'v': 'CTagsGlobalVariable',
+	}
+	LanguageKinds['sql'] = \
+	{
+		'c': 'CTagsCursor',
+		'd': 'CTagsFunction',
+		'f': 'CTagsFunction',
+		'F': 'CTagsField',
+		'l': 'CTagsLocalVariable',
+		'L': 'CTagsLabel',
+		'P': 'CTagsPackage',
+		'p': 'CTagsFunction',
+		'r': 'CTagsRecord',
+		's': 'CTagsType',
+		't': 'CTagsTable',
+		'T': 'CTagsTrigger',
+		'v': 'CTagsGlobalVariable',
+		'i': 'CTagsIndex',
+		'e': 'CTagsEvent',
+		'U': 'CTagsPublication',
+		'R': 'CTagsService',
+		'D': 'CTagsDomain',
+		'V': 'CTagsView',
+		'n': 'CTagsSynonym',
+	}
+	LanguageKinds['tcl'] = \
+	{
+		'c': 'CTagsClass',
+		'm': 'CTagsMethod',
+		'p': 'CTagsFunction',
+	}
+	LanguageKinds['vera'] = \
+	{
+		'c': 'CTagsClass',
+		'd': 'CTagsDefinedName',
+		'e': 'CTagsEnumerationValue',
+		'f': 'CTagsFunction',
+		'g': 'CTagsEnumeratorName',
+		'l': 'CTagsLocalVariable',
+		'm': 'CTagsMember',
+		'p': 'CTagsProgram',
+		'P': 'CTagsFunction',
+		't': 'CTagsTask',
+		'T': 'CTagsType',
+		'v': 'CTagsGlobalVariable',
+		'x': 'CTagsExtern',
+	}
+	LanguageKinds['verilog'] = \
+	{
+		'c': 'CTagsGlobalConstant',
+		'e': 'CTagsEvent',
+		'f': 'CTagsFunction',
+		'm': 'CTagsModule',
+		'n': 'CTagsNetType',
+		'p': 'CTagsPort',
+		'r': 'CTagsRegisterType',
+		't': 'CTagsTask',
+	}
+	LanguageKinds['vhdl'] = \
+	{
+		'c': 'CTagsGlobalConstant',
+		't': 'CTagsType',
+		'T': 'CTagsTypeComponent',
+		'r': 'CTagsRecord',
+		'e': 'CTagsEntity',
+		'C': 'CTagsComponent',
+		'd': 'CTagsPrototype',
+		'f': 'CTagsFunction',
+		'p': 'CTagsFunction',
+		'P': 'CTagsPackage',
+		'l': 'CTagsLocalVariable',
+	}
+	LanguageKinds['vim'] = \
+	{
+		'a': 'CTagsAutoCommand',
+		'c': 'CTagsCommand',
+		'f': 'CTagsFunction',
+		'm': 'CTagsMap',
+		'v': 'CTagsGlobalVariable',
+	}
+	LanguageKinds['yacc'] = \
+	{
+		'l': 'CTagsLabel',
+	}
+
 	
 if __name__ == "__main__":
 	main()
 
+"""
+CTagsAnchor
+CTagsAutoCommand
+CTagsBlockData
+CTagsClass
+CTagsCommand
+CTagsCommonBlocks
+CTagsComponent
+CTagsConstant
+CTagsCursor
+CTagsData
+CTagsDefinedName
+CTagsDomain
+CTagsEntity
+CTagsEntryPoint
+CTagsEnumeration
+CTagsEnumerationName
+CTagsEnumerationValue
+CTagsEnumerator
+CTagsEnumeratorName
+CTagsEvent
+CTagsException
+CTagsExtern
+CTagsFeature
+CTagsField
+CTagsFileDescription
+CTagsFormat
+CTagsFragment
+CTagsFunction
+CTagsFunctionObject
+CTagsGlobalConstant
+CTagsGlobalVariable
+CTagsGroupItem
+CTagsIndex
+CTagsInterface
+CTagsInterfaceComponent
+CTagsLabel
+CTagsLocalVariable
+CTagsMacro
+CTagsMap
+CTagsMember
+CTagsMethod
+CTagsModule
+CTagsNamelist
+CTagsNamespace
+CTagsNetType
+CTagsPackage
+CTagsParagraph
+CTagsPattern
+CTagsPort
+CTagsProgram
+CTagsProperty
+CTagsPrototype
+CTagsPublication
+CTagsRecord
+CTagsRegisterType
+CTagsSection
+CTagsService
+CTagsSet
+CTagsSignature
+CTagsSingleton
+CTagsSlot
+CTagsStructure
+CTagsSubroutine
+CTagsSynonym
+CTagsTable
+CTagsTask
+CTagsTrigger
+CTagsType
+CTagsTypeComponent
+CTagsUnion
+CTagsVariable
+CTagsView
+CTagsVirtualPattern
+"""
 extra_source/mktypes/setup.py	[[[1
 5
 from distutils.core import setup
@@ -843,7 +1255,7 @@ import py2exe
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
 372
-*ctags_highlighting.txt*       Tag Highlighting        23rd May 2009
+*ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
@@ -975,7 +1387,7 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
     	LocalVariable   : Local Variable
 
     An example of how to highlight one of these would be to include the
-    following line in your colour scheme (see |highlight|):
+    following line in your colour scheme (see |:highlight|):
 >
 	hi Enumerator guifg="c000c0"
 <
@@ -1025,10 +1437,10 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 	   If this (buffer-local) variable is set to 1, more obscure matches
 	   are included in the syntax highlighter.  The standard highlighter
 	   only highlights tags that are made up of keyword characters (see
-	   |iskeyword|).  If this option is enabled, other tags are
-	   highlighted using |syn-match|.  Note however that this can
+	   |'iskeyword'|).  If this option is enabled, other tags are
+	   highlighted using |:syn-match|.  Note however that this can
 	   seriously slow your Vim down if there are a lot of matches
-	   (|syn-match| is much slower than |syn-keyword|).
+	   (|:syn-match| is much slower than |:syn-keyword|).
     
         b:TypesFileLanguages             *b:TypesFileLanguages*
     
@@ -1145,7 +1557,7 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
     
     - Tidy up the types files for wxWidgets, Qt and wxPython.
     
-    - The g:*File variables should use |globpath|.
+    - The g:*File variables should use |globpath()|.
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
