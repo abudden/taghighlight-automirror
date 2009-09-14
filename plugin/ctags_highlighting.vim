@@ -1,7 +1,7 @@
 " ctags_highlighting
 "   Author:  A. S. Budden
 "## Date::   14th September 2009     ##
-"## RevTag:: r321                    ##
+"## RevTag:: r324                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
@@ -166,7 +166,7 @@ endfunc
 
 func! s:FindExePath(file)
 	if has("win32")
-		let short_file = fnamemodify(a:file . '.exe', '%:p:t')
+		let short_file = fnamemodify(a:file . '.exe', ':p:t')
 		let path = substitute($PATH, ';', ',', 'g')
 
 		call s:Debug_Print(g:DBG_Status, "Looking for " . short_file . " in " . path)
@@ -202,9 +202,9 @@ func! s:FindExePath(file)
 	else
 		let path = substitute($PATH, ':', ',', 'g')
 		if has("win32unix")
-			let short_file = fnamemodify(a:file . '.exe', '%:p:t')
+			let short_file = fnamemodify(a:file . '.exe', ':p:t')
 		else
-			let short_file = fnamemodify(a:file, '%:p:t')
+			let short_file = fnamemodify(a:file, ':p:t')
 		endif
 
 		call s:Debug_Print(g:DBG_Status, "Looking for " . short_file . " in " . path)
@@ -216,6 +216,7 @@ func! s:FindExePath(file)
 			let file_exe = file_exe_list[0]
 		else
 			call s:Debug_Print(g:DBG_Status, "Not found.")
+			let file_exe = ''
 		endif
 
 		if filereadable(file_exe)
