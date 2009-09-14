@@ -305,6 +305,12 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
 
+r321 : 14th September 2009 : Fixed bug with returning to the correct window
+			     after use, added debugging statements and moved
+			     executable search to a separate function.  Also
+			     added preliminary work towards more explicit
+			     type names.
+
 r309 : 17th August 2009    : Added documentation.
 
 r302 : 10th August 2009    : Added experimental PHP support.
