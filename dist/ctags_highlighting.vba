@@ -2,16 +2,19 @@
 UseVimball
 finish
 plugin/ctags_highlighting.vim	[[[1
-320
+323
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   14th September 2009     ##
-"## RevTag:: r324                    ##
+"## Date::   15th September 2009     ##
+"## RevTag:: r326                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
+
+let s:CTagsHighlighterVersion = "## RevTag:: r326 ##"
+let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r326      ##', '\1', '')
 
 if !exists('g:VIMFILESDIR')
 	if has("unix")
@@ -240,7 +243,7 @@ endfunc
 func! UpdateTypesFile(recurse, skiptags)
 	let s:vrc = globpath(&rtp, "mktypes.py")
 
-	call s:Debug_Print(g:DBG_Status, "Starting UpdateTypesFile")
+	call s:Debug_Print(g:DBG_Status, "Starting UpdateTypesFile revision " . s:CTagsHighlighterVersion)
 
 	if type(s:vrc) == type("")
 		let mktypes_py_file = s:vrc
@@ -1255,13 +1258,13 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
-380
+382
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:  r324                                                           ##
+## RevTag:: r326                                                           ##
 
 Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -1562,6 +1565,8 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r326 : 15th September 2009 : Added revision number to debug output.
 
 r324 : 14th September 2009 : Fixed Linux bugs with new implementation.
 
