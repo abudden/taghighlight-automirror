@@ -3,7 +3,7 @@
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r326                                                           ##
+## RevTag:: r328                                                           ##
 
 Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -304,6 +304,9 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r328 : 16th September 2009 : Fix for bug with path finding on Windows where
+                             directories in the path end in a backslash.
 
 r326 : 15th September 2009 : Added revision number to debug output.
 

@@ -1,15 +1,15 @@
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   15th September 2009     ##
-"## RevTag:: r326                    ##
+"## Date::   16th September 2009     ##
+"## RevTag:: r328                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r326 ##"
-let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r326      ##', '\1', '')
+let s:CTagsHighlighterVersion = "## RevTag:: r328 ##"
+let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r328      ##', '\1', '')
 
 if !exists('g:VIMFILESDIR')
 	if has("unix")
@@ -170,7 +170,7 @@ endfunc
 func! s:FindExePath(file)
 	if has("win32")
 		let short_file = fnamemodify(a:file . '.exe', ':p:t')
-		let path = substitute($PATH, ';', ',', 'g')
+		let path = substitute($PATH, '\\\?;', ',', 'g')
 
 		call s:Debug_Print(g:DBG_Status, "Looking for " . short_file . " in " . path)
 

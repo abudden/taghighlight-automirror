@@ -5,16 +5,16 @@ plugin/ctags_highlighting.vim	[[[1
 323
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   15th September 2009     ##
-"## RevTag:: r326                    ##
+"## Date::   16th September 2009     ##
+"## RevTag:: r328                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r326 ##"
-let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r326      ##', '\1', '')
+let s:CTagsHighlighterVersion = "## RevTag:: r328 ##"
+let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r328      ##', '\1', '')
 
 if !exists('g:VIMFILESDIR')
 	if has("unix")
@@ -175,7 +175,7 @@ endfunc
 func! s:FindExePath(file)
 	if has("win32")
 		let short_file = fnamemodify(a:file . '.exe', ':p:t')
-		let path = substitute($PATH, ';', ',', 'g')
+		let path = substitute($PATH, '\\\?;', ',', 'g')
 
 		call s:Debug_Print(g:DBG_Status, "Looking for " . short_file . " in " . path)
 
@@ -1258,13 +1258,13 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
-382
+385
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r326                                                           ##
+## RevTag:: r328                                                           ##
 
 Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -1565,6 +1565,9 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r328 : 16th September 2009 : Fix for bug with path finding on Windows where
+                             directories in the path end in a backslash.
 
 r326 : 15th September 2009 : Added revision number to debug output.
 
