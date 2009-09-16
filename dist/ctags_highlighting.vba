@@ -327,11 +327,11 @@ func! UpdateTypesFile(recurse, skiptags)
 endfunc
 
 mktypes.py	[[[1
-922
+924
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   4th September 2009   ##
-## RevTag:: r320                 ##
+## Date::   16th September 2009  ##
+## RevTag:: r329                 ##
 
 import os
 import sys
@@ -340,6 +340,8 @@ import re
 import fnmatch
 import glob
 import subprocess
+
+revision = "## RevTag:: r329 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -765,7 +767,7 @@ def CreateTypesFile(config, Parameters, options):
 
 def main():
 	import optparse
-	parser = optparse.OptionParser()
+	parser = optparse.OptionParser(version=("Types File Creator (%%prog) %s" % revision))
 	parser.add_option('-r','-R','--recurse',
 			action="store_true",
 			default=False,
@@ -1258,13 +1260,13 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
-385
+389
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r328                                                           ##
+## RevTag:: r330                                                           ##
 
 Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -1565,6 +1567,10 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r330 : 16th September 2009 : Minor Documentation update.
+
+r329 : 16th September 2009 : Added revision output to mktypes.
 
 r328 : 16th September 2009 : Fix for bug with path finding on Windows where
                              directories in the path end in a backslash.
