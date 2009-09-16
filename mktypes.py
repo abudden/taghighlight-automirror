@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   4th September 2009   ##
-## RevTag:: r320                 ##
+## Date::   16th September 2009  ##
+## RevTag:: r329                 ##
 
 import os
 import sys
@@ -10,6 +10,8 @@ import re
 import fnmatch
 import glob
 import subprocess
+
+revision = "## RevTag:: r329 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -435,7 +437,7 @@ def CreateTypesFile(config, Parameters, options):
 
 def main():
 	import optparse
-	parser = optparse.OptionParser()
+	parser = optparse.OptionParser(version=("Types File Creator (%%prog) %s" % revision))
 	parser.add_option('-r','-R','--recurse',
 			action="store_true",
 			default=False,
