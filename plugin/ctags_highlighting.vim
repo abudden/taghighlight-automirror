@@ -1,15 +1,15 @@
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   16th September 2009     ##
-"## RevTag:: r328                    ##
+"## Date::   9th October 2009        ##
+"## RevTag:: r337                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r328 ##"
-let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r328      ##', '\1', '')
+let s:CTagsHighlighterVersion = "## RevTag:: r337 ##"
+let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r337      ##', '\1', '')
 
 if !exists('g:VIMFILESDIR')
 	if has("unix")
@@ -230,6 +230,8 @@ func! s:FindExePath(file)
 			throw "Cannot find file " . short_file
 		endif
 	endif
+
+	let file_path = substitute(file_path, '\\', '/', 'g')
 
 	return file_path
 endfunc
