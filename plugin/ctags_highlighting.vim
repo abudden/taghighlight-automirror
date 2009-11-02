@@ -1,15 +1,15 @@
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   9th October 2009        ##
-"## RevTag:: r337                    ##
+"## Date::   2nd November 2009       ##
+"## RevTag:: r340                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r337 ##"
-let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r337      ##', '\1', '')
+let s:CTagsHighlighterVersion = "## RevTag:: r340 ##"
+let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r340      ##', '\1', '')
 
 if !exists('g:VIMFILESDIR')
 	if has("unix")
@@ -160,6 +160,7 @@ function! ReadTypes(suffix)
 		endif
 	endif
 
+	" Restore the view
 	call winrestview(savedView)
 endfunction
 

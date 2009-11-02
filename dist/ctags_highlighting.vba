@@ -2,19 +2,19 @@
 UseVimball
 finish
 plugin/ctags_highlighting.vim	[[[1
-323
+328
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   16th September 2009     ##
-"## RevTag:: r328                    ##
+"## Date::   2nd November 2009       ##
+"## RevTag:: r340                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r328 ##"
-let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r328      ##', '\1', '')
+let s:CTagsHighlighterVersion = "## RevTag:: r340 ##"
+let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r340      ##', '\1', '')
 
 if !exists('g:VIMFILESDIR')
 	if has("unix")
@@ -164,6 +164,9 @@ function! ReadTypes(suffix)
 			endif
 		endif
 	endif
+
+	" Restore the view
+	call winrestview(savedView)
 endfunction
 
 func! s:Debug_Print(level, message)
@@ -235,6 +238,8 @@ func! s:FindExePath(file)
 			throw "Cannot find file " . short_file
 		endif
 	endif
+
+	let file_path = substitute(file_path, '\\', '/', 'g')
 
 	return file_path
 endfunc
@@ -1260,13 +1265,13 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
-389
+391
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r330                                                           ##
+## RevTag:: r340                                                           ##
 
 Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -1567,6 +1572,8 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r340 : 2nd November 2009   : Added missing winrestview().
 
 r330 : 16th September 2009 : Minor Documentation update.
 
