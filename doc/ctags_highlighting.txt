@@ -305,6 +305,8 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
 
+r339 : 2nd November 2009   : Added missing winrestview()
+
 r330 : 16th September 2009 : Minor Documentation update.
 
 r329 : 16th September 2009 : Added revision output to mktypes.

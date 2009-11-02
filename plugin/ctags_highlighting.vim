@@ -159,6 +159,8 @@ function! ReadTypes(suffix)
 			endif
 		endif
 	endif
+
+	call winrestview(savedView)
 endfunction
 
 func! s:Debug_Print(level, message)
