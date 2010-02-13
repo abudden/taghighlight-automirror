@@ -1,15 +1,15 @@
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   2nd November 2009       ##
-"## RevTag:: r340                    ##
+"## Date::   13th February 2010      ##
+"## RevTag:: r382                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r340 ##"
-let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r340      ##', '\1', '')
+let s:CTagsHighlighterVersion = "## RevTag:: r382 ##"
+let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r382      ##', '\1', '')
 
 if !exists('g:VIMFILESDIR')
 	if has("unix")
@@ -35,14 +35,14 @@ endif
 " These should only be included if editing a wx or qt file
 " They should also be updated to include all functions etc, not just
 " typedefs
-let g:wxTypesFile = shellescape(g:VIMFILESDIR . "types_wx.vim")
-let g:qtTypesFile = shellescape(g:VIMFILESDIR . "types_qt4.vim")
-let g:wxPyTypesFile = shellescape(g:VIMFILESDIR . "types_wxpy.vim")
+let g:wxTypesFile = escape(g:VIMFILESDIR . "types_wx.vim", ' \,')
+let g:qtTypesFile = escape(g:VIMFILESDIR . "types_qt4.vim", ' \,')
+let g:wxPyTypesFile = escape(g:VIMFILESDIR . "types_wxpy.vim", ' \,')
 
 " These should only be included if editing a wx or qt file
-let g:wxTagsFile = shellescape(g:VIMFILESDIR . 'tags_wx')
-let g:qtTagsFile = shellescape(g:VIMFILESDIR . 'tags_qt4')
-let g:wxPyTagsFile = shellescape(g:VIMFILESDIR . 'tags_wxpy')
+let g:wxTagsFile = escape(g:VIMFILESDIR . 'tags_wx', ' \,')
+let g:qtTagsFile = escape(g:VIMFILESDIR . 'tags_qt4', ' \,')
+let g:wxPyTagsFile = escape(g:VIMFILESDIR . 'tags_wxpy', ' \,')
 
 " Update types & tags - called with a ! recurses
 command! -bang -bar UpdateTypesFile silent call UpdateTypesFile(<bang>0, 0) | 
@@ -98,12 +98,17 @@ endfunction
 function! ReadTypes(suffix)
 	let savedView = winsaveview()
 
+	let file = '<afile>'
+	if len(expand(file)) == 0
+		let file = '%'
+	endif
+
 	if exists('b:NoTypeParsing')
 		return
 	endif
 	if exists('g:TypeParsingSkipList')
-		let basename = expand('<afile>:p:t')
-		let fullname = expand('<afile>:p')
+		let basename = expand(file . ':p:t')
+		let fullname = expand(file . ':p')
 		if index(g:TypeParsingSkipList, basename) != -1
 			return
 		endif
@@ -111,11 +116,11 @@ function! ReadTypes(suffix)
 			return
 		endif
 	endif
-	let fname = expand('<afile>:p:h') . '/types_' . a:suffix . '.vim'
+	let fname = expand(file . ':p:h') . '/types_' . a:suffix . '.vim'
 	if filereadable(fname)
 		exe 'so ' . fname
 	endif
-	let fname = expand('<afile>:p:h:h') . '/types_' . a:suffix . '.vim'
+	let fname = expand(file . ':p:h:h') . '/types_' . a:suffix . '.vim'
 	if filereadable(fname)
 		exe 'so ' . fname
 	endif
@@ -125,7 +130,7 @@ function! ReadTypes(suffix)
 	endif
 
 	" Open default source files
-	if index(['cpp', 'h', 'hpp'], expand('<afile>:e')) != -1
+	if index(['cpp', 'h', 'hpp'], expand(file . ':e')) != -1
 		" This is a C++ source file
 		call cursor(1,1)
 		if search('^\s*#include\s\+<wx/', 'nc', 30)
@@ -138,15 +143,16 @@ function! ReadTypes(suffix)
 		endif
 
 		call cursor(1,1)
-		if search('^\s*#include\s\+<q', 'nc', 30)
+		if search('\c^\s*#include\s\+<q', 'nc', 30)
 			if filereadable(g:qtTypesFile)
 				execute 'so ' . g:qtTypesFile
 			endif
 			if filereadable(g:qtTagsFile)
 				execute 'setlocal tags+=' . g:qtTagsFile
 			endif
+		else
 		endif
-	elseif index(['py', 'pyw'], expand('<afile>:e')) != -1
+	elseif index(['py', 'pyw'], expand(file . ':e')) != -1
 		" This is a python source file
 
 		call cursor(1,1)

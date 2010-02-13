@@ -3,7 +3,7 @@
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r340                                                           ##
+## RevTag:: r382                                                           ##
 
 Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -304,6 +304,9 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r382 : 13th February 2010  : Fixed escaping of paths and operation of
+                             ReadTypes when not in an autocommand.
 
 r340 : 2nd November 2009   : Added missing winrestview().
 
