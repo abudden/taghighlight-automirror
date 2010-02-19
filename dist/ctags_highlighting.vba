@@ -6,15 +6,15 @@ plugin/ctags_highlighting.vim	[[[1
 " ctags_highlighting
 "   Author:  A. S. Budden
 "## Date::   19th February 2010      ##
-"## RevTag:: r384                    ##
+"## RevTag:: r387                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r384 ##"
-let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r384      ##', '\1', '')
+let s:CTagsHighlighterVersion = "## RevTag:: r387 ##"
+let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r387      ##', '\1', '')
 
 if !exists('g:VIMFILESDIR')
 	let g:VIMFILESDIR = fnamemodify(globpath(&rtp, 'mktypes.py'), ':p:h')
@@ -311,7 +311,7 @@ func! UpdateTypesFile(recurse, skiptags)
 	let sysoutput = system(sysroot . syscmd) 
 	echo sysroot . syscmd
 	if sysoutput =~ 'python.*is not recognized as an internal or external command'
-		let sysroot = g:VIMFILESDIR . 'extra_source/mktypes/dist/mktypes.exe'
+		let sysroot = g:VIMFILESDIR . '/extra_source/mktypes/dist/mktypes.exe'
 		let sysoutput = sysoutput . "\nUsing compiled mktypes\n" . system(sysroot . syscmd)
 	endif
 
@@ -1256,13 +1256,13 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
-401
+403
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r384                                                           ##
+## RevTag:: r387                                                           ##
 
 Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -1563,6 +1563,8 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r387 : 20th February 2010  : Fixed VIMFILESDIR typo.
 
 r384 : 19th February 2010  : Improvements to VIMFILESDIR identification.
                              Re-architecture of type definitions to make
