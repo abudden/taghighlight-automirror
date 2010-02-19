@@ -1,24 +1,18 @@
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   13th February 2010      ##
-"## RevTag:: r382                    ##
+"## Date::   19th February 2010      ##
+"## RevTag:: r384                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r382 ##"
-let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r382      ##', '\1', '')
+let s:CTagsHighlighterVersion = "## RevTag:: r384 ##"
+let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r384      ##', '\1', '')
 
 if !exists('g:VIMFILESDIR')
-	if has("unix")
-		let g:VIMFILESDIR = $HOME . "/.vim/"
-	endif
-
-	if has("win32")
-		let g:VIMFILESDIR = $VIM . "/vimfiles/"
-	endif
+	let g:VIMFILESDIR = fnamemodify(globpath(&rtp, 'mktypes.py'), ':p:h')
 endif
 
 let g:DBG_None        = 0
@@ -35,14 +29,14 @@ endif
 " These should only be included if editing a wx or qt file
 " They should also be updated to include all functions etc, not just
 " typedefs
-let g:wxTypesFile = escape(g:VIMFILESDIR . "types_wx.vim", ' \,')
-let g:qtTypesFile = escape(g:VIMFILESDIR . "types_qt4.vim", ' \,')
-let g:wxPyTypesFile = escape(g:VIMFILESDIR . "types_wxpy.vim", ' \,')
+let g:wxTypesFile = escape(globpath(&rtp, "types_wx.vim"), ' \,')
+let g:qtTypesFile = escape(globpath(&rtp, "types_qt4.vim"), ' \,')
+let g:wxPyTypesFile = escape(globpath(&rtp, "types_wxpy.vim"), ' \,')
 
 " These should only be included if editing a wx or qt file
-let g:wxTagsFile = escape(g:VIMFILESDIR . 'tags_wx', ' \,')
-let g:qtTagsFile = escape(g:VIMFILESDIR . 'tags_qt4', ' \,')
-let g:wxPyTagsFile = escape(g:VIMFILESDIR . 'tags_wxpy', ' \,')
+let g:wxTagsFile = escape(globpath(&rtp, 'tags_wx'), ' \,')
+let g:qtTagsFile = escape(globpath(&rtp, 'tags_qt4'), ' \,')
+let g:wxPyTagsFile = escape(globpath(&rtp, 'tags_wxpy'), ' \,')
 
 " Update types & tags - called with a ! recurses
 command! -bang -bar UpdateTypesFile silent call UpdateTypesFile(<bang>0, 0) | 
@@ -332,3 +326,85 @@ func! UpdateTypesFile(recurse, skiptags)
 
 endfunc
 
+let tagnames = 
+			\ [
+			\ 		'CTagsAnchor',
+			\ 		'CTagsAutoCommand',
+			\ 		'CTagsBlockData',
+			\ 		'CTagsClass',
+			\ 		'CTagsCommand',
+			\ 		'CTagsCommonBlocks',
+			\ 		'CTagsComponent',
+			\ 		'CTagsConstant',
+			\ 		'CTagsCursor',
+			\ 		'CTagsData',
+			\ 		'CTagsDefinedName',
+			\ 		'CTagsDomain',
+			\ 		'CTagsEntity',
+			\ 		'CTagsEntryPoint',
+			\ 		'CTagsEnumeration',
+			\ 		'CTagsEnumerationName',
+			\ 		'CTagsEnumerationValue',
+			\ 		'CTagsEnumerator',
+			\ 		'CTagsEnumeratorName',
+			\ 		'CTagsEvent',
+			\ 		'CTagsException',
+			\ 		'CTagsExtern',
+			\ 		'CTagsFeature',
+			\ 		'CTagsField',
+			\ 		'CTagsFileDescription',
+			\ 		'CTagsFormat',
+			\ 		'CTagsFragment',
+			\ 		'CTagsFunction',
+			\ 		'CTagsFunctionObject',
+			\ 		'CTagsGlobalConstant',
+			\ 		'CTagsGlobalVariable',
+			\ 		'CTagsGroupItem',
+			\ 		'CTagsIndex',
+			\ 		'CTagsInterface',
+			\ 		'CTagsInterfaceComponent',
+			\ 		'CTagsLabel',
+			\ 		'CTagsLocalVariable',
+			\ 		'CTagsMacro',
+			\ 		'CTagsMap',
+			\ 		'CTagsMember',
+			\ 		'CTagsMethod',
+			\ 		'CTagsModule',
+			\ 		'CTagsNamelist',
+			\ 		'CTagsNamespace',
+			\ 		'CTagsNetType',
+			\ 		'CTagsPackage',
+			\ 		'CTagsParagraph',
+			\ 		'CTagsPattern',
+			\ 		'CTagsPort',
+			\ 		'CTagsProgram',
+			\ 		'CTagsProperty',
+			\ 		'CTagsPrototype',
+			\ 		'CTagsPublication',
+			\ 		'CTagsRecord',
+			\ 		'CTagsRegisterType',
+			\ 		'CTagsSection',
+			\ 		'CTagsService',
+			\ 		'CTagsSet',
+			\ 		'CTagsSignature',
+			\ 		'CTagsSingleton',
+			\ 		'CTagsSlot',
+			\ 		'CTagsStructure',
+			\ 		'CTagsSubroutine',
+			\ 		'CTagsSynonym',
+			\ 		'CTagsTable',
+			\ 		'CTagsTask',
+			\ 		'CTagsTrigger',
+			\ 		'CTagsType',
+			\ 		'CTagsTypeComponent',
+			\ 		'CTagsUnion',
+			\ 		'CTagsVariable',
+			\ 		'CTagsView',
+			\ 		'CTagsVirtualPattern',
+			\ ]
+
+for tagname in tagnames
+	let simplename = substitute(tagname, '^CTags', '', '')
+	exe 'hi default link' tagname simplename
+	exe 'hi default link' simplename 'Keyword'
+endfor
