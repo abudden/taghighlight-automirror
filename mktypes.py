@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #  Author:  A. S. Budden
 ## Date::   2nd March 2010       ##
-## RevTag:: r390                 ##
+## RevTag:: r391                 ##
 
 import os
 import sys
@@ -11,7 +11,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r390 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r391 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -583,7 +583,7 @@ def GetKindList():
 	{
 		'ctags_c': 'CTagsClass',
 		'ctags_d': 'CTagsDefinedName',
-		'ctags_e': 'CTagsEnumerator',
+		'ctags_e': 'CTagsEnumerationValue',
 		'ctags_f': 'CTagsFunction',
 		'ctags_g': 'CTagsEnumerationName',
 		'ctags_k': 'CTagsConstant',
@@ -601,7 +601,7 @@ def GetKindList():
 	{
 		'ctags_c': 'CTagsClass',
 		'ctags_d': 'CTagsDefinedName',
-		'ctags_e': 'CTagsEnumerator',
+		'ctags_e': 'CTagsEnumerationValue',
 		'ctags_E': 'CTagsEvent',
 		'ctags_f': 'CTagsField',
 		'ctags_g': 'CTagsEnumerationName',
