@@ -2,19 +2,19 @@
 UseVimball
 finish
 plugin/ctags_highlighting.vim	[[[1
-410
+412
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   19th February 2010      ##
-"## RevTag:: r387                    ##
+"## Date::   2nd March 2010          ##
+"## RevTag:: r390                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r387 ##"
-let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r387      ##', '\1', '')
+let s:CTagsHighlighterVersion = "## RevTag:: r390 ##"
+let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r390      ##', '\1', '')
 
 if !exists('g:VIMFILESDIR')
 	let g:VIMFILESDIR = fnamemodify(globpath(&rtp, 'mktypes.py'), ':p:h')
@@ -68,6 +68,7 @@ autocmd BufRead,BufNewFile *.pyw    call ReadTypes('py')
 autocmd BufRead,BufNewFile *.rb     call ReadTypes('ruby')
 autocmd BufRead,BufNewFile *.vhd*   call ReadTypes('vhdl')
 autocmd BufRead,BufNewFile *.php    call ReadTypes('php')
+autocmd BufRead,BufNewFile *.cs     call ReadTypes('cs')
 
 command! ReadTypes call ReadTypesAutoDetect()
 
@@ -80,6 +81,7 @@ function! ReadTypesAutoDetect()
 				\     'java'         : "java",
 				\     'pyw\?'        : "py",
 				\     'rb'           : "ruby",
+				\     'cs'           : "cs",
 				\     'php'          : "php",
 				\     'vhdl\?'       : "vhdl",
 				\ }
@@ -414,11 +416,11 @@ for tagname in tagnames
 	exe 'hi default link' simplename 'Keyword'
 endfor
 mktypes.py	[[[1
-833
+842
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   19th February 2010   ##
-## RevTag:: r384                 ##
+## Date::   2nd March 2010       ##
+## RevTag:: r391                 ##
 
 import os
 import sys
@@ -428,7 +430,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r384 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r391 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -533,10 +535,10 @@ def CreateTagsFile(config, languages, options):
 
 	ctags_cmd = '%s %s %s %s' % (ctags_exe, config['CTAGS_OPTIONS'], "--languages=" + ",".join(ctags_languages), " ".join(config['CTAGS_FILES']))
 
-#   fh = open('ctags_cmd.txt', 'w')
-#   fh.write(ctags_cmd)
-#   fh.write('\n')
-#   fh.close()
+#	fh = open('ctags_cmd.txt', 'w')
+#	fh.write(ctags_cmd)
+#	fh.write('\n')
+#	fh.close()
 
 	#os.system(ctags_cmd)
 	subprocess.call(ctags_cmd, shell = (os.name != 'nt'))
@@ -578,6 +580,9 @@ def GetLanguageParameters(lang):
 	elif lang == 'php':
 		params['suffix'] = 'php'
 		params['extensions'] = r'php'
+	elif lang == 'c#':
+		params['suffix'] = 'cs'
+		params['extensions'] = 'cs'
 	else:
 		raise AttributeError('Language not recognised %s' % lang)
 	return params
@@ -702,20 +707,29 @@ def CreateTypesFile(config, Parameters, options):
 	matchEntries = []
 	vimtypes_entries = []
 
-	vimtypes_entries.append('silent! syn clear ctags_c ctags_d ctags_e ctags_f ctags_p ctags_g ctags_m ctags_s ctags_t ctags_u ctags_v')
+	clear_string = 'silent! syn clear '
 
 	patternCharacters = "/@#':"
 	charactersToEscape = '\\' + '~[]*.$^'
-	UsedTypes = [
-			'ctags_c', 'ctags_d', 'ctags_e', 'ctags_f',
-			'ctags_g', 'ctags_k', 'ctags_m', 'ctags_p',
-			'ctags_s', 'ctags_t', 'ctags_u', 'ctags_v'
-			]
+	KindList = GetKindList()[Parameters['suffix']]
 
-	if options.include_locals:
-		UsedTypes.append('ctags_l')
-		vimtypes_entries.append('silent! syn clear ctags_l')
-	
+	if not options.include_locals:
+		remove_list = []
+		for key, value in KindList.iteritems():
+			if value == 'CTagsLocalVariable':
+				remove_list.append(key)
+		for key in remove_list:
+			try:
+				del(KindList[key])
+			except KeyError:
+				pass
+
+	UsedTypes = KindList.keys()
+
+	clear_string += " ".join(UsedTypes)
+
+	vimtypes_entries.append(clear_string)
+
 
 	# Specified highest priority first
 	Priority = [
@@ -724,9 +738,6 @@ def CreateTypesFile(config, Parameters, options):
 			'ctags_g', 'ctags_k', 'ctags_v',
 			'ctags_u', 'ctags_m', 'ctags_s',
 			]
-
-	if options.include_locals:
-		Priority.append('ctags_l')
 
 	# Reverse the list as highest priority should be last!
 	Priority.reverse()
@@ -916,7 +927,7 @@ def main():
 
 	CreateCScopeFile(options)
 
-	full_language_list = ['c', 'java', 'perl', 'python', 'ruby', 'vhdl', 'php']
+	full_language_list = ['c', 'java', 'perl', 'python', 'ruby', 'vhdl', 'php', 'c#']
 	if len(options.languages) == 0:
 		# Include all languages
 		language_list = full_language_list
@@ -991,7 +1002,7 @@ def GetKindList():
 	{
 		'ctags_c': 'CTagsClass',
 		'ctags_d': 'CTagsDefinedName',
-		'ctags_e': 'CTagsEnumerator',
+		'ctags_e': 'CTagsEnumerationValue',
 		'ctags_f': 'CTagsFunction',
 		'ctags_g': 'CTagsEnumerationName',
 		'ctags_k': 'CTagsConstant',
@@ -1005,11 +1016,11 @@ def GetKindList():
 		'ctags_v': 'CTagsGlobalVariable',
 		'ctags_x': 'CTagsExtern',
 	}
-	LanguageKinds['c#'] = \
+	LanguageKinds['cs'] = \
 	{
 		'ctags_c': 'CTagsClass',
 		'ctags_d': 'CTagsDefinedName',
-		'ctags_e': 'CTagsEnumerator',
+		'ctags_e': 'CTagsEnumerationValue',
 		'ctags_E': 'CTagsEvent',
 		'ctags_f': 'CTagsField',
 		'ctags_g': 'CTagsEnumerationName',
@@ -1256,13 +1267,13 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
-403
+408
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r387                                                           ##
+## RevTag:: r391                                                           ##
 
 Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -1563,6 +1574,11 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r391 : 2nd March 2010      : Fix for ctags names.
+
+r390 : 2nd March 2010      : Attempted improvements to code including support
+                             for C# (thanks to Aleksey Baibarin).
 
 r387 : 20th February 2010  : Fixed VIMFILESDIR typo.
 
