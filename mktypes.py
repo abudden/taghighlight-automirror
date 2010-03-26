@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   2nd March 2010       ##
-## RevTag:: r391                 ##
+## Date::   26th March 2010      ##
+## RevTag:: r394                 ##
 
 import os
 import sys
@@ -11,7 +11,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r391 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r394 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -142,27 +142,35 @@ def GetLanguageParameters(lang):
 	params['iskeyword'] = '@,48-57,_,192-255'
 	if lang == 'c':
 		params['suffix'] = 'c'
+		params['name'] = 'c'
 		params['extensions'] = r'[ch]\w*'
 	elif lang == 'python':
 		params['suffix'] = 'py'
+		params['name'] = 'python'
 		params['extensions'] = r'pyw?'
 	elif lang == 'ruby':
 		params['suffix'] = 'ruby'
+		params['name'] = 'ruby'
 		params['extensions'] = 'rb'
 	elif lang == 'java':
 		params['suffix'] = 'java'
+		params['name'] = 'java'
 		params['extensions'] = 'java'
 	elif lang == 'perl':
 		params['suffix'] = 'pl'
+		params['name'] = 'perl'
 		params['extensions'] = r'p[lm]'
 	elif lang == 'vhdl':
 		params['suffix'] = 'vhdl'
+		params['name'] = 'vhdl'
 		params['extensions'] = r'vhdl?'
 	elif lang == 'php':
 		params['suffix'] = 'php'
+		params['name'] = 'php'
 		params['extensions'] = r'php'
 	elif lang == 'c#':
 		params['suffix'] = 'cs'
+		params['name'] = 'c#'
 		params['extensions'] = 'cs'
 	else:
 		raise AttributeError('Language not recognised %s' % lang)
@@ -292,7 +300,7 @@ def CreateTypesFile(config, Parameters, options):
 
 	patternCharacters = "/@#':"
 	charactersToEscape = '\\' + '~[]*.$^'
-	KindList = GetKindList()[Parameters['suffix']]
+	KindList = GetKindList()[Parameters['name']]
 
 	if not options.include_locals:
 		remove_list = []
@@ -394,7 +402,7 @@ def CreateTypesFile(config, Parameters, options):
 
 	for thisType in allTypes:
 		if thisType in UsedTypes:
-			vimtypes_entries.append('hi link ' + thisType + ' ' + LanguageKinds[Parameters['suffix']][thisType])
+			vimtypes_entries.append('hi link ' + thisType + ' ' + LanguageKinds[Parameters['name']][thisType])
 			if AddList != 'add=':
 				AddList += ','
 			AddList += thisType;
@@ -597,7 +605,7 @@ def GetKindList():
 		'ctags_v': 'CTagsGlobalVariable',
 		'ctags_x': 'CTagsExtern',
 	}
-	LanguageKinds['cs'] = \
+	LanguageKinds['c#'] = \
 	{
 		'ctags_c': 'CTagsClass',
 		'ctags_d': 'CTagsDefinedName',
