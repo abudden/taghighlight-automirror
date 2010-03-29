@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   26th March 2010      ##
-## RevTag:: r394                 ##
+## Date::   29th March 2010      ##
+## RevTag:: r396                 ##
 
 import os
 import sys
@@ -11,7 +11,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r394 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r396 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -31,8 +31,7 @@ r'''
 	.*                # If it is followed by a tab, soak up the rest of the line; replace with the syntax keyword line
 ''', re.VERBOSE)
 
-field_trim = re.compile(r'ctags_[pF]')
-field_keyword = re.compile(r'syntax keyword (?P<kind>ctags_\w) (?P<keyword>.*)')
+field_keyword = re.compile(r'syntax keyword (?P<kind>CTags\w+) (?P<keyword>.*)')
 field_const = re.compile(r'\bconst\b')
 
 vim_synkeyword_arguments = [
@@ -251,6 +250,7 @@ def CreateTypesFile(config, Parameters, options):
 	else:
 		LocalTagType = ''
 
+	KindList = GetKindList()[Parameters['name']]
 	ctags_entries = []
 	while 1:
 		line = p.readline()
@@ -262,13 +262,13 @@ def CreateTypesFile(config, Parameters, options):
 
 		m = field_processor.match(line.strip())
 		if m is not None:
-			vimmed_line = 'syntax keyword ctags_' + m.group('kind') + ' ' + m.group('keyword')
+			vimmed_line = 'syntax keyword ' + KindList['ctags_' + m.group('kind')] + ' ' + m.group('keyword')
 
 			if options.parse_constants and (Parameters['suffix'] == 'c') and (m.group('kind') == 'v'):
 				if field_const.search(m.group('search')) is not None:
-					vimmed_line = vimmed_line.replace('ctags_v', 'ctags_k')
+					vimmed_line = vimmed_line.replace('CTagsGlobalVariable', 'CTagsConstant')
 
-			if not field_trim.match(vimmed_line):
+			if Parameters['suffix'] != 'c' or m.group('kind') != 'p':
 				ctags_entries.append(vimmed_line)
 	
 	p.close()
@@ -300,7 +300,6 @@ def CreateTypesFile(config, Parameters, options):
 
 	patternCharacters = "/@#':"
 	charactersToEscape = '\\' + '~[]*.$^'
-	KindList = GetKindList()[Parameters['name']]
 
 	if not options.include_locals:
 		remove_list = []
@@ -313,7 +312,7 @@ def CreateTypesFile(config, Parameters, options):
 			except KeyError:
 				pass
 
-	UsedTypes = KindList.keys()
+	UsedTypes = KindList.values()
 
 	clear_string += " ".join(UsedTypes)
 
@@ -322,10 +321,10 @@ def CreateTypesFile(config, Parameters, options):
 
 	# Specified highest priority first
 	Priority = [
-			'ctags_c', 'ctags_d', 'ctags_t',
-			'ctags_p', 'ctags_f', 'ctags_e',
-			'ctags_g', 'ctags_k', 'ctags_v',
-			'ctags_u', 'ctags_m', 'ctags_s',
+			'CTagsClass', 'CTagsDefinedName', 'CTagsType',
+			'CTagsFunction', 'CTagsEnumerationValue',
+			'CTagsEnumeratorName', 'CTagsConstant', 'CTagsGlobalVariable',
+			'CTagsUnion', 'CTagsMember', 'CTagsStructure',
 			]
 
 	# Reverse the list as highest priority should be last!
@@ -341,7 +340,7 @@ def CreateTypesFile(config, Parameters, options):
 			typeList.remove(thisType)
 	for thisType in typeList:
 		allTypes.append(thisType)
-#   print allTypes
+	#print allTypes
 
 	for thisType in allTypes:
 		if thisType not in UsedTypes:
@@ -402,7 +401,6 @@ def CreateTypesFile(config, Parameters, options):
 
 	for thisType in allTypes:
 		if thisType in UsedTypes:
-			vimtypes_entries.append('hi link ' + thisType + ' ' + LanguageKinds[Parameters['name']][thisType])
 			if AddList != 'add=':
 				AddList += ','
 			AddList += thisType;
