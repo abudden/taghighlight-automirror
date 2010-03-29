@@ -416,11 +416,11 @@ for tagname in tagnames
 	exe 'hi default link' simplename 'Keyword'
 endfor
 mktypes.py	[[[1
-850
+848
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   26th March 2010      ##
-## RevTag:: r394                 ##
+## Date::   29th March 2010      ##
+## RevTag:: r396                 ##
 
 import os
 import sys
@@ -430,7 +430,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r394 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r396 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -450,8 +450,7 @@ r'''
 	.*                # If it is followed by a tab, soak up the rest of the line; replace with the syntax keyword line
 ''', re.VERBOSE)
 
-field_trim = re.compile(r'ctags_[pF]')
-field_keyword = re.compile(r'syntax keyword (?P<kind>ctags_\w) (?P<keyword>.*)')
+field_keyword = re.compile(r'syntax keyword (?P<kind>CTags\w+) (?P<keyword>.*)')
 field_const = re.compile(r'\bconst\b')
 
 vim_synkeyword_arguments = [
@@ -670,6 +669,7 @@ def CreateTypesFile(config, Parameters, options):
 	else:
 		LocalTagType = ''
 
+	KindList = GetKindList()[Parameters['name']]
 	ctags_entries = []
 	while 1:
 		line = p.readline()
@@ -681,13 +681,13 @@ def CreateTypesFile(config, Parameters, options):
 
 		m = field_processor.match(line.strip())
 		if m is not None:
-			vimmed_line = 'syntax keyword ctags_' + m.group('kind') + ' ' + m.group('keyword')
+			vimmed_line = 'syntax keyword ' + KindList['ctags_' + m.group('kind')] + ' ' + m.group('keyword')
 
 			if options.parse_constants and (Parameters['suffix'] == 'c') and (m.group('kind') == 'v'):
 				if field_const.search(m.group('search')) is not None:
-					vimmed_line = vimmed_line.replace('ctags_v', 'ctags_k')
+					vimmed_line = vimmed_line.replace('CTagsGlobalVariable', 'CTagsConstant')
 
-			if not field_trim.match(vimmed_line):
+			if Parameters['suffix'] != 'c' or m.group('kind') != 'p':
 				ctags_entries.append(vimmed_line)
 	
 	p.close()
@@ -719,7 +719,6 @@ def CreateTypesFile(config, Parameters, options):
 
 	patternCharacters = "/@#':"
 	charactersToEscape = '\\' + '~[]*.$^'
-	KindList = GetKindList()[Parameters['name']]
 
 	if not options.include_locals:
 		remove_list = []
@@ -732,7 +731,7 @@ def CreateTypesFile(config, Parameters, options):
 			except KeyError:
 				pass
 
-	UsedTypes = KindList.keys()
+	UsedTypes = KindList.values()
 
 	clear_string += " ".join(UsedTypes)
 
@@ -741,10 +740,10 @@ def CreateTypesFile(config, Parameters, options):
 
 	# Specified highest priority first
 	Priority = [
-			'ctags_c', 'ctags_d', 'ctags_t',
-			'ctags_p', 'ctags_f', 'ctags_e',
-			'ctags_g', 'ctags_k', 'ctags_v',
-			'ctags_u', 'ctags_m', 'ctags_s',
+			'CTagsClass', 'CTagsDefinedName', 'CTagsType',
+			'CTagsFunction', 'CTagsEnumerationValue',
+			'CTagsEnumeratorName', 'CTagsConstant', 'CTagsGlobalVariable',
+			'CTagsUnion', 'CTagsMember', 'CTagsStructure',
 			]
 
 	# Reverse the list as highest priority should be last!
@@ -760,7 +759,7 @@ def CreateTypesFile(config, Parameters, options):
 			typeList.remove(thisType)
 	for thisType in typeList:
 		allTypes.append(thisType)
-#   print allTypes
+	#print allTypes
 
 	for thisType in allTypes:
 		if thisType not in UsedTypes:
@@ -821,7 +820,6 @@ def CreateTypesFile(config, Parameters, options):
 
 	for thisType in allTypes:
 		if thisType in UsedTypes:
-			vimtypes_entries.append('hi link ' + thisType + ' ' + LanguageKinds[Parameters['name']][thisType])
 			if AddList != 'add=':
 				AddList += ','
 			AddList += thisType;
@@ -1275,13 +1273,13 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
-410
+413
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r394                                                           ##
+## RevTag:: r396                                                           ##
 
 Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -1582,6 +1580,9 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r396 : 29th March 2010     : Factored out old ctags_[a-z] types to improve
+                             language support.
 
 r394 : 26th March 2010     : Fix for python use.
 
