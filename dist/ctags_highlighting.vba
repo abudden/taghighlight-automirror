@@ -416,11 +416,11 @@ for tagname in tagnames
 	exe 'hi default link' simplename 'Keyword'
 endfor
 mktypes.py	[[[1
-848
+849
 #!/usr/bin/env python
 #  Author:  A. S. Budden
 ## Date::   29th March 2010      ##
-## RevTag:: r396                 ##
+## RevTag:: r398                 ##
 
 import os
 import sys
@@ -430,7 +430,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r396 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r398 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -1140,6 +1140,7 @@ def GetKindList():
 	{
 		'ctags_c': 'CTagsClass',
 		'ctags_f': 'CTagsFunction',
+		'ctags_i': 'CTagsImport',
 		'ctags_m': 'CTagsMember',
 		'ctags_v': 'CTagsGlobalVariable',
 	}
@@ -1273,13 +1274,13 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
-413
+415
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r396                                                           ##
+## RevTag:: r398                                                           ##
 
 Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -1580,6 +1581,8 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r398 : 29th March 2010     : Added support for python import in the listing.
 
 r396 : 29th March 2010     : Factored out old ctags_[a-z] types to improve
                              language support.
