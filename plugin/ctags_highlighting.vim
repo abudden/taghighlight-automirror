@@ -1,15 +1,15 @@
 " ctags_highlighting
 "   Author:  A. S. Budden
 "## Date::   9th September 2010      ##
-"## RevTag:: r409                    ##
+"## RevTag:: r410                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r409 ##"
-let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r409      ##', '\1', '')
+let s:CTagsHighlighterVersion = "## RevTag:: r410 ##"
+let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r410        ##', '\1', '')
 
 if !exists('g:VIMFILESDIR')
 	let g:VIMFILESDIR = fnamemodify(globpath(&rtp, 'mktypes.py'), ':p:h')
@@ -241,6 +241,16 @@ func! s:FindExePath(file)
 	return file_path
 endfunc
 
+func! s:GetOption(name, default)
+	let opt = a:default
+	if exists('g:' . a:name)
+		exe 'let opt = g:' . a:name
+	endif
+	if exists('b:' . a:name)
+		exe 'let opt = b:' . a:name
+	endif
+	return opt
+endfunction
 
 func! UpdateTypesFile(recurse, skiptags)
 	let s:vrc = globpath(&rtp, "mktypes.py")
@@ -276,34 +286,24 @@ func! UpdateTypesFile(recurse, skiptags)
 		endfor
 	endif
 
-	if exists('b:TypesFileIncludeSynMatches')
-		if b:TypesFileIncludeSynMatches == 1
-			let syscmd .= ' --include-invalid-keywords-as-matches'
-		endif
+	let TypesFileIncludeSynMatches = s:GetOption('TypesFileIncludeSynMatches', 1)
+	if TypesFileIncludeSynMatches == 1
+		let syscmd .= ' --include-invalid-keywords-as-matches'
 	endif
 
-	if exists('b:TypesFileIncludeLocals')
-		if b:TypesFileIncludeLocals == 1
-			let syscmd .= ' --include-locals'
-		endif
+	let TypesFileIncludeLocals = s:GetOption('TypesFileIncludeLocals', 1)
+	if TypesFileIncludeLocals == 1
+		let syscmd .= ' --include-locals'
 	endif
 
-	if exists('b:TypesFileDoNotGenerateTags')
-		if b:TypesFileDoNotGenerateTags == 1
-			let syscmd .= ' --use-existing-tagfile'
-		endif
+	let TypesFileDoNotGenerateTags = s:GetOption('TypesFileDoNotGenerateTags', 0)
+	if TypesFileDoNotGenerateTags == 1
+		let syscmd .= ' --use-existing-tagfile'
 	elseif a:skiptags == 1
 		let syscmd .= ' --use-existing-tagfile'
 	endif
 
-	let CheckForCScopeFiles = 0
-	if exists('g:CheckForCScopeFiles')
-		let CheckForCScopeFiles = g:CheckForCScopeFiles
-	endif
-	if exists('b:CheckForCScopeFiles')
-		let CheckForCScopeFiles = b:CheckForCScopeFiles
-	endif
-
+	let CheckForCScopeFiles = s:GetOption('CheckForCScopeFiles', 0)
 	if CheckForCScopeFiles == 1
 		let syscmd .= ' --build-cscopedb-if-cscope-file-exists'
 		let syscmd .= ' --cscope-dir=' 
