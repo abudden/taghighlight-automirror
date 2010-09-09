@@ -1,15 +1,15 @@
 " ctags_highlighting
 "   Author:  A. S. Budden
 "## Date::   9th September 2010      ##
-"## RevTag:: r410                    ##
+"## RevTag:: r411                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r410 ##"
-let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r410        ##', '\1', '')
+let s:CTagsHighlighterVersion = "## RevTag:: r411 ##"
+let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '[#]\{2} RevTag[:]\{2} \(r\d\+\) *[#]\{2}', '\1', '')
 
 if !exists('g:VIMFILESDIR')
 	let g:VIMFILESDIR = fnamemodify(globpath(&rtp, 'mktypes.py'), ':p:h')
