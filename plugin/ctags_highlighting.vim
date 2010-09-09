@@ -1,15 +1,15 @@
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   2nd March 2010          ##
-"## RevTag:: r390                    ##
+"## Date::   9th September 2010      ##
+"## RevTag:: r409                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r390 ##"
-let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r390      ##', '\1', '')
+let s:CTagsHighlighterVersion = "## RevTag:: r409 ##"
+let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r409      ##', '\1', '')
 
 if !exists('g:VIMFILESDIR')
 	let g:VIMFILESDIR = fnamemodify(globpath(&rtp, 'mktypes.py'), ':p:h')
@@ -296,13 +296,19 @@ func! UpdateTypesFile(recurse, skiptags)
 		let syscmd .= ' --use-existing-tagfile'
 	endif
 
+	let CheckForCScopeFiles = 0
+	if exists('g:CheckForCScopeFiles')
+		let CheckForCScopeFiles = g:CheckForCScopeFiles
+	endif
 	if exists('b:CheckForCScopeFiles')
-		if b:CheckForCScopeFiles == 1
-			let syscmd .= ' --build-cscopedb-if-cscope-file-exists'
-			let syscmd .= ' --cscope-dir=' 
-			let cscope_path = s:FindExePath('extra_source/cscope_win/cscope')
-			let syscmd .= cscope_path
-		endif
+		let CheckForCScopeFiles = b:CheckForCScopeFiles
+	endif
+
+	if CheckForCScopeFiles == 1
+		let syscmd .= ' --build-cscopedb-if-cscope-file-exists'
+		let syscmd .= ' --cscope-dir=' 
+		let cscope_path = s:FindExePath('extra_source/cscope_win/cscope')
+		let syscmd .= cscope_path
 	endif
 
 	let sysoutput = system(sysroot . syscmd) 
