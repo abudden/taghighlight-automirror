@@ -246,7 +246,7 @@ def CreateTypesFile(config, Parameters, options):
 	p = open('tags', "r")
 
 	if options.include_locals:
-		LocalTagType = ',ctags_l'
+		LocalTagType = ',CTagsLocalVariable'
 	else:
 		LocalTagType = ''
 
@@ -404,7 +404,6 @@ def CreateTypesFile(config, Parameters, options):
 			if AddList != 'add=':
 				AddList += ','
 			AddList += thisType;
-	AddList += ' '
 
 	if Parameters['suffix'] in ['c',]:
 		vimtypes_entries.append('')
@@ -415,6 +414,10 @@ def CreateTypesFile(config, Parameters, options):
 		vimtypes_entries.append('\tsyn cluster cParenGroup ' + AddList + LocalTagType)
 		vimtypes_entries.append('\tsyn cluster cCppParenGroup ' + AddList + LocalTagType)
 		vimtypes_entries.append('endif')
+
+	if Parameters['suffix'] in ['java',]:
+		vimtypes_entries.append('')
+		vimtypes_entries.append('syn cluster javaTop ' + AddList + LocalTagType)
 
 	try:
 		fh = open(outfile, 'wb')

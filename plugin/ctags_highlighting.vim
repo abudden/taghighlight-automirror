@@ -32,6 +32,8 @@ endif
 let g:wxTypesFile = escape(globpath(&rtp, "types_wx.vim"), ' \,')
 let g:qtTypesFile = escape(globpath(&rtp, "types_qt4.vim"), ' \,')
 let g:wxPyTypesFile = escape(globpath(&rtp, "types_wxpy.vim"), ' \,')
+let g:jdkTypesFile = escape(globpath(&rtp, "types_jdk.vim"), ' \,')
+let g:androidTypesFile = escape(globpath(&rtp, "types_android.vim"), ' \,')
 
 " These should only be included if editing a wx or qt file
 let g:wxTagsFile = escape(globpath(&rtp, 'tags_wx'), ' \,')
@@ -158,6 +160,17 @@ function! ReadTypes(suffix)
 			endif
 			if filereadable(g:wxPyTagsFile)
 				execute 'setlocal tags+=' . g:wxPyTagsFile
+			endif
+		endif
+	elseif index(['java',], expand(file . ':e')) != -1
+		" This is a java source file
+		call cursor(1,1)
+		if filereadable(g:jdkTypesFile)
+			execute 'so ' . g:jdkTypesFile
+		endif
+		if search('^\s*import\s\+android\./', 'nc', 30)
+			if filereadable(g:androidTypesFile)
+				execute 'so ' . g:androidTypesFile
 			endif
 		endif
 	endif
