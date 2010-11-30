@@ -2,19 +2,19 @@
 UseVimball
 finish
 plugin/ctags_highlighting.vim	[[[1
-412
+431
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   2nd March 2010          ##
-"## RevTag:: r390                    ##
+"## Date::   9th September 2010      ##
+"## RevTag:: r411                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r390 ##"
-let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '## RevTag:: r390      ##', '\1', '')
+let s:CTagsHighlighterVersion = "## RevTag:: r411 ##"
+let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '[#]\{2} RevTag[:]\{2} \(r\d\+\) *[#]\{2}', '\1', '')
 
 if !exists('g:VIMFILESDIR')
 	let g:VIMFILESDIR = fnamemodify(globpath(&rtp, 'mktypes.py'), ':p:h')
@@ -37,6 +37,8 @@ endif
 let g:wxTypesFile = escape(globpath(&rtp, "types_wx.vim"), ' \,')
 let g:qtTypesFile = escape(globpath(&rtp, "types_qt4.vim"), ' \,')
 let g:wxPyTypesFile = escape(globpath(&rtp, "types_wxpy.vim"), ' \,')
+let g:jdkTypesFile = escape(globpath(&rtp, "types_jdk.vim"), ' \,')
+let g:androidTypesFile = escape(globpath(&rtp, "types_android.vim"), ' \,')
 
 " These should only be included if editing a wx or qt file
 let g:wxTagsFile = escape(globpath(&rtp, 'tags_wx'), ' \,')
@@ -165,6 +167,17 @@ function! ReadTypes(suffix)
 				execute 'setlocal tags+=' . g:wxPyTagsFile
 			endif
 		endif
+	elseif index(['java',], expand(file . ':e')) != -1
+		" This is a java source file
+		call cursor(1,1)
+		if filereadable(g:jdkTypesFile)
+			execute 'so ' . g:jdkTypesFile
+		endif
+		if search('^\s*import\s\+android\./', 'nc', 30)
+			if filereadable(g:androidTypesFile)
+				execute 'so ' . g:androidTypesFile
+			endif
+		endif
 	endif
 
 	" Restore the view
@@ -246,6 +259,16 @@ func! s:FindExePath(file)
 	return file_path
 endfunc
 
+func! s:GetOption(name, default)
+	let opt = a:default
+	if exists('g:' . a:name)
+		exe 'let opt = g:' . a:name
+	endif
+	if exists('b:' . a:name)
+		exe 'let opt = b:' . a:name
+	endif
+	return opt
+endfunction
 
 func! UpdateTypesFile(recurse, skiptags)
 	let s:vrc = globpath(&rtp, "mktypes.py")
@@ -281,33 +304,29 @@ func! UpdateTypesFile(recurse, skiptags)
 		endfor
 	endif
 
-	if exists('b:TypesFileIncludeSynMatches')
-		if b:TypesFileIncludeSynMatches == 1
-			let syscmd .= ' --include-invalid-keywords-as-matches'
-		endif
+	let TypesFileIncludeSynMatches = s:GetOption('TypesFileIncludeSynMatches', 1)
+	if TypesFileIncludeSynMatches == 1
+		let syscmd .= ' --include-invalid-keywords-as-matches'
 	endif
 
-	if exists('b:TypesFileIncludeLocals')
-		if b:TypesFileIncludeLocals == 1
-			let syscmd .= ' --include-locals'
-		endif
+	let TypesFileIncludeLocals = s:GetOption('TypesFileIncludeLocals', 1)
+	if TypesFileIncludeLocals == 1
+		let syscmd .= ' --include-locals'
 	endif
 
-	if exists('b:TypesFileDoNotGenerateTags')
-		if b:TypesFileDoNotGenerateTags == 1
-			let syscmd .= ' --use-existing-tagfile'
-		endif
+	let TypesFileDoNotGenerateTags = s:GetOption('TypesFileDoNotGenerateTags', 0)
+	if TypesFileDoNotGenerateTags == 1
+		let syscmd .= ' --use-existing-tagfile'
 	elseif a:skiptags == 1
 		let syscmd .= ' --use-existing-tagfile'
 	endif
 
-	if exists('b:CheckForCScopeFiles')
-		if b:CheckForCScopeFiles == 1
-			let syscmd .= ' --build-cscopedb-if-cscope-file-exists'
-			let syscmd .= ' --cscope-dir=' 
-			let cscope_path = s:FindExePath('extra_source/cscope_win/cscope')
-			let syscmd .= cscope_path
-		endif
+	let CheckForCScopeFiles = s:GetOption('CheckForCScopeFiles', 0)
+	if CheckForCScopeFiles == 1
+		let syscmd .= ' --build-cscopedb-if-cscope-file-exists'
+		let syscmd .= ' --cscope-dir=' 
+		let cscope_path = s:FindExePath('extra_source/cscope_win/cscope')
+		let syscmd .= cscope_path
 	endif
 
 	let sysoutput = system(sysroot . syscmd) 
@@ -416,7 +435,7 @@ for tagname in tagnames
 	exe 'hi default link' simplename 'Keyword'
 endfor
 mktypes.py	[[[1
-849
+854
 #!/usr/bin/env python
 #  Author:  A. S. Budden
 ## Date::   29th March 2010      ##
@@ -665,7 +684,7 @@ def CreateTypesFile(config, Parameters, options):
 	p = open('tags', "r")
 
 	if options.include_locals:
-		LocalTagType = ',ctags_l'
+		LocalTagType = ',CTagsLocalVariable'
 	else:
 		LocalTagType = ''
 
@@ -823,7 +842,6 @@ def CreateTypesFile(config, Parameters, options):
 			if AddList != 'add=':
 				AddList += ','
 			AddList += thisType;
-	AddList += ' '
 
 	if Parameters['suffix'] in ['c',]:
 		vimtypes_entries.append('')
@@ -834,6 +852,10 @@ def CreateTypesFile(config, Parameters, options):
 		vimtypes_entries.append('\tsyn cluster cParenGroup ' + AddList + LocalTagType)
 		vimtypes_entries.append('\tsyn cluster cCppParenGroup ' + AddList + LocalTagType)
 		vimtypes_entries.append('endif')
+
+	if Parameters['suffix'] in ['java',]:
+		vimtypes_entries.append('')
+		vimtypes_entries.append('syn cluster javaTop ' + AddList + LocalTagType)
 
 	try:
 		fh = open(outfile, 'wb')
@@ -1266,6 +1288,8 @@ def GetKindList():
 	
 if __name__ == "__main__":
 	main()
+
+# vim: noet ts=4 sw=4
 extra_source/mktypes/setup.py	[[[1
 5
 from distutils.core import setup
