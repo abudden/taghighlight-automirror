@@ -1,14 +1,14 @@
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   16th November 2010      ##
-"## RevTag:: r425                    ##
+"## Date::   2nd December 2010       ##
+"## RevTag:: r429                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r425 ##"
+let s:CTagsHighlighterVersion = "## RevTag:: r429 ##"
 let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '[#]\{2} RevTag[:]\{2} \(r\d\+\) *[#]\{2}', '\1', '')
 
 if !exists('g:VIMFILESDIR')
@@ -29,11 +29,11 @@ endif
 " These should only be included if editing a wx or qt file
 " They should also be updated to include all functions etc, not just
 " typedefs
-let g:wxTypesFile = escape(globpath(&rtp, "types_wx.vim"), ' \,')
-let g:qtTypesFile = escape(globpath(&rtp, "types_qt4.vim"), ' \,')
-let g:wxPyTypesFile = escape(globpath(&rtp, "types_wxpy.vim"), ' \,')
-let g:jdkTypesFile = escape(globpath(&rtp, "types_jdk.vim"), ' \,')
-let g:androidTypesFile = escape(globpath(&rtp, "types_android.vim"), ' \,')
+let g:wxTypesFile = escape(globpath(&rtp, "types_wx.vim"), '\,')
+let g:qtTypesFile = escape(globpath(&rtp, "types_qt4.vim"), '\,')
+let g:wxPyTypesFile = escape(globpath(&rtp, "types_wxpy.vim"), '\,')
+let g:jdkTypesFile = escape(globpath(&rtp, "types_jdk.vim"), '\,')
+let g:androidTypesFile = escape(globpath(&rtp, "types_android.vim"), '\,')
 
 " These should only be included if editing a wx or qt file
 let g:wxTagsFile = escape(globpath(&rtp, 'tags_wx'), ' \,')
@@ -83,11 +83,12 @@ function! ReadTypesAutoDetect()
 				\     'vhdl\?'       : "vhdl",
 				\ }
 
+	call s:Debug_Print(g:DBG_Information, "Detecting types for extension '" . extension . "'")
 	for key in keys(extensionLookup)
 		let regex = '^' . key . '$'
 		if extension =~ regex
+			call s:Debug_Print(g:DBG_Information, "Loading types for extension '" . extensionLookup[key] . "'")
 			call ReadTypes(extensionLookup[key])
-			"			echo 'Loading types for ' . extensionLookup[key] . ' files'
 			continue
 		endif
 	endfor
@@ -102,37 +103,49 @@ function! ReadTypes(suffix)
 	endif
 
 	if exists('b:NoTypeParsing')
+		call s:Debug_Print(g:DBG_Information, "Type file parsing disabled")
 		return
 	endif
 	if exists('g:TypeParsingSkipList')
 		let basename = expand(file . ':p:t')
 		let fullname = expand(file . ':p')
 		if index(g:TypeParsingSkipList, basename) != -1
+			call s:Debug_Print(g:DBG_Information, "Skipping file due to basename match")
 			return
 		endif
 		if index(g:TypeParsingSkipList, fullname) != -1
+			call s:Debug_Print(g:DBG_Information, "Skipping file due to fullname match")
 			return
 		endif
 	endif
 	let fname = expand(file . ':p:h') . '/types_' . a:suffix . '.vim'
+	call s:Debug_Print(g:DBG_Information, "Checking for file " . fname)
 	if filereadable(fname)
+		call s:Debug_Print(g:DBG_Information, "Found")
 		exe 'so ' . fname
 	endif
 	let fname = expand(file . ':p:h:h') . '/types_' . a:suffix . '.vim'
+	call s:Debug_Print(g:DBG_Information, "Checking for file " . fname)
 	if filereadable(fname)
+		call s:Debug_Print(g:DBG_Information, "Found")
 		exe 'so ' . fname
 	endif
 	let fname = 'types_' . a:suffix . '.vim'
+	call s:Debug_Print(g:DBG_Information, "Checking for file " . fname)
 	if filereadable(fname)
+		call s:Debug_Print(g:DBG_Information, "Found")
 		exe 'so ' . fname
 	endif
 
 	" Open default source files
 	if index(['cpp', 'h', 'hpp'], expand(file . ':e')) != -1
+		call s:Debug_Print(g:DBG_Information, 'C++ source file, checking for wx/Qt')
 		" This is a C++ source file
 		call cursor(1,1)
 		if search('^\s*#include\s\+<wx/', 'nc', 30)
+			call s:Debug_Print(g:DBG_Information, 'WxWidgets Source file - checking ' . g:wxTypesFile . '"')
 			if filereadable(g:wxTypesFile)
+				call s:Debug_Print(g:DBG_Information, 'Loading wx types')
 				execute 'so ' . g:wxTypesFile
 			endif
 			if filereadable(g:wxTagsFile)
@@ -142,7 +155,9 @@ function! ReadTypes(suffix)
 
 		call cursor(1,1)
 		if search('\c^\s*#include\s\+<q', 'nc', 30)
+			call s:Debug_Print(g:DBG_Information, 'Qt Source file - checking "' . g:qtTypesFile . '"')
 			if filereadable(g:qtTypesFile)
+				call s:Debug_Print(g:DBG_Information, 'Loading Qt4 types')
 				execute 'so ' . g:qtTypesFile
 			endif
 			if filereadable(g:qtTagsFile)
@@ -152,10 +167,13 @@ function! ReadTypes(suffix)
 		endif
 	elseif index(['py', 'pyw'], expand(file . ':e')) != -1
 		" This is a python source file
+		call s:Debug_Print(g:DBG_Information, 'Python source file, checking for wx')
 
 		call cursor(1,1)
 		if search('^\s*import\s\+wx', 'nc', 30)
+			call s:Debug_Print(g:DBG_Information, 'wxPython Source file - checking "' . g:wxPyTypesFile . '"')
 			if filereadable(g:wxPyTypesFile)
+				call s:Debug_Print(g:DBG_Information, 'Loading wxpython types')
 				execute 'so ' . g:wxPyTypesFile
 			endif
 			if filereadable(g:wxPyTagsFile)
@@ -164,12 +182,16 @@ function! ReadTypes(suffix)
 		endif
 	elseif index(['java',], expand(file . ':e')) != -1
 		" This is a java source file
-		call cursor(1,1)
+		call s:Debug_Print(g:DBG_Information, 'Java Source file - checking "' . g:jdkTypesFile . '"')
 		if filereadable(g:jdkTypesFile)
+			call s:Debug_Print(g:DBG_Information, 'Loading JDK types')
 			execute 'so ' . g:jdkTypesFile
 		endif
-		if search('^\s*import\s\+android\./', 'nc', 30)
+		call cursor(1,1)
+		if search('^\s*import\s\+android\.', 'nc', 30)
+			call s:Debug_Print(g:DBG_Information, 'Android Source file - checking "' . g:androidTypesFile . '"')
 			if filereadable(g:androidTypesFile)
+				call s:Debug_Print(g:DBG_Information, 'Loading Android types')
 				execute 'so ' . g:androidTypesFile
 			endif
 		endif
@@ -204,7 +226,7 @@ func! s:FindExePath(file)
 		" If file is not in the path, look for it in vimfiles/
 		if !filereadable(file_exe)
 			call s:Debug_Print(g:DBG_Status, "Looking for " . a:file . " in " . &rtp)
-			let file_exe_list = split(globpath(&rtp, a:file . '.exe'))
+			let file_exe_list = split(globpath(&rtp, a:file . '.exe'), '\n')
 			if len(file_exe_list) > 0
 				call s:Debug_Print(g:DBG_Status, "Success.")
 				let file_exe = file_exe_list[0]
@@ -230,7 +252,7 @@ func! s:FindExePath(file)
 
 		call s:Debug_Print(g:DBG_Status, "Looking for " . short_file . " in " . path)
 
-		let file_exe_list = split(globpath(path, short_file))
+		let file_exe_list = split(globpath(path, short_file), '\n')
 
 		if len(file_exe_list) > 0
 			call s:Debug_Print(g:DBG_Status, "Success.")

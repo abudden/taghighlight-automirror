@@ -3,7 +3,7 @@
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r425                                                           ##
+## RevTag:: r429                                                           ##
 
 Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -298,6 +298,8 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r429 : 2nd December 2010   : Improvements to cope with spaces in paths.
 
 r425 : 16th November 2010  : Added support for Java and Android SDKs.
 
