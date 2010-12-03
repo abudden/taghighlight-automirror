@@ -2,18 +2,18 @@
 UseVimball
 finish
 plugin/ctags_highlighting.vim	[[[1
-431
+453
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   16th November 2010      ##
-"## RevTag:: r425                    ##
+"## Date::   2nd December 2010       ##
+"## RevTag:: r429                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r425 ##"
+let s:CTagsHighlighterVersion = "## RevTag:: r429 ##"
 let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '[#]\{2} RevTag[:]\{2} \(r\d\+\) *[#]\{2}', '\1', '')
 
 if !exists('g:VIMFILESDIR')
@@ -34,11 +34,11 @@ endif
 " These should only be included if editing a wx or qt file
 " They should also be updated to include all functions etc, not just
 " typedefs
-let g:wxTypesFile = escape(globpath(&rtp, "types_wx.vim"), ' \,')
-let g:qtTypesFile = escape(globpath(&rtp, "types_qt4.vim"), ' \,')
-let g:wxPyTypesFile = escape(globpath(&rtp, "types_wxpy.vim"), ' \,')
-let g:jdkTypesFile = escape(globpath(&rtp, "types_jdk.vim"), ' \,')
-let g:androidTypesFile = escape(globpath(&rtp, "types_android.vim"), ' \,')
+let g:wxTypesFile = escape(globpath(&rtp, "types_wx.vim"), '\,')
+let g:qtTypesFile = escape(globpath(&rtp, "types_qt4.vim"), '\,')
+let g:wxPyTypesFile = escape(globpath(&rtp, "types_wxpy.vim"), '\,')
+let g:jdkTypesFile = escape(globpath(&rtp, "types_jdk.vim"), '\,')
+let g:androidTypesFile = escape(globpath(&rtp, "types_android.vim"), '\,')
 
 " These should only be included if editing a wx or qt file
 let g:wxTagsFile = escape(globpath(&rtp, 'tags_wx'), ' \,')
@@ -88,11 +88,12 @@ function! ReadTypesAutoDetect()
 				\     'vhdl\?'       : "vhdl",
 				\ }
 
+	call s:Debug_Print(g:DBG_Information, "Detecting types for extension '" . extension . "'")
 	for key in keys(extensionLookup)
 		let regex = '^' . key . '$'
 		if extension =~ regex
+			call s:Debug_Print(g:DBG_Information, "Loading types for extension '" . extensionLookup[key] . "'")
 			call ReadTypes(extensionLookup[key])
-			"			echo 'Loading types for ' . extensionLookup[key] . ' files'
 			continue
 		endif
 	endfor
@@ -107,37 +108,49 @@ function! ReadTypes(suffix)
 	endif
 
 	if exists('b:NoTypeParsing')
+		call s:Debug_Print(g:DBG_Information, "Type file parsing disabled")
 		return
 	endif
 	if exists('g:TypeParsingSkipList')
 		let basename = expand(file . ':p:t')
 		let fullname = expand(file . ':p')
 		if index(g:TypeParsingSkipList, basename) != -1
+			call s:Debug_Print(g:DBG_Information, "Skipping file due to basename match")
 			return
 		endif
 		if index(g:TypeParsingSkipList, fullname) != -1
+			call s:Debug_Print(g:DBG_Information, "Skipping file due to fullname match")
 			return
 		endif
 	endif
 	let fname = expand(file . ':p:h') . '/types_' . a:suffix . '.vim'
+	call s:Debug_Print(g:DBG_Information, "Checking for file " . fname)
 	if filereadable(fname)
+		call s:Debug_Print(g:DBG_Information, "Found")
 		exe 'so ' . fname
 	endif
 	let fname = expand(file . ':p:h:h') . '/types_' . a:suffix . '.vim'
+	call s:Debug_Print(g:DBG_Information, "Checking for file " . fname)
 	if filereadable(fname)
+		call s:Debug_Print(g:DBG_Information, "Found")
 		exe 'so ' . fname
 	endif
 	let fname = 'types_' . a:suffix . '.vim'
+	call s:Debug_Print(g:DBG_Information, "Checking for file " . fname)
 	if filereadable(fname)
+		call s:Debug_Print(g:DBG_Information, "Found")
 		exe 'so ' . fname
 	endif
 
 	" Open default source files
 	if index(['cpp', 'h', 'hpp'], expand(file . ':e')) != -1
+		call s:Debug_Print(g:DBG_Information, 'C++ source file, checking for wx/Qt')
 		" This is a C++ source file
 		call cursor(1,1)
 		if search('^\s*#include\s\+<wx/', 'nc', 30)
+			call s:Debug_Print(g:DBG_Information, 'WxWidgets Source file - checking ' . g:wxTypesFile . '"')
 			if filereadable(g:wxTypesFile)
+				call s:Debug_Print(g:DBG_Information, 'Loading wx types')
 				execute 'so ' . g:wxTypesFile
 			endif
 			if filereadable(g:wxTagsFile)
@@ -147,7 +160,9 @@ function! ReadTypes(suffix)
 
 		call cursor(1,1)
 		if search('\c^\s*#include\s\+<q', 'nc', 30)
+			call s:Debug_Print(g:DBG_Information, 'Qt Source file - checking "' . g:qtTypesFile . '"')
 			if filereadable(g:qtTypesFile)
+				call s:Debug_Print(g:DBG_Information, 'Loading Qt4 types')
 				execute 'so ' . g:qtTypesFile
 			endif
 			if filereadable(g:qtTagsFile)
@@ -157,10 +172,13 @@ function! ReadTypes(suffix)
 		endif
 	elseif index(['py', 'pyw'], expand(file . ':e')) != -1
 		" This is a python source file
+		call s:Debug_Print(g:DBG_Information, 'Python source file, checking for wx')
 
 		call cursor(1,1)
 		if search('^\s*import\s\+wx', 'nc', 30)
+			call s:Debug_Print(g:DBG_Information, 'wxPython Source file - checking "' . g:wxPyTypesFile . '"')
 			if filereadable(g:wxPyTypesFile)
+				call s:Debug_Print(g:DBG_Information, 'Loading wxpython types')
 				execute 'so ' . g:wxPyTypesFile
 			endif
 			if filereadable(g:wxPyTagsFile)
@@ -169,12 +187,16 @@ function! ReadTypes(suffix)
 		endif
 	elseif index(['java',], expand(file . ':e')) != -1
 		" This is a java source file
-		call cursor(1,1)
+		call s:Debug_Print(g:DBG_Information, 'Java Source file - checking "' . g:jdkTypesFile . '"')
 		if filereadable(g:jdkTypesFile)
+			call s:Debug_Print(g:DBG_Information, 'Loading JDK types')
 			execute 'so ' . g:jdkTypesFile
 		endif
-		if search('^\s*import\s\+android\./', 'nc', 30)
+		call cursor(1,1)
+		if search('^\s*import\s\+android\.', 'nc', 30)
+			call s:Debug_Print(g:DBG_Information, 'Android Source file - checking "' . g:androidTypesFile . '"')
 			if filereadable(g:androidTypesFile)
+				call s:Debug_Print(g:DBG_Information, 'Loading Android types')
 				execute 'so ' . g:androidTypesFile
 			endif
 		endif
@@ -209,7 +231,7 @@ func! s:FindExePath(file)
 		" If file is not in the path, look for it in vimfiles/
 		if !filereadable(file_exe)
 			call s:Debug_Print(g:DBG_Status, "Looking for " . a:file . " in " . &rtp)
-			let file_exe_list = split(globpath(&rtp, a:file . '.exe'))
+			let file_exe_list = split(globpath(&rtp, a:file . '.exe'), '\n')
 			if len(file_exe_list) > 0
 				call s:Debug_Print(g:DBG_Status, "Success.")
 				let file_exe = file_exe_list[0]
@@ -235,7 +257,7 @@ func! s:FindExePath(file)
 
 		call s:Debug_Print(g:DBG_Status, "Looking for " . short_file . " in " . path)
 
-		let file_exe_list = split(globpath(path, short_file))
+		let file_exe_list = split(globpath(path, short_file), '\n')
 
 		if len(file_exe_list) > 0
 			call s:Debug_Print(g:DBG_Status, "Success.")
@@ -435,11 +457,11 @@ for tagname in tagnames
 	exe 'hi default link' simplename 'Keyword'
 endfor
 mktypes.py	[[[1
-854
+858
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   29th March 2010      ##
-## RevTag:: r398                 ##
+## Date::   2nd December 2010    ##
+## RevTag:: r431                 ##
 
 import os
 import sys
@@ -449,7 +471,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r398 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r431 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -509,6 +531,10 @@ def GetCommandArgs(options):
 		Configuration['CTAGS_OPTIONS'] = '--recurse'
 		if options.include_locals:
 			Configuration['CTAGS_OPTIONS'] += ' --c-kinds=+l'
+			Configuration['CTAGS_OPTIONS'] += ' --java-kinds=+l'
+			Configuration['CTAGS_OPTIONS'] += ' --c++-kinds=+l'
+			Configuration['CTAGS_OPTIONS'] += ' --c#-kinds=+l'
+			Configuration['CTAGS_OPTIONS'] += ' --java-kinds=+l'
 		Configuration['CTAGS_FILES'] = ['.']
 	else:
 		if options.include_locals:
@@ -1298,13 +1324,13 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
-416
+421
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r425                                                           ##
+## RevTag:: r431                                                           ##
 
 Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -1599,6 +1625,11 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r431 : 2nd December 2010   : Add support for local variables in non-C
+                             languages.
+
+r429 : 2nd December 2010   : Improvements to cope with spaces in paths.
 
 r425 : 16th November 2010  : Added support for Java and Android SDKs.
 
