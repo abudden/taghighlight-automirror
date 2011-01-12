@@ -321,7 +321,7 @@ func! UpdateTypesFile(recurse, skiptags)
 		endfor
 	endif
 
-	let TypesFileIncludeSynMatches = s:GetOption('TypesFileIncludeSynMatches', 1)
+	let TypesFileIncludeSynMatches = s:GetOption('TypesFileIncludeSynMatches', 0)
 	if TypesFileIncludeSynMatches == 1
 		let syscmd .= ' --include-invalid-keywords-as-matches'
 	endif
