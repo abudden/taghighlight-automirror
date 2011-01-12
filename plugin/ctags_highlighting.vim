@@ -8,7 +8,7 @@ if &cp || exists("g:loaded_ctags_highlighting")
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r429 ##"
+let s:CTagsHighlighterVersion = "## RevTag:: r435 ##"
 let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '[#]\{2} RevTag[:]\{2} \(r\d\+\) *[#]\{2}', '\1', '')
 
 if !exists('g:VIMFILESDIR')
