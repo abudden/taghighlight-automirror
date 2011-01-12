@@ -5,8 +5,8 @@ plugin/ctags_highlighting.vim	[[[1
 453
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   2nd December 2010       ##
-"## RevTag:: r429                    ##
+"## Date::   11th January 2011       ##
+"## RevTag:: r435                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
@@ -326,7 +326,7 @@ func! UpdateTypesFile(recurse, skiptags)
 		endfor
 	endif
 
-	let TypesFileIncludeSynMatches = s:GetOption('TypesFileIncludeSynMatches', 1)
+	let TypesFileIncludeSynMatches = s:GetOption('TypesFileIncludeSynMatches', 0)
 	if TypesFileIncludeSynMatches == 1
 		let syscmd .= ' --include-invalid-keywords-as-matches'
 	endif
@@ -1324,13 +1324,13 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
-421
+427
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r431                                                           ##
+## RevTag:: r435                                                           ##
 
 Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -1625,6 +1625,12 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r435 : 11th January 2011   : Changed default to not include syntax matches
+                             unless either g:TypesFileIncludeSynMatches or
+                             b:TypesFileIncludeSynMatches is set to 1 (this
+                             makes the highlighting much faster for large
+                             projects).
 
 r431 : 2nd December 2010   : Add support for local variables in non-C
                              languages.
