@@ -1,7 +1,7 @@
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   2nd December 2010       ##
-"## RevTag:: r429                    ##
+"## Date::   11th January 2011       ##
+"## RevTag:: r435                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
