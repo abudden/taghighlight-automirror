@@ -1,7 +1,7 @@
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   10th February 2011      ##
-"## RevTag:: r439                    ##
+"## Date::   16th February 2011      ##
+"## RevTag:: r440                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
@@ -73,14 +73,14 @@ function! ReadTypesAutoDetect()
 	let extension = expand('%:e')
 	let extensionLookup = 
 				\ {
-				\     '[ch]\(pp\)\?' : "c",
-				\     'p[lm]'        : "pl",
-				\     'java'         : "java",
-				\     'pyw\?'        : "py",
-				\     'rb'           : "ruby",
-				\     'cs'           : "cs",
-				\     'php'          : "php",
-				\     'vhdl\?'       : "vhdl",
+				\     '\(c\|cc\|cpp\|h\|hpp\|cxx\|hxx\)' : "c",
+				\     'p[lm]'                            : "pl",
+				\     'java'                             : "java",
+				\     'pyw\?'                            : "py",
+				\     'rb'                               : "ruby",
+				\     'cs'                               : "cs",
+				\     'php'                              : "php",
+				\     'vhdl\?'                           : "vhdl",
 				\ }
 
 	call s:Debug_Print(g:DBG_Information, "Detecting types for extension '" . extension . "'")
@@ -138,7 +138,7 @@ function! ReadTypes(suffix)
 	endif
 
 	" Open default source files
-	if index(['cpp', 'h', 'hpp'], expand(file . ':e')) != -1
+	if index(['cc', 'cpp', 'h', 'hpp'], expand(file . ':e')) != -1
 		call s:Debug_Print(g:DBG_Information, 'C++ source file, checking for wx/Qt')
 		" This is a C++ source file
 		call cursor(1,1)
