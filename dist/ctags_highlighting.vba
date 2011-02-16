@@ -465,11 +465,11 @@ for tagname in tagnames
 	exe 'hi default link' simplename 'Keyword'
 endfor
 mktypes.py	[[[1
-858
+860
 #!/usr/bin/env python
 #  Author:  A. S. Budden
 ## Date::   16th February 2011   ##
-## RevTag:: r440                 ##
+## RevTag:: r442                 ##
 
 import os
 import sys
@@ -479,7 +479,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r440 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r442 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -793,10 +793,12 @@ def CreateTypesFile(config, Parameters, options):
 
 	# Specified highest priority first
 	Priority = [
-			'CTagsClass', 'CTagsDefinedName', 'CTagsType',
-			'CTagsFunction', 'CTagsEnumerationValue',
-			'CTagsEnumeratorName', 'CTagsConstant', 'CTagsGlobalVariable',
-			'CTagsUnion', 'CTagsMember', 'CTagsStructure',
+			'CTagsNamespace', 'CTagsClass', 'CTagsDefinedName',
+			'CTagsType', 'CTagsMethod', 'CTagsFunction',
+			'CTagsEnumerationValue', 'CTagsEnumeratorName',
+			'CTagsConstant', 'CTagsGlobalVariable',
+			'CTagsUnion', 'CTagsProperty', 'CTagsMember',
+			'CTagsStructure',
 			]
 
 	# Reverse the list as highest priority should be last!
@@ -1332,7 +1334,7 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
-435
+438
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
@@ -1633,6 +1635,9 @@ Copyright:  (c) 2009-2011 by A. S. Budden       *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r442 : 16th February 2011  : Improved prioritisation of object-oriented
+                             language types (thanks to Aleksey Baibarin).
 
 r440 : 16th February 2011  : More explicit choice of C/C++ file extensions to
 			     avoid conflicts with C# (thanks to Aleksey
