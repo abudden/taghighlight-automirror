@@ -2,11 +2,11 @@
 UseVimball
 finish
 plugin/ctags_highlighting.vim	[[[1
-453
+461
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   11th January 2011       ##
-"## RevTag:: r435                    ##
+"## Date::   16th February 2011      ##
+"## RevTag:: r440                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
@@ -78,14 +78,14 @@ function! ReadTypesAutoDetect()
 	let extension = expand('%:e')
 	let extensionLookup = 
 				\ {
-				\     '[ch]\(pp\)\?' : "c",
-				\     'p[lm]'        : "pl",
-				\     'java'         : "java",
-				\     'pyw\?'        : "py",
-				\     'rb'           : "ruby",
-				\     'cs'           : "cs",
-				\     'php'          : "php",
-				\     'vhdl\?'       : "vhdl",
+				\     '\(c\|cc\|cpp\|h\|hpp\|cxx\|hxx\)' : "c",
+				\     'p[lm]'                            : "pl",
+				\     'java'                             : "java",
+				\     'pyw\?'                            : "py",
+				\     'rb'                               : "ruby",
+				\     'cs'                               : "cs",
+				\     'php'                              : "php",
+				\     'vhdl\?'                           : "vhdl",
 				\ }
 
 	call s:Debug_Print(g:DBG_Information, "Detecting types for extension '" . extension . "'")
@@ -143,7 +143,7 @@ function! ReadTypes(suffix)
 	endif
 
 	" Open default source files
-	if index(['cpp', 'h', 'hpp'], expand(file . ':e')) != -1
+	if index(['cc', 'cpp', 'h', 'hpp'], expand(file . ':e')) != -1
 		call s:Debug_Print(g:DBG_Information, 'C++ source file, checking for wx/Qt')
 		" This is a C++ source file
 		call cursor(1,1)
@@ -345,6 +345,14 @@ func! UpdateTypesFile(recurse, skiptags)
 
 	let CheckForCScopeFiles = s:GetOption('CheckForCScopeFiles', 0)
 	if CheckForCScopeFiles == 1
+		if cscope_connection()
+			" Kill all existing cscope connections so that the database can be
+			" rebuilt.  Because we run cscope in the background (from python)
+			" we can't just re-add the cscope database as it might not have
+			" finished yet.  Otherwise, we'd parse the output of 'cs show'
+			" and re-add the database at the end of the function.
+			cs kill -1
+		endif
 		let syscmd .= ' --build-cscopedb-if-cscope-file-exists'
 		let syscmd .= ' --cscope-dir=' 
 		let cscope_path = s:FindExePath('extra_source/cscope_win/cscope')
@@ -460,8 +468,8 @@ mktypes.py	[[[1
 858
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   2nd December 2010    ##
-## RevTag:: r431                 ##
+## Date::   16th February 2011   ##
+## RevTag:: r440                 ##
 
 import os
 import sys
@@ -471,7 +479,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r431 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r440 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -606,7 +614,7 @@ def GetLanguageParameters(lang):
 	if lang == 'c':
 		params['suffix'] = 'c'
 		params['name'] = 'c'
-		params['extensions'] = r'[ch]\w*'
+		params['extensions'] = r'(c|cc|cpp|h|hpp|cxx|hxx)'
 	elif lang == 'python':
 		params['suffix'] = 'py'
 		params['name'] = 'python'
@@ -1324,15 +1332,15 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
-427
+435
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r435                                                           ##
+## RevTag:: r440                                                           ##
 
-Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
+Copyright:  (c) 2009-2011 by A. S. Budden       *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
 	    ctags_highlighting.txt (see |copyright|) except use
 	    "ctags_highlighting" instead of "Vim".
@@ -1625,6 +1633,14 @@ Copyright:  (c) 2009 by A. S. Budden            *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r440 : 16th February 2011  : More explicit choice of C/C++ file extensions to
+			     avoid conflicts with C# (thanks to Aleksey
+			     Baibarin).
+
+r439 : 10th February 2011  : Kill any cscope connections prior to running 
+                             script in order to prevent cscope from locking
+                             the cscope.out file.
 
 r435 : 11th January 2011   : Changed default to not include syntax matches
                              unless either g:TypesFileIncludeSynMatches or
