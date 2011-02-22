@@ -2,18 +2,18 @@
 UseVimball
 finish
 plugin/ctags_highlighting.vim	[[[1
-461
+464
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   16th February 2011      ##
-"## RevTag:: r440                    ##
+"## Date::   19th February 2011      ##
+"## RevTag:: r443                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r435 ##"
+let s:CTagsHighlighterVersion = "## RevTag:: r443 ##"
 let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '[#]\{2} RevTag[:]\{2} \(r\d\+\) *[#]\{2}', '\1', '')
 
 if !exists('g:VIMFILESDIR')
@@ -30,6 +30,17 @@ let g:DBG_Information = 5
 if !exists('g:CTagsHighlighterDebug')
 	let g:CTagsHighlighterDebug = g:DBG_None
 endif
+
+func! s:GetOption(name, default)
+	let opt = a:default
+	if exists('g:' . a:name)
+		exe 'let opt = g:' . a:name
+	endif
+	if exists('b:' . a:name)
+		exe 'let opt = b:' . a:name
+	endif
+	return opt
+endfunction
 
 " These should only be included if editing a wx or qt file
 " They should also be updated to include all functions etc, not just
@@ -123,19 +134,19 @@ function! ReadTypes(suffix)
 			return
 		endif
 	endif
-	let fname = expand(file . ':p:h') . '/types_' . a:suffix . '.vim'
+	let fname = expand(file . ':p:h') . '/' . s:GetOption('TypesPrefix', 'types') . '_' . a:suffix . '.vim'
 	call s:Debug_Print(g:DBG_Information, "Checking for file " . fname)
 	if filereadable(fname)
 		call s:Debug_Print(g:DBG_Information, "Found")
 		exe 'so ' . fname
 	endif
-	let fname = expand(file . ':p:h:h') . '/types_' . a:suffix . '.vim'
+	let fname = expand(file . ':p:h:h') . '/' . s:GetOption('TypesPrefix', 'types') . '_' . a:suffix . '.vim'
 	call s:Debug_Print(g:DBG_Information, "Checking for file " . fname)
 	if filereadable(fname)
 		call s:Debug_Print(g:DBG_Information, "Found")
 		exe 'so ' . fname
 	endif
-	let fname = 'types_' . a:suffix . '.vim'
+	let fname = s:GetOption('TypesPrefix', 'types') . '_' . a:suffix . '.vim'
 	call s:Debug_Print(g:DBG_Information, "Checking for file " . fname)
 	if filereadable(fname)
 		call s:Debug_Print(g:DBG_Information, "Found")
@@ -281,17 +292,6 @@ func! s:FindExePath(file)
 	return file_path
 endfunc
 
-func! s:GetOption(name, default)
-	let opt = a:default
-	if exists('g:' . a:name)
-		exe 'let opt = g:' . a:name
-	endif
-	if exists('b:' . a:name)
-		exe 'let opt = b:' . a:name
-	endif
-	return opt
-endfunction
-
 func! UpdateTypesFile(recurse, skiptags)
 	let s:vrc = globpath(&rtp, "mktypes.py")
 
@@ -342,6 +342,9 @@ func! UpdateTypesFile(recurse, skiptags)
 	elseif a:skiptags == 1
 		let syscmd .= ' --use-existing-tagfile'
 	endif
+
+	let syscmd .= ' --ctags-file ' . s:GetOption('TypesCTagsFile', 'tags')
+	let syscmd .= ' --types-prefix ' . s:GetOption('TypesPrefix', 'types')
 
 	let CheckForCScopeFiles = s:GetOption('CheckForCScopeFiles', 0)
 	if CheckForCScopeFiles == 1
@@ -465,11 +468,11 @@ for tagname in tagnames
 	exe 'hi default link' simplename 'Keyword'
 endfor
 mktypes.py	[[[1
-860
+873
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   16th February 2011   ##
-## RevTag:: r442                 ##
+## Date::   19th February 2011   ##
+## RevTag:: r443                 ##
 
 import os
 import sys
@@ -479,7 +482,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r442 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r443 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -535,8 +538,11 @@ def GetCommandArgs(options):
 	Configuration = {}
 	Configuration['CTAGS_OPTIONS'] = ''
 
+	if options.ctags_file:
+		Configuration['CTAGS_OPTIONS'] += ' -f %s ' % options.ctags_file
+
 	if options.recurse:
-		Configuration['CTAGS_OPTIONS'] = '--recurse'
+		Configuration['CTAGS_OPTIONS'] += '--recurse'
 		if options.include_locals:
 			Configuration['CTAGS_OPTIONS'] += ' --c-kinds=+l'
 			Configuration['CTAGS_OPTIONS'] += ' --java-kinds=+l'
@@ -595,14 +601,14 @@ def CreateTagsFile(config, languages, options):
 	#os.system(ctags_cmd)
 	subprocess.call(ctags_cmd, shell = (os.name != 'nt'))
 
-	tagFile = open('tags', 'r')
+	tagFile = open(options.ctags_file, 'r')
 	tagLines = [line.strip() for line in tagFile]
 	tagFile.close()
 
 	# Also sort the file a bit better (tag, then kind, then filename)
 	tagLines.sort(key=ctags_key)
 
-	tagFile = open('tags', 'w')
+	tagFile = open(options.ctags_file, 'w')
 	for line in tagLines:
 		tagFile.write(line + "\n")
 	tagFile.close()
@@ -707,15 +713,15 @@ def IsValidKeyword(keyword, iskeyword):
 		if not char in iskeyword:
 			return False
 	return True
-	
+
 #@print_timing
 def CreateTypesFile(config, Parameters, options):
-	outfile = 'types_%s.vim' % Parameters['suffix']
+	outfile = '%s_%s.vim' % (options.types_prefix, Parameters['suffix'])
 	print "Generating " + outfile
 	lineMatcher = re.compile(r'^.*?\t[^\t]*\.(?P<extension>' + Parameters['extensions'] + ')\t')
 
 	#p = os.popen(ctags_cmd, "r")
-	p = open('tags', "r")
+	p = open(options.ctags_file, "r")
 
 	if options.include_locals:
 		LocalTagType = ',CTagsLocalVariable'
@@ -917,6 +923,16 @@ def main():
 			default=False,
 			dest="recurse",
 			help="Recurse into subdirectories")
+	parser.add_option('--ctags-file',
+			action='store',
+			default='tags',
+			dest='ctags_file',
+			help='CTAGS output filename')
+	parser.add_option('--types-prefix',
+			action='store',
+			default='types',
+			dest='types_prefix',
+			help='Vim Types file prefix')
 	parser.add_option('--ctags-dir',
 			action='store',
 			default=None,
@@ -998,7 +1014,7 @@ def main():
 	else:
 		language_list = [i for i in full_language_list if i in options.languages]
 
-	if options.use_existing_tagfile and not os.path.exists('tags'):
+	if options.use_existing_tagfile and not os.path.exists(options.ctags_file):
 		options.use_existing_tagfile = False
 
 	if not options.use_existing_tagfile:
@@ -1334,13 +1350,13 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
-438
+450
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r440                                                           ##
+## RevTag:: r443                                                           ##
 
 Copyright:  (c) 2009-2011 by A. S. Budden       *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -1535,6 +1551,15 @@ Copyright:  (c) 2009-2011 by A. S. Budden       *ctags_highlighting-copyright*
 >
 		let b:TypesFileLanguages = ['ruby', 'python']
 <
+	b:TypesCTagsFile                 *b:TypesCTagsFile*
+
+	   Change the name of the tags file from the default, "tags". Affects
+	   both file reading and creation.
+
+	b:TypesPrefix                    *b:TypesPrefix*
+
+	   Change the prefix for the vim types files from the default, "types".
+	   Affects both file reading and creation.
 
 2.5 Installation                         *ctags_highlighting-install*     {{{2
 
@@ -1635,6 +1660,9 @@ Copyright:  (c) 2009-2011 by A. S. Budden       *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r443 : 19th February 2011  : Allow customisation of the filenames used
+                             for tags and types files (thanks to Sung Pae).
 
 r442 : 16th February 2011  : Improved prioritisation of object-oriented
                              language types (thanks to Aleksey Baibarin).
