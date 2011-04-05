@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   19th February 2011   ##
-## RevTag:: r443                 ##
+## Date::   5th April 2011       ##
+## RevTag:: r448                 ##
 
 import os
 import sys
@@ -11,7 +11,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r443 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r448 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -384,7 +384,7 @@ def CreateTypesFile(config, Parameters, options):
 					continue
 
 
-			if keyword.lower() in vim_synkeyword_arguments:
+			if keyword.lower() in vim_synkeyword_arguments and not options.skip_matches:
 				matchEntries.append('syntax match ' + thisType + ' /' + keyword + '/')
 				continue
 
@@ -606,6 +606,7 @@ def GetKindList():
 		'ctags_u': 'CTagsUnion',
 		'ctags_v': 'CTagsGlobalVariable',
 		'ctags_x': 'CTagsExtern',
+		'ctags_F': 'CTagsFile',
 	}
 	LanguageKinds['c++'] = \
 	{
@@ -624,6 +625,7 @@ def GetKindList():
 		'ctags_u': 'CTagsUnion',
 		'ctags_v': 'CTagsGlobalVariable',
 		'ctags_x': 'CTagsExtern',
+		'ctags_F': 'CTagsFile',
 	}
 	LanguageKinds['c#'] = \
 	{
@@ -766,6 +768,7 @@ def GetKindList():
 	LanguageKinds['sh'] = \
 	{
 		'ctags_f': 'CTagsFunction',
+		'ctags_F': 'CTagsFile',
 	}
 	LanguageKinds['slang'] = \
 	{
