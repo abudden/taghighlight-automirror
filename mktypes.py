@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #  Author:  A. S. Budden
 ## Date::   6th April 2011       ##
-## RevTag:: r450                 ##
+## RevTag:: r452                 ##
 
 import os
 import sys
@@ -11,7 +11,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r450 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r452 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -871,7 +871,6 @@ def GetKindList():
 	}
 	return LanguageKinds
 
-	
 if __name__ == "__main__":
 	main()
 
