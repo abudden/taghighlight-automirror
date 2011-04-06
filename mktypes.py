@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   5th April 2011       ##
-## RevTag:: r448                 ##
+## Date::   6th April 2011       ##
+## RevTag:: r450                 ##
 
 import os
 import sys
@@ -11,7 +11,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r448 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r450 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -269,17 +269,20 @@ def CreateTypesFile(config, Parameters, options):
 
 		m = field_processor.match(line.strip())
 		if m is not None:
-			vimmed_line = 'syntax keyword ' + KindList['ctags_' + m.group('kind')] + ' ' + m.group('keyword')
+			try:
+				vimmed_line = 'syntax keyword ' + KindList['ctags_' + m.group('kind')] + ' ' + m.group('keyword')
 
-			if options.parse_constants and (Parameters['suffix'] == 'c') and (m.group('kind') == 'v'):
-				if field_const.search(m.group('search')) is not None:
-					vimmed_line = vimmed_line.replace('CTagsGlobalVariable', 'CTagsConstant')
+				if options.parse_constants and (Parameters['suffix'] == 'c') and (m.group('kind') == 'v'):
+					if field_const.search(m.group('search')) is not None:
+						vimmed_line = vimmed_line.replace('CTagsGlobalVariable', 'CTagsConstant')
 
-			if Parameters['suffix'] != 'c' or m.group('kind') != 'p':
-				ctags_entries.append(vimmed_line)
-	
+				if Parameters['suffix'] != 'c' or m.group('kind') != 'p':
+					ctags_entries.append(vimmed_line)
+			except KeyError:
+				ctags_entries.append('''" Skipping unrecognised kind '%c' ''' % (m.group('kind'),))
+
 	p.close()
-	
+
 	# Essentially a uniq() function
 	ctags_entries = dict.fromkeys(ctags_entries).keys()
 	# Sort the list
@@ -288,7 +291,7 @@ def CreateTypesFile(config, Parameters, options):
 	if len(ctags_entries) == 0:
 		print "No tags found"
 		return
-	
+
 	keywordDict = {}
 	for line in ctags_entries:
 		m = field_keyword.match(line)
@@ -395,7 +398,7 @@ def CreateTypesFile(config, Parameters, options):
 			keycommand = keycommand + " " + keyword
 		if keycommand != keystarter:
 			vimtypes_entries.append(keycommand)
-	
+
 	# Essentially a uniq() function
 	matchEntries = dict.fromkeys(matchEntries).keys()
 	# Sort the list
@@ -405,7 +408,6 @@ def CreateTypesFile(config, Parameters, options):
 	for thisMatch in matchEntries:
 		vimtypes_entries.append(thisMatch)
 
-	LanguageKinds = GetKindList()
 	AddList = 'add='
 
 	for thisType in allTypes:
