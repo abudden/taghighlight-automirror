@@ -6,14 +6,14 @@ plugin/ctags_highlighting.vim	[[[1
 " ctags_highlighting
 "   Author:  A. S. Budden
 "## Date::   6th April 2011          ##
-"## RevTag:: r452                    ##
+"## RevTag:: r454                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r452 ##"
+let s:CTagsHighlighterVersion = "## RevTag:: r454 ##"
 let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '[#]\{2} RevTag[:]\{2} \(r\d\+\) *[#]\{2}', '\1', '')
 
 if !exists('g:VIMFILESDIR')
@@ -470,7 +470,7 @@ mktypes.py	[[[1
 #!/usr/bin/env python
 #  Author:  A. S. Budden
 ## Date::   6th April 2011       ##
-## RevTag:: r452                 ##
+## RevTag:: r454                 ##
 
 import os
 import sys
@@ -480,7 +480,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r452 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r454 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -570,7 +570,7 @@ def CreateCScopeFile(options):
 
 	if options.build_cscopedb:
 		run_cscope = True
-	
+
 	if os.path.exists('cscope.files'):
 		if options.build_cscopedb_if_file_exists:
 			run_cscope = True
@@ -584,7 +584,7 @@ def CreateCScopeFile(options):
 #@print_timing
 def CreateTagsFile(config, languages, options):
 	print "Generating Tags"
-	
+
 	ctags_languages = languages[:]
 	if 'c' in ctags_languages:
 		ctags_languages.append('c++')
@@ -1352,13 +1352,13 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
-452
+454
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r452                                                           ##
+## RevTag:: r454                                                           ##
 
 Copyright:  (c) 2009-2011 by A. S. Budden       *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -1662,6 +1662,8 @@ Copyright:  (c) 2009-2011 by A. S. Budden       *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r454 : 6th March 2011      : Fixed accidental file-type change.
 
 r452 : 6th March 2011      : Better handling of unknown ctags tag kinds.
 
