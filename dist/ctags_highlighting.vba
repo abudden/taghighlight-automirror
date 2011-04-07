@@ -2,18 +2,18 @@
 UseVimball
 finish
 plugin/ctags_highlighting.vim	[[[1
-462
+467
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   6th April 2011          ##
-"## RevTag:: r456                    ##
+"## Date::   7th April 2011          ##
+"## RevTag:: r458                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r456 ##"
+let s:CTagsHighlighterVersion = "## RevTag:: r458 ##"
 let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '[#]\{2} RevTag[:]\{2} \(r\d\+\) *[#]\{2}', '\1', '')
 
 if !exists('g:VIMFILESDIR')
@@ -331,6 +331,11 @@ func! UpdateTypesFile(recurse, skiptags)
 		let syscmd .= ' --include-invalid-keywords-as-matches'
 	endif
 
+	let TypeFileSkipVimKeywords = s:GetOption('TypesFileSkipVimKeywords', 0)
+	if TypeFileSkipVimKeywords == 1
+		let syscmd .= ' --exclude-vim-keywords'
+	endif
+
 	let TypesFileIncludeLocals = s:GetOption('TypesFileIncludeLocals', 1)
 	if TypesFileIncludeLocals == 1
 		let syscmd .= ' --include-locals'
@@ -466,11 +471,11 @@ for tagname in tagnames
 	exe 'hi default link' simplename 'Keyword'
 endfor
 mktypes.py	[[[1
-877
+883
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   6th April 2011       ##
-## RevTag:: r456                 ##
+## Date::   7th April 2011       ##
+## RevTag:: r458                 ##
 
 import os
 import sys
@@ -480,7 +485,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r456 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r458 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -856,8 +861,9 @@ def CreateTypesFile(config, Parameters, options):
 					continue
 
 
-			if keyword.lower() in vim_synkeyword_arguments and not options.skip_matches:
-				matchEntries.append('syntax match ' + thisType + ' /' + keyword + '/')
+			if keyword.lower() in vim_synkeyword_arguments:
+				if not options.skip_vimkeywords:
+					matchEntries.append('syntax match ' + thisType + ' /' + keyword + '/')
 				continue
 
 			temp = keycommand + " " + keyword
@@ -954,6 +960,11 @@ def main():
 			default=True,
 			dest='skip_matches',
 			help='Include invalid keywords as regular expression matches (may slow it loading)')
+	parser.add_option('--exclude-vim-keywords',
+			action='store_true',
+			default=False,
+			dest='skip_vimkeywords',
+			help="Don't include Vim keywords (they have to be matched with regular expression matches, which is slower)")
 	parser.add_option('--do-not-analyse-constants',
 			action='store_false',
 			default=True,
@@ -1352,13 +1363,13 @@ import py2exe
 # for console program use 'console = [{"script" : "scriptname.py"}]
 setup(console=[{"script" : "../../mktypes.py"}])
 doc/ctags_highlighting.txt	[[[1
-454
+472
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r456                                                           ##
+## RevTag:: r458                                                           ##
 
 Copyright:  (c) 2009-2011 by A. S. Budden       *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -1539,6 +1550,19 @@ Copyright:  (c) 2009-2011 by A. S. Budden       *ctags_highlighting-copyright*
 	   |:syn-match|.  Note however that this can seriously slow your Vim
 	   down if there are a lot of matches (|:syn-match| is much slower
 	   than |:syn-keyword|).
+>
+               let b:TypesFileIncludeSynMatches = 1
+<
+
+	b:TypesFileSkipVimKeywords       *b:TypesFileSkipVimKeywords*
+
+	   If this variable is set to 1, the regular expression matchers used
+	   to highlight any keywords that match the keywords used in Vim's
+	   syntax definition language are disabled and these keywords won't
+	   be highlighted.
+>
+               let b:TypesFileSkipVimKeywords = 1
+<
     
         b:TypesFileLanguages             *b:TypesFileLanguages*
     
@@ -1657,11 +1681,16 @@ Copyright:  (c) 2009-2011 by A. S. Budden       *ctags_highlighting-copyright*
     - Move most of the functionality into an autoload script.
     
     - Tidy up the types files for wxWidgets, Qt, JDK, Android and wxPython.
+    
+    - More control over location of tags and types file.
 
-    - Make it work when Vim is installed in a path with spaces.
+    - Make it work better when Vim is installed in a path with spaces.
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r458 : 7th March 2011      : Inclusion of vim keywords (display, contained
+                             etc) controlled by separate option.
 
 r456 : 6th March 2011      : Fixed accidental file-type change.
 
