@@ -2,18 +2,18 @@
 UseVimball
 finish
 plugin/ctags_highlighting.vim	[[[1
-467
+484
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   7th April 2011          ##
-"## RevTag:: r458                    ##
+"## Date::   6th May 2011            ##
+"## RevTag:: r461                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r458 ##"
+let s:CTagsHighlighterVersion = "## RevTag:: r461 ##"
 let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '[#]\{2} RevTag[:]\{2} \(r\d\+\) *[#]\{2}', '\1', '')
 
 if !exists('g:VIMFILESDIR')
@@ -225,7 +225,11 @@ endfunc
 
 func! s:FindExePath(file)
 	if has("win32")
-		let short_file = fnamemodify(a:file . '.exe', ':p:t')
+		if a:file =~ '.exe$'
+			let short_file = fnamemodify(a:file, ':p:t')
+		else
+			let short_file = fnamemodify(a:file . '.exe', ':p:t')
+		endif
 		let path = substitute($PATH, '\\\?;', ',', 'g')
 
 		call s:Debug_Print(g:DBG_Status, "Looking for " . short_file . " in " . path)
@@ -304,11 +308,24 @@ func! UpdateTypesFile(recurse, skiptags)
 	endif
 
 	let sysroot = 'python ' . shellescape(mktypes_py_file)
-	let syscmd = ' --ctags-dir='
+	let syscmd = ''
 
-	let ctags_path = s:FindExePath('ctags')
-
-	let syscmd .= ctags_path
+	let ctags_option = s:GetOption('TypesFileCtagsExecutable', '')
+	if ctags_option == ''
+		" Option not set: search for 'ctags' in the path
+		let ctags_path = s:FindExePath('ctags')
+		let syscmd .= ' --ctags-dir=' . ctags_path
+	elseif ctags_option =~ '[\\/]'
+		" Option set and includes '/' or '\': must be explicit
+		" path to named executable: just pass to mktypes
+		let syscmd .= ' --ctags-executable=' . ctags_option
+	else
+		" Option set but doesn't include path separator: search
+		" in the path
+		let ctags_path = s:FindExePath(ctags_option)
+		let syscmd .= ' --ctags-path=' . ctags_path
+		let syscmd .= ' --ctags-executable=' . ctags_option
+	endif
 	
 	if exists('b:TypesFileRecurse')
 		if b:TypesFileRecurse == 1
@@ -471,11 +488,11 @@ for tagname in tagnames
 	exe 'hi default link' simplename 'Keyword'
 endfor
 mktypes.py	[[[1
-883
+893
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   7th April 2011       ##
-## RevTag:: r458                 ##
+## Date::   6th May 2011         ##
+## RevTag:: r461                 ##
 
 import os
 import sys
@@ -485,7 +502,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r458 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r461 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -945,6 +962,12 @@ def main():
 			dest='ctags_dir',
 			type='string',
 			help='CTAGS Executable Directory')
+	parser.add_option('--ctags-executable',
+			action='store',
+			default='ctags',
+			dest='ctags_executable',
+			type='string',
+			help='Name of the CTAGS executable, with or without a full path')
 	parser.add_option('--include-docs',
 			action='store_true',
 			default=False,
@@ -1005,9 +1028,13 @@ def main():
 
 	options, remainder = parser.parse_args()
 
-	if options.ctags_dir is not None:
-		global ctags_exe
-		ctags_exe = os.path.join(options.ctags_dir, 'ctags')
+	global ctags_exe
+	if '/' in options.ctags_executable:
+		ctags_exe = options.ctags_executable
+	elif options.ctags_dir is not None:
+		ctags_exe = os.path.join(options.ctags_dir, options.ctags_executable)
+	else:
+		ctags_exe = options.ctags_executable
 
 
 	if options.cscope_dir is not None:
@@ -1355,21 +1382,35 @@ if __name__ == "__main__":
 	main()
 
 # vim: noet ts=4 sw=4
-extra_source/mktypes/setup.py	[[[1
-5
-from distutils.core import setup
-import py2exe
-
-# for console program use 'console = [{"script" : "scriptname.py"}]
-setup(console=[{"script" : "../../mktypes.py"}])
+extra_source/mktypes/mktypes.spec	[[[1
+19
+# -*- mode: python -*-
+a = Analysis([os.path.join(HOMEPATH,'support\\_mountzlib.py'), os.path.join(HOMEPATH,'support\\useUnicode.py'), '../../mktypes.py'],
+             pathex=['.'])
+pyz = PYZ(a.pure)
+exe = EXE(pyz,
+          a.scripts,
+          exclude_binaries=1,
+          name=os.path.join('build\\pyi.win32\\mktypes', 'mktypes.exe'),
+          debug=False,
+          strip=False,
+          upx=True,
+          console=True )
+coll = COLLECT( exe,
+               a.binaries,
+               a.zipfiles,
+               a.datas,
+               strip=False,
+               upx=True,
+               name='dist')
 doc/ctags_highlighting.txt	[[[1
-472
+493
 *ctags_highlighting.txt*       Tag Highlighting
 
 Author:	    A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 	    Remove NOSPAM.
 
-## RevTag:: r458                                                           ##
+## RevTag:: r461                                                           ##
 
 Copyright:  (c) 2009-2011 by A. S. Budden       *ctags_highlighting-copyright*
 	    The VIM LICENCE applies to ctags_highlighting.vim, mktypes.py and
@@ -1392,10 +1433,12 @@ Copyright:  (c) 2009-2011 by A. S. Budden       *ctags_highlighting-copyright*
     3.    CTAGS Highlighting Customisation   |ctags_highlighting-custom|
     3.1   Adding More Languages              |ctags_highlighting-adding|
     3.1.1 Example                            |ctags_highlighting-add-example|
+
+    4.    Troubleshooting                    |ctags_highlighting-troubleshooting|
     
-    4.    Feature Wishlist                   |ctags_highlighting-wishlist|
+    5.    Feature Wishlist                   |ctags_highlighting-wishlist|
     
-    5.    CTAGS Highlighting History         |ctags_highlighting-history|
+    6.    CTAGS Highlighting History         |ctags_highlighting-history|
 
 ==============================================================================
 2. CTAGS Highlighting Manual		 *ctags_highlighting-manual*      {{{1
@@ -1432,7 +1475,12 @@ Copyright:  (c) 2009-2011 by A. S. Budden       *ctags_highlighting-copyright*
     The vast majority of the testing has been with C source code, so I'd be
     very interested in any feedback on the use with C++ and the various other
     languages.
-    
+
+    Currently requires exuberant ctags or one of its derivatives.  Exuberant
+    ctags is available from:
+>
+    http://ctags.sourceforge.net
+<
     Adding more languages is extremely simple, see
     |ctags_highlighting-adding|.
     
@@ -1587,6 +1635,16 @@ Copyright:  (c) 2009-2011 by A. S. Budden       *ctags_highlighting-copyright*
 	   Change the prefix for the vim types files from the default, "types".
 	   Affects both file reading and creation.
 
+	b:TypesFileCtagsExecutable       *b:TypesFileCtagsExecutable*
+	   
+	   Change the name of the ctags executable.  By default, the script
+	   searches for a file called ctags or ctags.exe (depending on
+	   platform) in the path or in the vimfiles directory (if on Windows).
+	   If this is set to the name of an executable (e.g. etags), it will
+	   search for this executable in the path or vimfiles.  If it is set
+	   to a full path to an executable, the specified executable will be
+	   used.
+
 2.5 Installation                         *ctags_highlighting-install*     {{{2
 
     The highlighter is distributed as a |vimball|.  To install, open it in Vim
@@ -1688,6 +1746,10 @@ Copyright:  (c) 2009-2011 by A. S. Budden       *ctags_highlighting-copyright*
 
 ==============================================================================
 5. CTAGS Highlighting History            *ctags_highlighting-history*     {{{1
+
+r461 : 6th May 2011        : Allow explicit setting of ctags executable
+                             name.  Added troubleshooting section to the
+                             manual.
 
 r458 : 7th March 2011      : Inclusion of vim keywords (display, contained
                              etc) controlled by separate option.
