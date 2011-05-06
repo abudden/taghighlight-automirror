@@ -1,14 +1,14 @@
 " ctags_highlighting
 "   Author:  A. S. Budden
-"## Date::   7th April 2011          ##
-"## RevTag:: r458                    ##
+"## Date::   6th May 2011            ##
+"## RevTag:: r461                    ##
 
 if &cp || exists("g:loaded_ctags_highlighting")
 	finish
 endif
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r458 ##"
+let s:CTagsHighlighterVersion = "## RevTag:: r461 ##"
 let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '[#]\{2} RevTag[:]\{2} \(r\d\+\) *[#]\{2}', '\1', '')
 
 if !exists('g:VIMFILESDIR')
@@ -220,7 +220,11 @@ endfunc
 
 func! s:FindExePath(file)
 	if has("win32")
-		let short_file = fnamemodify(a:file . '.exe', ':p:t')
+		if a:file =~ '.exe$'
+			let short_file = fnamemodify(a:file, ':p:t')
+		else
+			let short_file = fnamemodify(a:file . '.exe', ':p:t')
+		endif
 		let path = substitute($PATH, '\\\?;', ',', 'g')
 
 		call s:Debug_Print(g:DBG_Status, "Looking for " . short_file . " in " . path)
@@ -299,11 +303,24 @@ func! UpdateTypesFile(recurse, skiptags)
 	endif
 
 	let sysroot = 'python ' . shellescape(mktypes_py_file)
-	let syscmd = ' --ctags-dir='
+	let syscmd = ''
 
-	let ctags_path = s:FindExePath('ctags')
-
-	let syscmd .= ctags_path
+	let ctags_option = s:GetOption('TypesFileCtagsExecutable', '')
+	if ctags_option == ''
+		" Option not set: search for 'ctags' in the path
+		let ctags_path = s:FindExePath('ctags')
+		let syscmd .= ' --ctags-dir=' . ctags_path
+	elseif ctags_option =~ '[\\/]'
+		" Option set and includes '/' or '\': must be explicit
+		" path to named executable: just pass to mktypes
+		let syscmd .= ' --ctags-executable=' . ctags_option
+	else
+		" Option set but doesn't include path separator: search
+		" in the path
+		let ctags_path = s:FindExePath(ctags_option)
+		let syscmd .= ' --ctags-path=' . ctags_path
+		let syscmd .= ' --ctags-executable=' . ctags_option
+	endif
 	
 	if exists('b:TypesFileRecurse')
 		if b:TypesFileRecurse == 1

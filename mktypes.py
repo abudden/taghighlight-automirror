@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   7th April 2011       ##
-## RevTag:: r458                 ##
+## Date::   6th May 2011         ##
+## RevTag:: r461                 ##
 
 import os
 import sys
@@ -11,7 +11,7 @@ import fnmatch
 import glob
 import subprocess
 
-revision = "## RevTag:: r458 ##".strip('# ').replace('RevTag::', 'revision')
+revision = "## RevTag:: r461 ##".strip('# ').replace('RevTag::', 'revision')
 
 field_processor = re.compile(
 r'''
@@ -471,6 +471,12 @@ def main():
 			dest='ctags_dir',
 			type='string',
 			help='CTAGS Executable Directory')
+	parser.add_option('--ctags-executable',
+			action='store',
+			default='ctags',
+			dest='ctags_executable',
+			type='string',
+			help='Name of the CTAGS executable, with or without a full path')
 	parser.add_option('--include-docs',
 			action='store_true',
 			default=False,
@@ -531,9 +537,13 @@ def main():
 
 	options, remainder = parser.parse_args()
 
-	if options.ctags_dir is not None:
-		global ctags_exe
-		ctags_exe = os.path.join(options.ctags_dir, 'ctags')
+	global ctags_exe
+	if '/' in options.ctags_executable:
+		ctags_exe = options.ctags_executable
+	elif options.ctags_dir is not None:
+		ctags_exe = os.path.join(options.ctags_dir, options.ctags_executable)
+	else:
+		ctags_exe = options.ctags_executable
 
 
 	if options.cscope_dir is not None:
