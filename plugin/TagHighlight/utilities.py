@@ -10,7 +10,7 @@ def print_timing(func):
         return res
     return wrapper
 
-class CustomDict(dict):
+class AttributeDict(dict):
     """Customised version of a dictionary that allows access by attribute."""
     def __getattr__(self, name):
         return self[name]
