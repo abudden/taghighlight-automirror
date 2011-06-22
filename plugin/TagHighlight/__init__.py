@@ -25,7 +25,7 @@ def main():
 
     for language in config['language_list']:
         if language in tag_db:
-            CreateTypesFile(config, language)
+            CreateTypesFile(config, language, tag_db[language])
 
 if __name__ == "__main__":
     main()

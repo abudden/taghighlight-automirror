@@ -6,6 +6,7 @@ class Language(LanguageClassInterface):
 
     def GetParameters(self):
         params = {
+                'iskeyword': '@,48-57,_,192-255',
                 'suffix': 'c',
                 'name': 'c',
                 'extensions': r'(c|cc|cpp|h|hpp|cxx|hxx)',

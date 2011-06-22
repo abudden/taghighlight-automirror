@@ -80,6 +80,16 @@ def ProcessCommandLine():
             dest='cscope_dir',
             type='string',
             help='CSCOPE Executable Directory')
+    parser.add_option('--type-prefix',
+            action='store',
+            default='types_',
+            dest='type_file_prefix',
+            help='Specify the prefix for the generated types files')
+    parser.add_option('--type-file-location',
+            action='store',
+            default='.',
+            dest='type_file_location',
+            help='Specify the location for the generated types files')
     parser.add_option('--include-locals',
             action='store_true',
             default=False,

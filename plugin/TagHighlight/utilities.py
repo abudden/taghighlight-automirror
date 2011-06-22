@@ -1,6 +1,8 @@
+import time
+import re
+
 # Used for timing a function; from http://www.daniweb.com/code/snippet368.html
 # decorator: put @print_timing before a function to time it.
-import time
 def print_timing(func):
     def wrapper(*arg):
         t1 = time.time()
@@ -43,6 +45,68 @@ class DictDict(dict):
             super(DictDict, self).__setitem__(key, value)
         else:
             raise NotImplementedError
+
+def GenerateValidKeywordRange(iskeyword):
+    ValidKeywordSets = iskeyword.split(',')
+    rangeMatcher = re.compile('^(?P<from>(?:\d+|\S))-(?P<to>(?:\d+|\S))$')
+    falseRangeMatcher = re.compile('^^(?P<from>(?:\d+|\S))-(?P<to>(?:\d+|\S))$')
+    validList = []
+    for valid in ValidKeywordSets:
+        m = rangeMatcher.match(valid)
+        fm = falseRangeMatcher.match(valid)
+        if valid == '@':
+            for ch in [chr(i) for i in range(0,256)]:
+                if ch.isalpha():
+                    validList.append(ch)
+        elif m is not None:
+            # We have a range of ascii values
+            if m.group('from').isdigit():
+                rangeFrom = int(m.group('from'))
+            else:
+                rangeFrom = ord(m.group('from'))
+
+            if m.group('to').isdigit():
+                rangeTo = int(m.group('to'))
+            else:
+                rangeTo = ord(m.group('to'))
+
+            validRange = range(rangeFrom, rangeTo+1)
+            for ch in [chr(i) for i in validRange]:
+                validList.append(ch)
+
+        elif fm is not None:
+            # We have a range of ascii values: remove them!
+            if fm.group('from').isdigit():
+                rangeFrom = int(fm.group('from'))
+            else:
+                rangeFrom = ord(fm.group('from'))
+
+            if fm.group('to').isdigit():
+                rangeTo = int(fm.group('to'))
+            else:
+                rangeTo = ord(fm.group('to'))
+
+            validRange = range(rangeFrom, rangeTo+1)
+            for ch in [chr(i) for i in validRange]:
+                for i in range(validList.count(ch)):
+                    validList.remove(ch)
+
+        elif len(valid) == 1:
+            # Just a char
+            validList.append(valid)
+
+        else:
+            raise ValueError('Unrecognised iskeyword part: ' + valid)
+
+    return validList
+
+
+def IsValidKeyword(keyword, iskeyword):
+    for char in keyword:
+        if not char in iskeyword:
+            return False
+    return True
+
 
 if __name__ == "__main__":
     import pprint

@@ -1,4 +1,17 @@
 class LanguageClassInterface():
+    """Default priority: specified highest priority first.
+
+    Can be overridden in specific language implementations.
+    """
+    Priority = [
+            'CTagsNamespace', 'CTagsClass', 'CTagsDefinedName',
+            'CTagsType', 'CTagsMethod', 'CTagsFunction',
+            'CTagsEnumerationValue', 'CTagsEnumeratorName',
+            'CTagsConstant', 'CTagsGlobalVariable',
+            'CTagsUnion', 'CTagsProperty', 'CTagsMember',
+            'CTagsStructure',
+            ]
+
     def __init__(self, options):
         self.options = options
 
