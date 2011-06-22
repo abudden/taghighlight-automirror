@@ -1,8 +1,8 @@
 from optparse import Values
 from languages import Languages
-from custom_dict import CustomDict
+from utilities import AttributeDict
 
-config = CustomDict()
+config = AttributeDict()
 
 def SetInitialOptions(new_options):
     global config
