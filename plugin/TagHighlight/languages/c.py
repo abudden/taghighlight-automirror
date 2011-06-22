@@ -12,6 +12,9 @@ class Language(LanguageClassInterface):
                 }
         return params
 
+    def KindsToSkip(self):
+        return ['ctags_p']
+
     def GetCTagsOptions(self):
         result = []
         if self.options.include_locals:

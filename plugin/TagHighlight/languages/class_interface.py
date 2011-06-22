@@ -5,6 +5,9 @@ class LanguageClassInterface():
     def GetParameters(self):
         raise NotImplementedError
 
+    def KindsToSkip(self):
+        raise NotImplementedError
+
     def GetCTagsOptions(self):
         raise NotImplementedError
 

@@ -2,6 +2,7 @@ import subprocess
 import os
 import re
 import glob
+from utilities import DictDict
 
 field_processor = re.compile(
 r'''
@@ -28,7 +29,6 @@ def GenerateTags(options):
     args = GetCommandArgs(options)
 
     ctags_cmd = [options['ctags_exe_full']] + args
-    print ctags_cmd
 
     #subprocess.call(" ".join(ctags_cmd), shell = (os.name != 'nt'))
     subprocess.call(ctags_cmd)
@@ -50,7 +50,46 @@ def ParseTags(options):
 
     Each entry is a list of tags with all the required details.
     """
-    return {}
+    languages = options['language_handler']
+    kind_list = languages.GetKindList()
+
+    # Language: {Type: set([keyword, keyword, keyword])}
+    ctags_entries = DictDict()
+
+    lineMatchers = {}
+    for key in languages.GetAllLanguages():
+        lineMatchers[key] = re.compile(
+                r'^.*?\t[^\t]*\.(?P<extension>' +
+                languages.GetLanguageHandler(key).GetParameters()['extensions'] +
+                ')\t')
+
+    p = open(options['ctags_file'], 'r')
+    while 1:
+        line = p.readline()
+        if not line:
+            break
+
+        for key, lineMatcher in lineMatchers.items():
+            if lineMatcher.match(line):
+                # We have a match
+                m = field_processor.match(line.strip())
+                if m is not None:
+                    try:
+                        short_kind = 'ctags_' + m.group('kind')
+                        kind = kind_list[key][short_kind]
+                        keyword = m.group('keyword')
+                        if options['parse_constants'] and \
+                                (key == 'c') and \
+                                (kind == 'CTagsGlobalVariable'):
+                            if field_const.search(m.group('search')) is not None:
+                                kind = 'CTagsConstant'
+                        if short_kind not in languages.GetLanguageHandler(key).KindsToSkip():
+                            ctags_entries[key][kind].add(keyword)
+                    except KeyError:
+                        print "Unrecognised kind '%c' for language %s" % (m.group('kind'), key)
+    p.close()
+
+    return ctags_entries
 
 def GetCommandArgs(options):
     args = []

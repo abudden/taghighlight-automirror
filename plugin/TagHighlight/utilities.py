@@ -18,25 +18,38 @@ class AttributeDict(dict):
     def __setattr__(self, name, value):
         self[name] = value
 
-class ListDict(dict):
-    """Customised version of a dictionary that auto-creates non-existent keys as lists."""
+class SetDict(dict):
+    """Customised version of a dictionary that auto-creates non-existent keys as sets."""
     def __getitem__(self, key):
         if key not in self:
-            self[key] = []
-        return super(ListDict, self).__getitem__(key)
+            self[key] = set()
+        return super(SetDict, self).__getitem__(key)
 
     def __setitem__(self, key, value):
-        if isinstance(value, list):
-            super(ListDict, self).__setitem__(key, value)
+        if isinstance(value, set):
+            super(SetDict, self).__setitem__(key, value)
         else:
-            super(ListDict, self).__setitem__(key, [value])
+            super(SetDict, self).__setitem__(key, set([value]))
+
+class DictDict(dict):
+    """Customised version of a dictionary that auto-creates non-existent keys as SetDicts."""
+    def __getitem__(self, key):
+        if key not in self:
+            self[key] = SetDict()
+        return super(DictDict, self).__getitem__(key)
+
+    def __setitem__(self, key, value):
+        if isinstance(value, SetDict):
+            super(DictDict, self).__setitem__(key, value)
+        else:
+            raise NotImplementedError
 
 if __name__ == "__main__":
     import pprint
-    test_obj = ListDict()
+    test_obj = SetDict()
     # Should be able to add an item to the list
     pprint.pprint(test_obj)
-    test_obj['MyIndex'].append('Hello')
+    test_obj['MyIndex'].add('Hello')
     test_obj['SetList'] = ['This', 'Is', 'A', 'List']
     test_obj['SetString'] = 'This is a string'
     # These should all be lists:

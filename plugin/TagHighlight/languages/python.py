@@ -12,6 +12,9 @@ class Language(LanguageClassInterface):
                 }
         return params
 
+    def KindsToSkip(self):
+        return []
+
     def GetCTagsOptions(self):
         return []
 
