@@ -3,13 +3,14 @@
 
 import sys
 
-from version import revision, date
+from version import revtag, datetag
+
+revision = revtag.strip('# ').replace('RevTag:: ', '')
+date = datetag.strip('# ').replace('Date:: ', '')
 
 def main():
     from cmd import ProcessCommandLine
     from config import config
-
-    print >>sys.stderr, "Tag Highlight Generator, %s, %s" % (revision, date)
 
 #    ProcessConfig()
     # This loads options and creates the config object
