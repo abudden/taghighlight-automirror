@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 #  Author:  A. S. Budden
-## Date::   24th June 2011       ##
-## RevTag:: r472                 ##
 
-revision = "## RevTag:: r472 ##".strip('# ').replace('RevTag::', 'revision')
+import sys
+
+from version import revision, date
 
 def main():
     from cmd import ProcessCommandLine
     from config import config
+
+    print >>sys.stderr, "Tag Highlight Generator, %s, %s" % (revision, date)
 
 #    ProcessConfig()
     # This loads options and creates the config object
