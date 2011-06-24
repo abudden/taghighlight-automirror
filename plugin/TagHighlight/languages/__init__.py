@@ -8,6 +8,7 @@ class Languages():
         # and will add to the registry
         import os
         import sys
+
         for module in os.listdir(os.path.dirname(__file__)):
             if module in ['__init__.py', 'class_interface.py'] or module[-3:] != '.py':
                 continue
