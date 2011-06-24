@@ -100,6 +100,16 @@ def ProcessCommandLine():
             default=False,
             dest='use_existing_tagfile',
             help="Do not generate tags if a tag file already exists")
+    parser.add_option('--list-all-tagnames',
+            action='store_true',
+            default=False,
+            dest='list_all_tagnames',
+            help='Just print a list of all the tag names')
+    parser.add_option('--generate-extension-lookup',
+            action='store_true',
+            default=False,
+            dest='generate_extension_lookup',
+            help='Just generate a table of extensions and file types')
 
     options, remainder = parser.parse_args()
 

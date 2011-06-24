@@ -37,7 +37,24 @@ class Languages():
     def GetLanguageHandler(self, name):
         return self.registry[name]
 
-    def GetKindList(self, language=None):
+    def GenerateExtensionTable(self):
+        results = {}
+        for handler in self.registry.values():
+            extensions = handler.GetVimMatcher()
+            suffix = handler.GetSuffix()
+            results[extensions] = suffix
+        return results
+
+    @staticmethod
+    def GenerateFullKindList():
+        all_kinds = Languages.GetKindList()
+        kinds = set()
+        for language in all_kinds.keys():
+            kinds |= set(all_kinds[language].values())
+        return sorted(list(kinds))
+
+    @staticmethod
+    def GetKindList(language=None):
         """Explicit list of kinds exported from ctags help."""
         LanguageKinds = {}
         LanguageKinds['asm'] = \
@@ -359,3 +376,4 @@ class Languages():
             return LanguageKinds[language]
         else:
             return None
+

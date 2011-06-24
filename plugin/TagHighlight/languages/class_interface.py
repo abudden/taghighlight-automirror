@@ -15,8 +15,22 @@ class LanguageClassInterface():
     def __init__(self, options):
         self.options = options
 
-    def GetParameters(self):
+    def GetExtensions(self):
         raise NotImplementedError
+
+    def GetSuffix(self):
+        raise NotImplementedError
+
+    def GetIsKeyword(self):
+        return '@,48-57,_,192-255'
+
+    def GetVimMatcher(self):
+        python_matcher = self.GetExtensions()
+        special_characters = '()|?+'
+        vim_matcher = python_matcher
+        for ch in special_characters:
+            vim_matcher = vim_matcher.replace(ch, "\\" + ch)
+        return vim_matcher
 
     def KindsToSkip(self):
         raise NotImplementedError

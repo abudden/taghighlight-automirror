@@ -4,14 +4,11 @@ class Language(LanguageClassInterface):
     def __init__(self, options):
         self.options = options
 
-    def GetParameters(self):
-        params = {
-                'iskeyword': '@,48-57,_,192-255',
-                'suffix': 'py',
-                'name': 'python',
-                'extensions': r'pyw?',
-                }
-        return params
+    def GetExtensions(self):
+        return r'pyw?'
+
+    def GetSuffix(self):
+        return 'py'
 
     def KindsToSkip(self):
         return []

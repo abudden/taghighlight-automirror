@@ -3,6 +3,7 @@ import os
 import re
 import glob
 from utilities import DictDict
+from languages import Languages
 
 field_processor = re.compile(
 r'''
@@ -51,7 +52,7 @@ def ParseTags(options):
     Each entry is a list of tags with all the required details.
     """
     languages = options['language_handler']
-    kind_list = languages.GetKindList()
+    kind_list = Languages.GetKindList()
 
     # Language: {Type: set([keyword, keyword, keyword])}
     ctags_entries = DictDict()
@@ -60,7 +61,7 @@ def ParseTags(options):
     for key in languages.GetAllLanguages():
         lineMatchers[key] = re.compile(
                 r'^.*?\t[^\t]*\.(?P<extension>' +
-                languages.GetLanguageHandler(key).GetParameters()['extensions'] +
+                languages.GetLanguageHandler(key).GetExtensions() +
                 ')\t')
 
     p = open(options['ctags_file'], 'r')

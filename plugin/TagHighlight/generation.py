@@ -24,7 +24,7 @@ def CreateTypesFile(options, language, tags):
     language_handler = options['language_handler'].GetLanguageHandler(language)
 
     if options['check_keywords']:
-        iskeyword = GenerateValidKeywordRange(language_handler.GetParameters()['iskeyword'])
+        iskeyword = GenerateValidKeywordRange(language_handler.GetIsKeyword())
 
     matchEntries = set()
     vimtypes_entries = []
@@ -126,7 +126,7 @@ def CreateTypesFile(options, language, tags):
         vimtypes_entries.append('syn cluster javaTop ' + AddList + LocalTagType)
 
     filename = os.path.join(options['type_file_location'],
-            options['type_file_prefix'] + language_handler.GetParameters()['suffix'] + '.vim')
+            options['type_file_prefix'] + language_handler.GetSuffix() + '.vim')
 
     try:
         fh = open(filename, 'wb')

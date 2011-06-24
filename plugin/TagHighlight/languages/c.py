@@ -4,14 +4,11 @@ class Language(LanguageClassInterface):
     def __init__(self, options):
         self.options = options
 
-    def GetParameters(self):
-        params = {
-                'iskeyword': '@,48-57,_,192-255',
-                'suffix': 'c',
-                'name': 'c',
-                'extensions': r'(c|cc|cpp|h|hpp|cxx|hxx)',
-                }
-        return params
+    def GetExtensions(self):
+        return r'(c|cc|cpp|h|hpp|cxx|hxx)'
+
+    def GetSuffix(self):
+        return 'c'
 
     def KindsToSkip(self):
         return ['ctags_p']
