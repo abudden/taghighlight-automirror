@@ -1,26 +1,18 @@
 " ctags_highlighting
 "   Author:  A. S. Budden
 "## Date::   29th June 2011          ##
-"## RevTag:: r471                    ##
+"## RevTag:: r472                    ##
 
-" Compatible mode, get out quickly
-if &cp
+try
+	if &cp || (exists('g:loaded_ctags_highlighting') && (g:plugin_development_mode != 1))
+		throw "Already loaded"
+	endif
+catch
 	finish
-endif
-
-" Ensure that plugin development mode variable exists (used to override
-" repeated load protection).
-if (! exists('g:plugin_development_mode'))
-	let g:plugin_development_mode = 0
-endif
-" If we've already loaded the plugin and are not in development mode,
-" don't reload the plugin.
-if (exists("g:loaded_ctags_highlighting") && (g:plugin_development_mode != 1))
-	finish
-endif
+endtry
 let g:loaded_ctags_highlighting = 1
 
-let s:CTagsHighlighterVersion = "## RevTag:: r471 ##"
+let s:CTagsHighlighterVersion = "## RevTag:: r472 ##"
 let s:CTagsHighlighterVersion = substitute(s:CTagsHighlighterVersion, '[#]\{2} RevTag[:]\{2} \(r\d\+\) *[#]\{2}', '\1', '')
 
 if !exists('g:VIMFILESDIR')
