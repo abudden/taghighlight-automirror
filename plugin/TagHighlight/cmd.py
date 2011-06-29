@@ -110,6 +110,11 @@ def ProcessCommandLine():
             default=False,
             dest='generate_extension_lookup',
             help='Just generate a table of extensions and file types')
+    parser.add_option('--pyversion',
+            action='store_true',
+            default=False,
+            dest='print_py_version',
+            help='Just print the version of python')
 
     options, remainder = parser.parse_args()
 

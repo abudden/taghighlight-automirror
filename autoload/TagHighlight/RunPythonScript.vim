@@ -38,12 +38,13 @@ function! s:GetPath()
 endfunction
 
 function! s:FindExeInPath(file)
+	let full_file = a:file
 	if has("win32") || has("win32unix")
-		if a:file =~ '.exe$'
+		if a:file !~ '.exe$'
 			let full_file = a:file . '.exe.'
 		endif
 	endif
-	let short_file = fnamemodify(a:file, ':p:t')
+	let short_file = fnamemodify(full_file, ':p:t')
 	let file_exe_list = split(globpath(s:GetPath(), short_file), '\n')
 	
 	if len(file_exe_list) > 0 && executable(file_exe_list[0])
@@ -52,12 +53,34 @@ function! s:FindExeInPath(file)
 		return 'None'
 	endif
 	let file_exe = substitute(file_exe, '\\', '/', 'g')
+	return file_exe
+endfunction
+
+function! TagHighlight#RunPythonScript#GetPythonVersion()
+	" Assumes that python path is set correctly
+	if s:python_variant == 'if_pyth'
+		py import sys
+		py vim.command('let g:taghl_getpythonversion = "%s"' % sys.version)
+		let pyversion = g:taghl_getpythonversion
+		unlet g:taghl_getpythonversion
+	elseif s:python_variant == 'python'
+		let syscmd = shellescape(s:python_path) . " --version"
+		let pyversion = system(syscmd)
+	elseif s:python_variant == 'compiled'
+		let syscmd = shellescape(s:highlighter_path) . " --pyversion"
+		let pyversion = system(syscmd)
+	else
+		let pyversion = 'ERROR'
+	endif
+	return pyversion
 endfunction
 
 function! TagHighlight#RunPythonScript#FindPython()
 	let s:python_variant = 'None'
+	let forced_variant = TagHighlight#Option#GetOption('ForcedPythonVariant', 'None')
+
 	" This script is written for python 2.x, so we check for that.
-	if has('python')
+	if has('python') && index(['None', 'if_pyth'], forced_variant) != -1
 		" Check that it works
 		let g:taghl_findpython_testvar = 0
 		try
@@ -67,19 +90,12 @@ function! TagHighlight#RunPythonScript#FindPython()
 			if g:taghl_findpython_testvar != 1
 				throw "Python doesn't seem to be working"
 			endif
-			" Get the version of python
-			if TagHighlight#Debug#GetDebugLevelName() == 'Information'
-				py import sys
-				py vim.command('let g:taghl_findpython_testvar = "%s"' % sys.version)
-				call TagHighlight#Debug#Print("Python version reported as: " . g:taghl_findpython_testvar,
-							\ 'Information')
-			endif
 			unlet g:taghl_findpython_testvar
 			let s:python_variant = 'if_pyth'
 		endtry
 	endif
 
-	if s:python_variant == 'None'
+	if forced_variant == 'python' || (s:python_variant == 'None' && forced_variant == 'None')
 		" Has a specific path to python been set?
 		let python_path = TagHighlight#Option#GetOption('PathToPython', 'None')
 		if python_path != 'None' && executable(python_path)
@@ -94,18 +110,9 @@ function! TagHighlight#RunPythonScript#FindPython()
 				let s:python_path = python_path
 			endif
 		endif
-		
-		if python_path != 'None'
-			" Consider checking that it's valid
-			if TagHighlight#Debug#GetDebugLevelName() == 'Information'
-				let pyversion = TagHighlight#RunPythonScript#GetPythonVersion()
-				TagHighlight#Debug#Print("Python version reported as: " . pyversion,
-							\ 'Information')
-			endif
-		endif
 	endif
 
-	if s:python_variant == 'None'
+	if forced_variant == 'compiled' || (s:python_variant == 'None' && forced_variant == 'None')
 		" Still haven't found it, see if we have a compiled version available
 		if has("win32")
 			let compiled_highlighter = split(globpath(&rtp, "plugin/TagHighlight/Win32Compiled/TagHighlight.exe"), "\n")
@@ -116,7 +123,14 @@ function! TagHighlight#RunPythonScript#FindPython()
 		endif
 	endif
 
-	if s:python_variant == 'None'
+	if s:python_variant != 'None'
+		" Consider checking that it's valid
+		if TagHighlight#Debug#GetDebugLevelName() == 'Information'
+			let pyversion = TagHighlight#RunPythonScript#GetPythonVersion()
+			call TagHighlight#Debug#Print("Python version reported as: " . pyversion,
+						\ 'Information')
+		endif
+	else
 		throw "Tag highlighter: could not find python or the compiled version of the highlighter."
 	endif
 

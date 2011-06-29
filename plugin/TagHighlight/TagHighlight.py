@@ -16,6 +16,10 @@ def main():
     # This loads options and creates the config object
     ProcessCommandLine()
 
+    if config['print_py_version']:
+        print sys.version
+        return
+
     print_then_exit = False
 
     if config['list_all_tagnames']:
