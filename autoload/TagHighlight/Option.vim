@@ -26,19 +26,22 @@ let s:opt_prefix = 'TagHL'
 function! TagHighlight#Option#GetOption(name, default)
 	let opt = a:default
 
-	" Option priority: global variable, global dictionary,
-	" buffer variable, buffer dictionary
-	if exists('g:' . s:opt_prefix . a:name)
-		exe 'let opt = g:' . s:opt_prefix . a:name
-	endif
+	" Option priority (highest first):
+	" * buffer dictionary,
+	" * buffer variable,
+	" * global dictionary,
+	" * global variable
+	" TODO: Make g:TagHighlightSettings exist in plugin/ so that
+	" we don't have to do exists() on this all the time
 	if exists('g:TagHighlightSettings') && has_key(g:TagHighlightSettings, a:name)
 		let opt = g:TagHighlightSettings[a:name]
-	endif
-	if exists('b:' . s:opt_prefix . a:name)
-		exe 'let opt = b:' . s:opt_prefix . a:name
+	elseif exists('g:' . s:opt_prefix . a:name)
+		exe 'let opt = g:' . s:opt_prefix . a:name
 	endif
 	if exists('b:TagHighlightSettings') && has_key(b:TagHighlightSettings, a:name)
 		let opt = b:TagHighlightSettings[a:name]
+	elseif exists('b:' . s:opt_prefix . a:name)
+		exe 'let opt = b:' . s:opt_prefix . a:name
 	endif
 	return opt
 endfunction
