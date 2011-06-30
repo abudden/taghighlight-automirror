@@ -18,7 +18,7 @@ class Languages():
             mod_list = all_languages.languages
         else:
             mod_dir = os.path.dirname(__file__)
-            mod_list = ['module.languages.' + i[:-3] for i in os.listdir(mod_dir) if i not in ['__init__.py','class_interface.py'] and module[-3:] == '.py']
+            mod_list = ['module.languages.' + i[:-3] for i in os.listdir(mod_dir) if i not in ['__init__.py','class_interface.py'] and i[-3:] == '.py']
 
         for module in mod_list:
             mod_import_name = module
