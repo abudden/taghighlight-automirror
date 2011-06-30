@@ -9,11 +9,19 @@ class Languages():
         import os
         import sys
 
-        for module in os.listdir(os.path.dirname(__file__)):
-            if module in ['__init__.py', 'class_interface.py'] or module[-3:] != '.py':
-                continue
+        # Get the list of languages.  For pyinstaller variants, this is from a module
+        # generated at compile time.  For script runs, this is done by parsing the
+        # list of files in the languages directory and loading everything except
+        # this file and class_interface.py
+        if hasattr(sys, "frozen"):
+            import all_languages
+            mod_list = all_languages.languages
+        else:
+            mod_dir = os.path.dirname(__file__)
+            mod_list = ['module.languages.' + i[:-3] for i in os.listdir(mod_dir) if i not in ['__init__.py','class_interface.py'] and module[-3:] == '.py']
 
-            mod_import_name = 'module.languages.' + module[:-3]
+        for module in mod_list:
+            mod_import_name = module
             __import__(mod_import_name)
             mod = sys.modules[mod_import_name]
 
