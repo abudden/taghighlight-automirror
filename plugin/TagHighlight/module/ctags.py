@@ -24,7 +24,6 @@ r'''
 	.*                # If it is followed by a tab, soak up the rest of the line; replace with the syntax keyword line
 ''', re.VERBOSE)
 
-
 def GenerateTags(options):
     print("Generating Tags")
 
@@ -88,7 +87,7 @@ def ParseTags(options):
                         if short_kind not in languages.GetLanguageHandler(key).KindsToSkip():
                             ctags_entries[key][kind].add(keyword)
                     except KeyError:
-                        print("Unrecognised kind '%c' for language %s" % (m.group('kind'), key))
+                        print("Unrecognised kind '{kind}' for language {language}".format(kind=m.group('kind'), language=key))
     p.close()
 
     return ctags_entries

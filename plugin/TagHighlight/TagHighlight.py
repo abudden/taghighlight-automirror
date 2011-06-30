@@ -25,7 +25,7 @@ def main():
 
     if config['generate_extension_lookup']:
         extension_table = config['language_handler'].GenerateExtensionTable()
-        print("EXTENSIONS;" + ",".join("%s:%s" % (k, v) for (k, v) in extension_table.items()))
+        print("EXTENSIONS;" + ",".join("{key}:{value}".format(key=k, value=v) for (k, v) in extension_table.items()))
         print_then_exit = True
 
     if print_then_exit:

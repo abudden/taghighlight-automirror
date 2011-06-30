@@ -134,7 +134,7 @@ def CreateTypesFile(options, language, tags):
         # The resulting file will then work with any Vim (Windows, Linux, Cygwin etc)
         fh = open(filename, 'wb')
     except IOError:
-        sys.stderr.write("ERROR: Couldn't create %s\n" % (outfile))
+        sys.stderr.write("ERROR: Couldn't create {file}\n".format(file=outfile))
         sys.exit(1)
 
     try:
@@ -142,7 +142,7 @@ def CreateTypesFile(options, language, tags):
             fh.write(line.encode('ascii'))
             fh.write('\n'.encode('ascii'))
     except IOError:
-        sys.stderr.write("ERROR: Couldn't write %s contents\n" % (outfile))
+        sys.stderr.write("ERROR: Couldn't write {file} contents\n".format(file=outfile))
         sys.exit(1)
     finally:
         fh.close()

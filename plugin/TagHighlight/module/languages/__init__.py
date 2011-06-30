@@ -23,7 +23,7 @@ class Languages():
                     if len(mod.__all__) == 1:
                         class_name = mod.__all__[0]
                 except AttributeError:
-                    raise NotImplementedError("Missing class (either call it Language or make it the only thing in __all__) for module %s" % mod_import_name)
+                    raise NotImplementedError("Missing class (either call it Language or make it the only thing in __all__) for module {module}".format(module=mod_import_name))
 
             mod_class = getattr(mod, class_name)
             self.registry[mod_class.GetFriendlyLanguageName()] = \
