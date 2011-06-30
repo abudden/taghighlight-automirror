@@ -83,68 +83,82 @@ endfunction
 function! TagHighlight#RunPythonScript#FindPython()
 	let s:python_variant = 'None'
 	let forced_variant = TagHighlight#Option#GetOption('ForcedPythonVariant', 'None')
+	" Supported variants
+	let supported_variants = ['if_pyth3', 'if_pyth', 'python', 'compiled']
+	" Priority of those variants (default is that specified above)
+	let variant_priority = TagHighlight#Option#GetOption('PythonVariantPriority',
+				\ supported_variants)
 
-	" This script works with python 3.x, so we check for that.
-	if forced_variant == 'if_pyth3' || (s:python_variant == 'None' && forced_variant == 'None')
-		if has('python3')
-			" Check that it works
-			let g:taghl_findpython_testvar = 0
-			try
-				py3 import vim
-				py3 vim.command('let g:taghl_findpython_testvar = 1')
-				if g:taghl_findpython_testvar != 1
-					throw "Python doesn't seem to be working"
-				endif
-				unlet g:taghl_findpython_testvar
-				let s:python_variant = 'if_pyth3'
-			endtry
-		endif
+	" Make sure that the user specified variant is supported
+	if index(supported_variants, forced_variant) == -1
+		let forced_variant = 'None'
 	endif
 
-	" This script works with python 2.x, so we check for that.
-	if forced_variant == 'if_pyth' || (s:python_variant == 'None' && forced_variant == 'None')
-		if has('python')
-			" Check that it works
-			let g:taghl_findpython_testvar = 0
-			try
-				py import vim
-				py vim.command('let g:taghl_findpython_testvar = 1')
-				if g:taghl_findpython_testvar != 1
-					throw "Python doesn't seem to be working"
-				endif
-				unlet g:taghl_findpython_testvar
-				let s:python_variant = 'if_pyth'
-			endtry
-		endif
-	endif
+	" Make sure that all variants in the priority list are supported
+	call filter(variant_priority, 'index(supported_variants, v:val) != -1')
 
-	if forced_variant == 'python' || (s:python_variant == 'None' && forced_variant == 'None')
-		" Has a specific path to python been set?
-		let python_path = TagHighlight#Option#GetOption('PathToPython', 'None')
-		if python_path != 'None' && executable(python_path)
-			" We've found python, it's probably usable
-			let s:python_variant = 'python'
-			let s:python_path = python_path
-		else
-			" See if it's in the path
-			let python_path = s:FindExeInPath('python')
-			if python_path != 'None'
-				let s:python_variant = 'python'
-				let s:python_path = python_path
+	" Try each variant in the priority list until we find one that works
+	for variant in variant_priority
+		if forced_variant == variant || forced_variant == 'None'
+			if variant == 'if_pyth3' && has('python3')
+				" Check whether the python 3 interface works
+				let g:taghl_findpython_testvar = 0
+				try
+					py3 import vim
+					py3 vim.command('let g:taghl_findpython_testvar = 1')
+					if g:taghl_findpython_testvar != 1
+						throw "Python doesn't seem to be working"
+					endif
+					unlet g:taghl_findpython_testvar
+					let s:python_variant = 'if_pyth3'
+				endtry
+			elseif variant == 'if_pyth' && has('python')
+				" Check whether the python 2 interface works
+				let g:taghl_findpython_testvar = 0
+				try
+					py import vim
+					py vim.command('let g:taghl_findpython_testvar = 1')
+					if g:taghl_findpython_testvar != 1
+						throw "Python doesn't seem to be working"
+					endif
+					unlet g:taghl_findpython_testvar
+					let s:python_variant = 'if_pyth'
+				endtry
+			elseif variant == 'python'
+				" Try calling an external python
+				
+				" Has a specific path to python been set?
+				let python_path = TagHighlight#Option#GetOption('PathToPython', 'None')
+				if python_path != 'None' && executable(python_path)
+					" We've found python, it's probably usable
+					let s:python_variant = 'python'
+					let s:python_path = python_path
+				else
+					" See if it's in the path
+					let python_path = s:FindExeInPath('python')
+					if python_path != 'None'
+						let s:python_variant = 'python'
+						let s:python_path = python_path
+					endif
+				endif
+			elseif variant == 'compiled'
+				" See if there's a compiled executable version of the
+				" highlighter
+				if has("win32")
+					let compiled_highlighter = split(globpath(&rtp, "plugin/TagHighlight/Win32Compiled/TagHighlight.exe"), "\n")
+					if len(compiled_highlighter) > 0  && executable(compiled_highlighter[0])
+						let s:python_variant = 'compiled'
+						let s:highlighter_path = compiled_highlighter[0]
+					endif
+				endif
 			endif
 		endif
-	endif
-
-	if forced_variant == 'compiled' || (s:python_variant == 'None' && forced_variant == 'None')
-		" Still haven't found it, see if we have a compiled version available
-		if has("win32")
-			let compiled_highlighter = split(globpath(&rtp, "plugin/TagHighlight/Win32Compiled/TagHighlight.exe"), "\n")
-			if len(compiled_highlighter) > 0  && executable(compiled_highlighter[0])
-				let s:python_variant = 'compiled'
-				let s:highlighter_path = compiled_highlighter[0]
-			endif
+		
+		if s:python_variant != 'None'
+			" Found one!
+			break
 		endif
-	endif
+	endfor
 
 	if s:python_variant != 'None'
 		" Consider checking that it's valid
