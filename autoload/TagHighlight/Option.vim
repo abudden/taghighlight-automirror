@@ -23,6 +23,9 @@ endtry
 let g:loaded_TagHLOption = 1
 let s:opt_prefix = 'TagHL'
 
+" TODO: Options should be customisable per project (following the same method
+" as looking for tags/types... look for options file).
+
 function! TagHighlight#Option#GetOption(name, default)
 	let opt = a:default
 
