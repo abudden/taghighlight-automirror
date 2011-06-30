@@ -1,43 +1,39 @@
 #!/usr/bin/env python
 #  Author:  A. S. Budden
 
+from __future__ import print_function
 import sys
 
-from version import revtag, datetag
-
-revision = revtag.strip('# ').replace('RevTag:: ', '')
-date = datetag.strip('# ').replace('Date:: ', '')
-
 def main():
-    from cmd import ProcessCommandLine
-    from config import config
+    from module.cmd import ProcessCommandLine
+    from module.config import config
 
 #    ProcessConfig()
     # This loads options and creates the config object
     ProcessCommandLine()
 
     if config['print_py_version']:
-        print sys.version
+        print(sys.version)
         return
 
     print_then_exit = False
 
     if config['list_all_tagnames']:
-        from languages import Languages
-        print "TAGNAMES;" + ",".join(Languages.GenerateFullKindList())
+        from module.languages import Languages
+        print("TAGNAMES;" + ",".join(Languages.GenerateFullKindList()))
         print_then_exit = True
 
     if config['generate_extension_lookup']:
         extension_table = config['language_handler'].GenerateExtensionTable()
-        print "EXTENSIONS;" + ",".join("%s:%s" % (k, v) for (k, v) in extension_table.items())
+        print("EXTENSIONS;" + ",".join("%s:%s" % (k, v) for (k, v) in extension_table.items()))
         print_then_exit = True
 
     if print_then_exit:
         return
 
-    from cscope import GenerateCScopeDBIfRequired
-    from ctags import GenerateTags, ParseTags
-    from generation import CreateTypesFile
+    from module.cscope import GenerateCScopeDBIfRequired
+    from module.ctags import GenerateTags, ParseTags
+    from module.generation import CreateTypesFile
 
     GenerateCScopeDBIfRequired(config)
 

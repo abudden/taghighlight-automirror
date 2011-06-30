@@ -1,9 +1,10 @@
+from __future__ import print_function
 import subprocess
 import os
 import re
 import glob
-from utilities import DictDict
-from languages import Languages
+from .utilities import DictDict
+from .languages import Languages
 
 field_processor = re.compile(
 r'''
@@ -25,7 +26,7 @@ r'''
 
 
 def GenerateTags(options):
-    print "Generating Tags"
+    print("Generating Tags")
 
     args = GetCommandArgs(options)
 
@@ -70,7 +71,7 @@ def ParseTags(options):
         if not line:
             break
 
-        for key, lineMatcher in lineMatchers.items():
+        for key, lineMatcher in list(lineMatchers.items()):
             if lineMatcher.match(line):
                 # We have a match
                 m = field_processor.match(line.strip())
@@ -87,7 +88,7 @@ def ParseTags(options):
                         if short_kind not in languages.GetLanguageHandler(key).KindsToSkip():
                             ctags_entries[key][kind].add(keyword)
                     except KeyError:
-                        print "Unrecognised kind '%c' for language %s" % (m.group('kind'), key)
+                        print("Unrecognised kind '%c' for language %s" % (m.group('kind'), key))
     p.close()
 
     return ctags_entries

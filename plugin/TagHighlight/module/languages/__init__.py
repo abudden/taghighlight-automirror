@@ -13,7 +13,7 @@ class Languages():
             if module in ['__init__.py', 'class_interface.py'] or module[-3:] != '.py':
                 continue
 
-            mod_import_name = 'languages.' + module[:-3]
+            mod_import_name = 'module.languages.' + module[:-3]
             __import__(mod_import_name)
             mod = sys.modules[mod_import_name]
 
@@ -30,17 +30,17 @@ class Languages():
                     mod_class(options)
 
     def GetAllLanguages(self):
-        return self.registry.keys()
+        return list(self.registry.keys())
 
     def GetAllLanguageHandlers(self):
-        return self.registry.values()
+        return list(self.registry.values())
 
     def GetLanguageHandler(self, name):
         return self.registry[name]
 
     def GenerateExtensionTable(self):
         results = {}
-        for handler in self.registry.values():
+        for handler in list(self.registry.values()):
             extensions = handler.GetVimMatcher()
             suffix = handler.GetSuffix()
             results[extensions] = suffix
@@ -50,7 +50,7 @@ class Languages():
     def GenerateFullKindList():
         all_kinds = Languages.GetKindList()
         kinds = set()
-        for language in all_kinds.keys():
+        for language in list(all_kinds.keys()):
             kinds |= set(all_kinds[language].values())
         return sorted(list(kinds))
 

@@ -1,5 +1,6 @@
+from __future__ import print_function
 import os
-from utilities import GenerateValidKeywordRange, IsValidKeyword
+from .utilities import GenerateValidKeywordRange, IsValidKeyword
 
 vim_synkeyword_arguments = [
         'contains',
@@ -18,7 +19,7 @@ vim_synkeyword_arguments = [
 
 
 def CreateTypesFile(options, language, tags):
-    tag_types = tags.keys()
+    tag_types = list(tags.keys())
     tag_types.sort()
 
     language_handler = options['language_handler'].GetLanguageHandler(language)
@@ -31,7 +32,7 @@ def CreateTypesFile(options, language, tags):
 
 
     # TODO: This may be included elsewhere, but we'll leave it in for now
-    typesUsedByLanguage = options['language_handler'].GetKindList(language).values()
+    typesUsedByLanguage = list(options['language_handler'].GetKindList(language).values())
     clear_string = 'silent! syn clear ' + " ".join(typesUsedByLanguage)
 
     vimtypes_entries = []
@@ -81,7 +82,7 @@ def CreateTypesFile(options, language, tags):
                             break
 
                     if not matchDone:
-                        print "Skipping keyword '" + keyword + "'"
+                        print("Skipping keyword '" + keyword + "'")
 
                     continue
 
@@ -129,6 +130,8 @@ def CreateTypesFile(options, language, tags):
             options['type_file_prefix'] + language_handler.GetSuffix() + '.vim')
 
     try:
+        # Have to open in binary mode as we want to write with Unix line endings
+        # The resulting file will then work with any Vim (Windows, Linux, Cygwin etc)
         fh = open(filename, 'wb')
     except IOError:
         sys.stderr.write("ERROR: Couldn't create %s\n" % (outfile))
@@ -136,8 +139,8 @@ def CreateTypesFile(options, language, tags):
 
     try:
         for line in vimtypes_entries:
-            fh.write(line)
-            fh.write('\n')
+            fh.write(line.encode('ascii'))
+            fh.write('\n'.encode('ascii'))
     except IOError:
         sys.stderr.write("ERROR: Couldn't write %s contents\n" % (outfile))
         sys.exit(1)

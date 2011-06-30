@@ -1,6 +1,6 @@
 from optparse import Values
-from languages import Languages
-from utilities import AttributeDict
+from .languages import Languages
+from .utilities import AttributeDict
 
 config = AttributeDict()
 

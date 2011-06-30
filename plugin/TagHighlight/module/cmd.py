@@ -1,8 +1,8 @@
 import os
 import optparse
 
-from config import SetInitialOptions, LoadLanguages
-from TagHighlight import revision
+from .config import SetInitialOptions, LoadLanguages
+from . import revision
 
 def ProcessCommandLine():
     parser = optparse.OptionParser(version=("Tag Highlight Types File Creator (revision %%prog) %s" % revision))

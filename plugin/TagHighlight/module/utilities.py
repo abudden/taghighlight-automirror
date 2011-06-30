@@ -1,3 +1,4 @@
+from __future__ import print_function
 import time
 import re
 
@@ -8,7 +9,7 @@ def print_timing(func):
         t1 = time.time()
         res = func(*arg)
         t2 = time.time()
-        print '%s took %0.3f ms' % (func.func_name, (t2-t1)*1000.0)
+        print('%s took %0.3f ms' % (func.func_name, (t2-t1)*1000.0))
         return res
     return wrapper
 
@@ -70,7 +71,7 @@ def GenerateValidKeywordRange(iskeyword):
             else:
                 rangeTo = ord(m.group('to'))
 
-            validRange = range(rangeFrom, rangeTo+1)
+            validRange = list(range(rangeFrom, rangeTo+1))
             for ch in [chr(i) for i in validRange]:
                 validList.append(ch)
 

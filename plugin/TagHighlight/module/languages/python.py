@@ -1,4 +1,4 @@
-from class_interface import LanguageClassInterface
+from .class_interface import LanguageClassInterface
 
 class Language(LanguageClassInterface):
     def __init__(self, options):
