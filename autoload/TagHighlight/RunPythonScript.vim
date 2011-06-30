@@ -58,7 +58,12 @@ endfunction
 
 function! TagHighlight#RunPythonScript#GetPythonVersion()
 	" Assumes that python path is set correctly
-	if s:python_variant == 'if_pyth'
+	if s:python_variant == 'if_pyth3'
+		py3 import sys
+		py3 vim.command('let g:taghl_getpythonversion = "{0}"'.format(sys.version))
+		let pyversion = g:taghl_getpythonversion
+		unlet g:taghl_getpythonversion
+	elseif s:python_variant == 'if_pyth'
 		py import sys
 		py vim.command('let g:taghl_getpythonversion = "%s"' % sys.version)
 		let pyversion = g:taghl_getpythonversion
@@ -79,20 +84,38 @@ function! TagHighlight#RunPythonScript#FindPython()
 	let s:python_variant = 'None'
 	let forced_variant = TagHighlight#Option#GetOption('ForcedPythonVariant', 'None')
 
-	" This script is written for python 2.x, so we check for that.
-	if has('python') && index(['None', 'if_pyth'], forced_variant) != -1
-		" Check that it works
-		let g:taghl_findpython_testvar = 0
-		try
-			py import vim
-			py import sys
-			py vim.command('let g:taghl_findpython_testvar = 1')
-			if g:taghl_findpython_testvar != 1
-				throw "Python doesn't seem to be working"
-			endif
-			unlet g:taghl_findpython_testvar
-			let s:python_variant = 'if_pyth'
-		endtry
+	" This script works with python 3.x, so we check for that.
+	if forced_variant == 'if_pyth3' || (s:python_variant == 'None' && forced_variant == 'None')
+		if has('python3')
+			" Check that it works
+			let g:taghl_findpython_testvar = 0
+			try
+				py3 import vim
+				py3 vim.command('let g:taghl_findpython_testvar = 1')
+				if g:taghl_findpython_testvar != 1
+					throw "Python doesn't seem to be working"
+				endif
+				unlet g:taghl_findpython_testvar
+				let s:python_variant = 'if_pyth3'
+			endtry
+		endif
+	endif
+
+	" This script works with python 2.x, so we check for that.
+	if forced_variant == 'if_pyth' || (s:python_variant == 'None' && forced_variant == 'None')
+		if has('python')
+			" Check that it works
+			let g:taghl_findpython_testvar = 0
+			try
+				py import vim
+				py vim.command('let g:taghl_findpython_testvar = 1')
+				if g:taghl_findpython_testvar != 1
+					throw "Python doesn't seem to be working"
+				endif
+				unlet g:taghl_findpython_testvar
+				let s:python_variant = 'if_pyth'
+			endtry
+		endif
 	endif
 
 	if forced_variant == 'python' || (s:python_variant == 'None' && forced_variant == 'None')
