@@ -39,7 +39,7 @@ coll = COLLECT( exe,
         a.datas,
         strip=False,
         upx=True,
-        name='Win32Compiled')
+        name='Compiled/Win32')
 
 # Remove the generated files
 
