@@ -13,7 +13,7 @@ def ProcessCommandLine():
             # TODO: Should be a critical debug error
             print "Missing field for option:",repr(option)
             return
-        if option['Type'] == bool:
+        if option['Type'] == 'bool':
             if option['Default'] == True:
                 action = 'store_false'
             else:
@@ -25,10 +25,12 @@ def ProcessCommandLine():
                     help=option['Help'])
         else:
             optparse_type='string'
-            if option['Type'] == str:
+            if option['Type'] == 'string':
                 action='store'
-            elif option['Type'] == list:
+            elif option['Type'] == 'list':
                 action='append'
+            else:
+                raise Exception('Unrecognised option type: ' + Option('Type'))
             parser.add_option(*option['CommandLineSwitches'],
                     action=action,
                     default=option['Default'],
