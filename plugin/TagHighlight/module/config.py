@@ -12,6 +12,8 @@ def SetInitialOptions(new_options):
 
 def LoadLanguages():
     global config
+    if 'language_handler' in config:
+        return
     config['language_handler'] = Languages(config)
 
     full_language_list = config['language_handler'].GetAllLanguages()
