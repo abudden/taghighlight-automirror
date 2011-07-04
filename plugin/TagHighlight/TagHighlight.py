@@ -16,21 +16,6 @@ def main():
         print(sys.version)
         return
 
-    print_then_exit = False
-
-    if config['list_all_tagnames']:
-        from module.languages import Languages
-        print("TAGNAMES;" + ",".join(Languages.GenerateFullKindList()))
-        print_then_exit = True
-
-    if config['generate_extension_lookup']:
-        extension_table = config['language_handler'].GenerateExtensionTable()
-        print("EXTENSIONS;" + ",".join("{key}:{value}".format(key=k, value=v) for (k, v) in extension_table.items()))
-        print_then_exit = True
-
-    if print_then_exit:
-        return
-
     from module.cscope import GenerateCScopeDBIfRequired
     from module.ctags import GenerateTags, ParseTags
     from module.generation import CreateTypesFile

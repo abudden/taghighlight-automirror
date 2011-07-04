@@ -133,20 +133,6 @@ AllOptions = [
             'Help': "Do not generate tags if a tag file already exists",
         },
         {
-            'CommandLineSwitches': ['--list-all-tagnames',],
-            'Type': 'bool',
-            'Default': False,
-            'Destination': 'list_all_tagnames',
-            'Help': "Just print a list of all the tag names",
-        },
-        {
-            'CommandLineSwitches': ['--generate-extension-lookup',],
-            'Type': 'bool',
-            'Default': False,
-            'Destination': 'generate_extension_lookup',
-            'Help': "Just generate a table of extensions and file types",
-        },
-        {
             'CommandLineSwitches': ['--pyversion',],
             'Type': 'bool',
             'Default': False,
