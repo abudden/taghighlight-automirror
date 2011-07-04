@@ -34,9 +34,7 @@ function! TagHighlight#Option#GetOption(name, default)
 	" * buffer variable,
 	" * global dictionary,
 	" * global variable
-	" TODO: Make g:TagHighlightSettings exist in plugin/ so that
-	" we don't have to do exists() on this all the time
-	if exists('g:TagHighlightSettings') && has_key(g:TagHighlightSettings, a:name)
+	if has_key(g:TagHighlightSettings, a:name)
 		let opt = g:TagHighlightSettings[a:name]
 	elseif exists('g:' . s:opt_prefix . a:name)
 		exe 'let opt = g:' . s:opt_prefix . a:name

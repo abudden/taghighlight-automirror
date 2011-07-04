@@ -23,4 +23,11 @@ endtry
 let g:loaded_TagHLReadTypes = 1
 
 function! TagHighlight#ReadTypes#ReadTypesAutoDetect()
+	let extension = expand('%:e')
+	for key in keys(g:TagHighlightSettings['ExtensionLookup'])
+		let regex = '^'.key.'$'
+		if extension =~ regex
+			echo "TODO: Found it!"
+		endif
+	endfor
 endfunction
