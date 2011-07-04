@@ -1,5 +1,12 @@
 AllOptions = [
         {
+            'CommandLineSwitches': ['--data-directory',],
+            'Type': 'string',
+            'Default': None,
+            'Destination': 'data_directory',
+            'Help': 'Location of the data files',
+        },
+        {
             'CommandLineSwitches': ['-r','-R','--recurse',],
             'Type': 'bool',
             'Default': False,

@@ -52,7 +52,7 @@ def ParseTags(options):
     Each entry is a list of tags with all the required details.
     """
     languages = options['language_handler']
-    kind_list = Languages.GetKindList()
+    kind_list = languages.GetKindList()
 
     # Language: {Type: set([keyword, keyword, keyword])}
     ctags_entries = DictDict()
