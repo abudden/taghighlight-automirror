@@ -1,7 +1,7 @@
 import os
 import glob
 
-from ..config import config
+from .config import config
 
 class Languages():
     registry = {}

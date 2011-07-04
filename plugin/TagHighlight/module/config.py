@@ -6,27 +6,26 @@ from .utilities import AttributeDict
 
 config = AttributeDict()
 
+if hasattr(sys, 'frozen'):
+    # Compiled variant, executable should be in
+    # plugin/TagHighlight/Compiled/Win32, so data
+    # is in ../../data relative to executable
+    config['data_directory'] = os.path.abspath(
+            os.path.join(os.path.dirname(sys.executable),
+            '../../data'))
+else:
+    # Script variant: this file in
+    # plugin/TagHighlight/module, so data is in
+    # ../data relative to this file
+    config['data_directory'] = os.path.abspath(
+            os.path.join(os.path.dirname(__file__),
+            '../data'))
+
 def SetInitialOptions(new_options):
     global config
     option_dict = vars(new_options)
     for key in option_dict:
         config[key] = option_dict[key]
-    # Default data directory:
-    if config['data_directory'] is None:
-        if hasattr(sys, 'frozen'):
-            # Compiled variant, executable should be in
-            # plugin/TagHighlight/Compiled/Win32, so data
-            # is in ../../data relative to executable
-            config['data_directory'] = os.path.abspath(
-                    os.path.join(os.path.dirname(sys.executable),
-                    '../../data'))
-        else:
-            # Script variant: this file in
-            # plugin/TagHighlight/module, so data is in
-            # ../data relative to this file
-            config['data_directory'] = os.path.abspath(
-                    os.path.join(os.path.dirname(__file__),
-                    '../data'))
 
 def LoadLanguages():
     global config

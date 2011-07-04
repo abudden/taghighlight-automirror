@@ -1,142 +1,47 @@
-AllOptions = [
-        {
-            'CommandLineSwitches': ['--data-directory',],
-            'Type': 'string',
-            'Default': None,
-            'Destination': 'data_directory',
-            'Help': 'Location of the data files',
-        },
-        {
-            'CommandLineSwitches': ['-r','-R','--recurse',],
-            'Type': 'bool',
-            'Default': False,
-            'Destination': 'recurse',
-            'Help': "Recurse into subdirectories",
-        },
-        {
-            'CommandLineSwitches': ['--ctags-file',],
-            'Type': 'string',
-            'Default': 'tags',
-            'Destination': 'ctags_file',
-            'Help': "CTAGS output filename",
-        },
-        {
-            'CommandLineSwitches': ['--types-prefix',],
-            'Type': 'string',
-            'Default': 'types',
-            'Destination': 'types_prefix',
-            'Help': "Vim Types file prefix",
-        },
-        {
-            'CommandLineSwitches': ['--ctags-dir',],
-            'Type': 'string',
-            'Default': None,
-            'Destination': 'ctags_dir',
-            'Help': "CTAGS Executable Directory",
-        },
-        {
-            'CommandLineSwitches': ['--ctags-executable',],
-            'Type': 'string',
-            'Default': 'ctags',
-            'Destination': 'ctags_executable',
-            'Help': "Name of the CTAGS executable, with or without a full path",
-        },
-        {
-            'CommandLineSwitches': ['--include-docs',],
-            'Type': 'bool',
-            'Default': False,
-            'Destination': 'include_docs',
-            'Help': "Include docs or Documentation directory ('string'ipped by default for speed)",
-        },
-        {
-            'CommandLineSwitches': ['--do-not-check-keywords',],
-            'Type': 'bool',
-            'Default': True,
-            'Destination': 'check_keywords',
-            'Help': "Do not check validity of keywords (for speed)",
-        },
-        {
-            'CommandLineSwitches': ['--include-invalid-keywords-as-matches',],
-            'Type': 'bool',
-            'Default': True,
-            'Destination': 'skip_matches',
-            'Help': "Include invalid keywords as regular expression matches (may slow it loading)",
-        },
-        {
-            'CommandLineSwitches': ['--exclude-vim-keywords',],
-            'Type': 'bool',
-            'Default': False,
-            'Destination': 'skip_vimkeywords',
-            'Help': "Don't include Vim keywords (they have to be matched with regular expression matches, which is slower)",
-        },
-        {
-            'CommandLineSwitches': ['--do-not-analyse-constants',],
-            'Type': 'bool',
-            'Default': True,
-            'Destination': 'parse_constants',
-            'Help': "Do not treat constants as separate entries",
-        },
-        {
-            'CommandLineSwitches': ['--include-language',],
-            'Destination': 'languages',
-            'Type': 'list',
-            'Default': [],
-            'Help': "Only include specified languages",
-        },
-        {
-            'CommandLineSwitches': ['--build-cscopedb',],
-            'Type': 'bool',
-            'Default': False,
-            'Destination': 'build_cscopedb',
-            'Help': "Also build a cscope database",
-        },
-        {
-            'CommandLineSwitches': ['--build-cscopedb-if-cscope-file-exists',],
-            'Type': 'bool',
-            'Default': False,
-            'Destination': 'build_cscopedb_if_file_exists',
-            'Help': "Also build a cscope database if cscope.files exists",
-        },
-        {
-            'CommandLineSwitches': ['--cscope-dir',],
-            'Type': 'string',
-            'Default': None,
-            'Destination': 'cscope_dir',
-            'Help': "CSCOPE Executable Directory",
-        },
-        {
-            'CommandLineSwitches': ['--type-prefix',],
-            'Type': 'string',
-            'Default': 'types_',
-            'Destination': 'type_file_prefix',
-            'Help': "Specify the prefix for the generated types files",
-        },
-        {
-            'CommandLineSwitches': ['--type-file-location',],
-            'Type': 'string',
-            'Default': '.',
-            'Destination': 'type_file_location',
-            'Help': "Specify the location for the generated types files",
-        },
-        {
-            'CommandLineSwitches': ['--include-locals',],
-            'Type': 'bool',
-            'Default': False,
-            'Destination': 'include_locals',
-            'Help': "Include local variables in the database",
-        },
-        {
-            'CommandLineSwitches': ['--use-existing-tagfile',],
-            'Type': 'bool',
-            'Default': False,
-            'Destination': 'use_existing_tagfile',
-            'Help': "Do not generate tags if a tag file already exists",
-        },
-        {
-            'CommandLineSwitches': ['--pyversion',],
-            'Type': 'bool',
-            'Default': False,
-            'Destination': 'print_py_version',
-            'Help': "Just print the version of python",
-        },
-        ]
+from .config import config
+import os
+
+AllOptions = []
+
+def LoadOptionSpecification():
+    options_file = os.path.join(config['data_directory'], 'options.txt')
+    global AllOptions
+    fh = open(options_file, 'r')
+    entry = None
+    dest = None
+    ListKeys = ['CommandLineSwitches']
+    RequiredKeys = ['CommandLineSwitches', 'Type', 'Default', 'Help']
+    for line in fh:
+        if line.strip().endswith(':') and line[0] not in [' ','\t',':','#']:
+            dest = line.strip()[:-1]
+            if entry is not None:
+                AllOptions.append(entry)
+            entry = {}
+            entry['Destination'] = dest
+        elif dest is not None and line.startswith('\t') and ':' in line:
+            parts = line.strip().split(':', 1)
+            key = parts[0]
+            value = parts[1]
+            if key in ListKeys:
+                value = value.split(',')
+            entry[key] = value
+
+    if entry is not None:
+        AllOptions.append(entry)
+
+    for entry in AllOptions:
+        for key in RequiredKeys:
+            if key not in entry:
+                raise Exception("Missing option {key} in option {dest}".format(key=key,dest=entry['Destination']))
+        if entry['Type'] == bool:
+            if entry['Default'] == 'True':
+                entry['Default'] = True
+            else:
+                entry['Default'] = False
+        elif entry['Type'] == list:
+            if entry['Default'] == '[]':
+                entry['Default'] = []
+            else:
+                entry['Default'] = entry['Default'].split(',')
+
+LoadOptionSpecification()

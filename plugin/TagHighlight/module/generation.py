@@ -127,7 +127,7 @@ def CreateTypesFile(options, language, tags):
         vimtypes_entries.append('syn cluster javaTop ' + AddList + LocalTagType)
 
     filename = os.path.join(options['type_file_location'],
-            options['type_file_prefix'] + language_handler['Suffix'] + '.vim')
+            options['type_file_prefix'] + '_' + language_handler['Suffix'] + '.vim')
 
     try:
         # Have to open in binary mode as we want to write with Unix line endings
