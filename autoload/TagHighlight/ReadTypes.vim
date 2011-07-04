@@ -24,6 +24,7 @@ let g:loaded_TagHLReadTypes = 1
 
 function! TagHighlight#ReadTypes#ReadTypesAutoDetect()
 	let extension = expand('%:e')
+	" echomsg "Reading types for extension " . extension
 	for key in keys(g:TagHighlightSettings['ExtensionLookup'])
 		let regex = '^'.key.'$'
 		if extension =~ regex
@@ -39,6 +40,8 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 	if len(expand(file)) == 0
 		let file = '%'
 	endif
+
+	" echomsg "Reading types of suffix " . a:suffix . " for file " . file
 
 	if TagHighlight#Option#GetOption('DisableTypeParsing', 0) == 1
 		call TagHighlight#Debug#Print("Type file parsing disabled", 'Status')
@@ -61,8 +64,28 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 
 	call TagHighlight#Debug#Print("Searching for types file", 'Status')
 
-	" TODO
+	" Clear any existing syntax entries
+	for group in g:TagHighlightSettings['AllTypes']
+		exe 'syn clear' group
+	endfor
+	
+	let type_files = TagHighlight#ReadTypes#FindTypeFiles(
+				\ TagHighlight#Option#GetOption('TypesFilePrefix',"types") . '_' .
+				\ a:suffix .
+				\ '.vim')
+	for fname in type_files
+		exe 'so' fname
+	endfor
 
 	" Restore the view
 	call winrestview(savedView)
+endfunction
+
+function! TagHighlight#ReadTypes#FindTypeFiles(filename)
+	" TODO: Initial implementation only supports current directory
+	let results = []
+	if filereadable(a:filename)
+		let results += [a:filename]
+	endif
+	return results
 endfunction
