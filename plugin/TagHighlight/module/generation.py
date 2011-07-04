@@ -31,12 +31,12 @@ def CreateTypesFile(options, language, tags):
     vimtypes_entries = []
 
 
-    # TODO: This may be included elsewhere, but we'll leave it in for now
     typesUsedByLanguage = list(options['language_handler'].GetKindList(language).values())
-    clear_string = 'silent! syn clear ' + " ".join(typesUsedByLanguage)
+    # TODO: This may be included elsewhere, but we'll leave it in for now
+    #clear_string = 'silent! syn clear ' + " ".join(typesUsedByLanguage)
 
     vimtypes_entries = []
-    vimtypes_entries.append(clear_string)
+    #vimtypes_entries.append(clear_string)
 
     # Get the priority list from the language handler
     priority = language_handler['Priority'][:]
