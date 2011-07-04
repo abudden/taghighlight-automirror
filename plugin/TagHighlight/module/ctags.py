@@ -61,7 +61,7 @@ def ParseTags(options):
     for key in languages.GetAllLanguages():
         lineMatchers[key] = re.compile(
                 r'^.*?\t[^\t]*\.(?P<extension>' +
-                languages.GetLanguageHandler(key).GetExtensions() +
+                languages.GetLanguageHandler(key)['PythonExtensionMatcher'] +
                 ')\t')
 
     p = open(options['ctags_file'], 'r')
@@ -84,7 +84,7 @@ def ParseTags(options):
                                 (kind == 'CTagsGlobalVariable'):
                             if field_const.search(m.group('search')) is not None:
                                 kind = 'CTagsConstant'
-                        if short_kind not in languages.GetLanguageHandler(key).KindsToSkip():
+                        if short_kind not in languages.GetLanguageHandler(key)['SkipList']:
                             ctags_entries[key][kind].add(keyword)
                     except KeyError:
                         print("Unrecognised kind '{kind}' for language {language}".format(kind=m.group('kind'), language=key))
@@ -95,7 +95,7 @@ def ParseTags(options):
 def GetCommandArgs(options):
     args = []
 
-    ctags_languages = [l.GetCTagsLanguageName() for l in options['language_handler'].GetAllLanguageHandlers()]
+    ctags_languages = [l['CTagsName'] for l in options['language_handler'].GetAllLanguageHandlers()]
     if 'c' in ctags_languages:
         ctags_languages.append('c++')
     args += ["--languages=" + ",".join(ctags_languages)]
@@ -106,8 +106,18 @@ def GetCommandArgs(options):
     if not options['include_docs']:
         args += ["--exclude=docs", "--exclude=Documentation"]
 
-    for language_handler in options['language_handler'].GetAllLanguageHandlers():
-        args += language_handler.GetCTagsOptions()
+    if options['include_locals']:
+        kinds = options['language_handler'].GetKindList()
+        def FindLocalVariableKinds(language_kinds):
+            """Finds the key associated with a value in a dictionary.
+
+            Assumes presence has already been checked."""
+            return "".join(key[-1] for key,val in language_kinds.items() if val == 'CTagsLocalVariable')
+
+        for language in ctags_languages:
+            if language in kinds and 'CTagsLocalVariable' in kinds[language].values():
+                args += ['--{language}-kinds=+{kind}'.format(language=language,
+                    kind=FindLocalVariableKinds(kinds[language]))]
 
     # Must be last as it includes the file list:
     if options['recurse']:

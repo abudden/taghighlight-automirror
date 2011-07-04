@@ -25,7 +25,7 @@ def CreateTypesFile(options, language, tags):
     language_handler = options['language_handler'].GetLanguageHandler(language)
 
     if options['check_keywords']:
-        iskeyword = GenerateValidKeywordRange(language_handler.GetIsKeyword())
+        iskeyword = GenerateValidKeywordRange(language_handler['IsKeyword'])
 
     matchEntries = set()
     vimtypes_entries = []
@@ -39,7 +39,7 @@ def CreateTypesFile(options, language, tags):
     vimtypes_entries.append(clear_string)
 
     # Get the priority list from the language handler
-    priority = language_handler.Priority[:]
+    priority = language_handler['Priority'][:]
     # Reverse the priority such that highest priority
     # is last.
     priority.reverse()
@@ -127,7 +127,7 @@ def CreateTypesFile(options, language, tags):
         vimtypes_entries.append('syn cluster javaTop ' + AddList + LocalTagType)
 
     filename = os.path.join(options['type_file_location'],
-            options['type_file_prefix'] + language_handler.GetSuffix() + '.vim')
+            options['type_file_prefix'] + language_handler['Suffix'] + '.vim')
 
     try:
         # Have to open in binary mode as we want to write with Unix line endings

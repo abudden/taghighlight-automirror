@@ -240,3 +240,4 @@ vim:
 	v:CTagsGlobalVariable
 yacc:
 	l:CTagsLabel
+# vim: ff=unix
