@@ -27,7 +27,42 @@ function! TagHighlight#ReadTypes#ReadTypesAutoDetect()
 	for key in keys(g:TagHighlightSettings['ExtensionLookup'])
 		let regex = '^'.key.'$'
 		if extension =~ regex
-			echo "TODO: Found it!"
+			call TagHighlight#ReadTypes#ReadTypes(g:TagHighlightSettings['ExtensionLookup'][key])
 		endif
 	endfor
+endfunction
+
+function! TagHighlight#ReadTypes#ReadTypes(suffix)
+	let savedView = winsaveview()
+
+	let file = '<afile>'
+	if len(expand(file)) == 0
+		let file = '%'
+	endif
+
+	if TagHighlight#Option#GetOption('DisableTypeParsing', 0) == 1
+		call TagHighlight#Debug#Print("Type file parsing disabled", 'Status')
+		return
+	endif
+
+	let skiplist = TagHighlight#Option#GetOption('ParsingSkipList', [])
+	if len(skiplist) > 0
+		let basename = expand(file . ':p:t')
+		let fullname = expand(file . ':p')
+		if index(skiplist, basename) != -1
+			call TagHighlight#Debug#Print("Skipping file due to basename match", 'Status')
+			return
+		endif
+		if index(skiplist, fullname) != -1
+			call TagHighlight#Debug#Print("Skipping file due to fullname match", 'Status')
+			return
+		endif
+	endif
+
+	call TagHighlight#Debug#Print("Searching for types file", 'Status')
+
+	" TODO
+
+	" Restore the view
+	call winrestview(savedView)
 endfunction
