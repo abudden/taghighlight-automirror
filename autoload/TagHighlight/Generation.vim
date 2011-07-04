@@ -22,6 +22,36 @@ catch
 endtry
 let g:loaded_TagHLGeneration = 1
 
+function! TagHighlight#Generation#LoadScriptOptions()
+	if has_key(g:TagHighlightSettings, 'ScriptOptions')
+		return
+	endif
+
+	let g:TagHighlightSettings['ScriptOptions'] = []
+	let entries = readfile(g:TagHighlightSettings['PluginPath'] . '/data/options.txt')
+	
+	let dest = ''
+	let option = {}
+	for entry in entries
+		if entry[len(entry)-1] == ':'
+			if dest != ''
+				let g:TagHighlightSettings['ScriptOptions'] += [deepcopy(option)]
+				let option = {}
+			endif
+			let dest = entry[:-1]
+			let option['Destination'] = dest
+			echo "Dest:".dest
+		elseif dest != '' && entry[0] == "\t" && stridx(entry, ':') != -1
+			let parts = split(entry[1:], ':')
+			let option[parts[0]] = parts[1]
+			echo "Option:".parts[0]."=".parts[1]
+		endif
+	endfor
+	if dest != ''
+		let g:TagHighlightSettings['ScriptOptions'] += [option]
+	endif
+endfunction
+
 function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
 	" Initial very simple implementation
 endfunction
