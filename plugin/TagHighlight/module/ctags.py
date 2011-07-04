@@ -8,20 +8,20 @@ from .languages import Languages
 
 field_processor = re.compile(
 r'''
-	^                 # Start of the line
-	(?P<keyword>.*?)  # Capture the first field: everything up to the first tab
-	\t                # Field separator: a tab character
-	.*?               # Second field (uncaptured): everything up to the next tab
-	\t                # Field separator: a tab character
-	(?P<search>.*?)   # Any character at all, but as few as necessary (i.e. catch everything up to the ;")
-	;"                # The end of the search specifier (see http://ctags.sourceforge.net/FORMAT)
-	(?=\t)            # There MUST be a tab character after the ;", but we want to match it with zero width
-	.*\t              # There can be other fields before "kind", so catch them here.
-	                  # Also catch the tab character from the previous line as there MUST be a tab before the field
-	(kind:)?          # This is the "kind" field; "kind:" is optional
-	(?P<kind>\w)      # The kind is a single character: catch it
-	(\t|$)            # It must be followed either by a tab or by the end of the line
-	.*                # If it is followed by a tab, soak up the rest of the line; replace with the syntax keyword line
+    ^                 # Start of the line
+    (?P<keyword>.*?)  # Capture the first field: everything up to the first tab
+    \t                # Field separator: a tab character
+    .*?               # Second field (uncaptured): everything up to the next tab
+    \t                # Field separator: a tab character
+    (?P<search>.*?)   # Any character at all, but as few as necessary (i.e. catch everything up to the ;")
+    ;"                # The end of the search specifier (see http://ctags.sourceforge.net/FORMAT)
+    (?=\t)            # There MUST be a tab character after the ;", but we want to match it with zero width
+    .*\t              # There can be other fields before "kind", so catch them here.
+                      # Also catch the tab character from the previous line as there MUST be a tab before the field
+    (kind:)?          # This is the "kind" field; "kind:" is optional
+    (?P<kind>\w)      # The kind is a single character: catch it
+    (\t|$)            # It must be followed either by a tab or by the end of the line
+    .*                # If it is followed by a tab, soak up the rest of the line; replace with the syntax keyword line
 ''', re.VERBOSE)
 
 def GenerateTags(options):
