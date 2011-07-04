@@ -2,9 +2,9 @@ import sys
 import os
 
 from optparse import Values
-from .utilities import AttributeDict
+from .utilities import TagHighlightOptionDict
 
-config = AttributeDict()
+config = TagHighlightOptionDict()
 
 if hasattr(sys, 'frozen'):
     # Compiled variant, executable should be in
@@ -23,9 +23,8 @@ else:
 
 def SetInitialOptions(new_options):
     global config
-    option_dict = vars(new_options)
-    for key in option_dict:
-        config[key] = option_dict[key]
+    for key in new_options:
+        config[key] = new_options[key]
 
 def LoadLanguages():
     global config

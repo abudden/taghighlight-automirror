@@ -17,7 +17,6 @@ vim_synkeyword_arguments = [
         'skipempty'
         ]
 
-
 def CreateTypesFile(options, language, tags):
     tag_types = list(tags.keys())
     tag_types.sort()
@@ -76,7 +75,7 @@ def CreateTypesFile(options, language, tags):
                             escapedKeyword = keyword
                             for ch in charactersToEscape:
                                 escapedKeyword = escapedKeyword.replace(ch, '\\' + ch)
-                            if not options['skip_matches']:
+                            if options['include_matches']:
                                 matchEntries.add('syn match ' + thisType + ' ' + patChar + escapedKeyword + patChar)
                             matchDone = True
                             break
@@ -112,6 +111,11 @@ def CreateTypesFile(options, language, tags):
             if AddList != 'add=':
                 AddList += ','
             AddList += thisType
+
+    if options['include_locals']:
+        LocalTagType = ',CTagsLocalVariable'
+    else:
+        LocalTagType = ''
 
     if language in ['c',]:
         vimtypes_entries.append('')

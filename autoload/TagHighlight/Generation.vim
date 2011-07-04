@@ -22,38 +22,39 @@ catch
 endtry
 let g:loaded_TagHLGeneration = 1
 
-function! TagHighlight#Generation#LoadScriptOptions()
-	if has_key(g:TagHighlightSettings, 'ScriptOptions')
-		return
-	endif
-
-	let g:TagHighlightSettings['ScriptOptions'] = []
-	let entries = readfile(g:TagHighlightSettings['PluginPath'] . '/data/options.txt')
-	
-	let dest = ''
-	let option = {}
-	for entry in entries
-		if entry[len(entry)-1] == ':'
-			if dest != ''
-				let g:TagHighlightSettings['ScriptOptions'] += [deepcopy(option)]
-				let option = {}
-			endif
-			let dest = entry[:-1]
-			let option['Destination'] = dest
-			echo "Dest:".dest
-		elseif dest != '' && entry[0] == "\t" && stridx(entry, ':') != -1
-			let parts = split(entry[1:], ':')
-			let option[parts[0]] = parts[1]
-			echo "Option:".parts[0]."=".parts[1]
-		endif
-	endfor
-	if dest != ''
-		let g:TagHighlightSettings['ScriptOptions'] += [option]
-	endif
-endfunction
-
 function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
 	" Initial very simple implementation
+	
+	" Start with a copy of the settings so that we can tweak things
+	let RunOptions = TagHighlight#Option#CopyOptions()
+	if a:recurse
+		let RunOptions['Recurse'] = 1
+	endif
+	if a:skiptags
+		let RunOptions['DoNotGenerateTags'] = 1
+	endif
+
+	" Most simple options are automatic.  The options below are
+	" handled manually.
+	
+	" Find the ctags path
+	let ctags_option = TagHighlight#Option#GetOption('CtagsExecutable', '')
+	if ctags_option == ''
+		" Option not set: search for 'ctags' in the path
+		let RunOptions['CtagsExeFull'] = TagHighlight#RunPythonScript#FindExeInPath('ctags')
+	elseif ctags_option =~ '[\\/]'
+		" Option set and includes '/' or '\': must be explicit
+		" path to named executable: just pass to mktypes
+		let RunOptions['CtagsExeFull'] = ctags_option
+	else
+		" Option set but doesn't include path separator: search
+		" in the path
+		let RunOptions['CtagsExeFull'] = TagHighlight#RunPythonScript#FindExePath(ctags_option)
+	endif
+	
+	" Find the cscope path
+
+	call TagHighlight#RunPythonScript#RunGenerator(RunOptions)
 endfunction
 
 " Old implementation:
@@ -70,23 +71,6 @@ func! UpdateTypesFile(recurse, skiptags)
 
 	let sysroot = 'python ' . shellescape(mktypes_py_file)
 	let syscmd = ''
-
-	let ctags_option = s:GetOption('TypesFileCtagsExecutable', '')
-	if ctags_option == ''
-		" Option not set: search for 'ctags' in the path
-		let ctags_path = s:FindExePath('ctags')
-		let syscmd .= ' --ctags-dir=' . ctags_path
-	elseif ctags_option =~ '[\\/]'
-		" Option set and includes '/' or '\': must be explicit
-		" path to named executable: just pass to mktypes
-		let syscmd .= ' --ctags-executable=' . ctags_option
-	else
-		" Option set but doesn't include path separator: search
-		" in the path
-		let ctags_path = s:FindExePath(ctags_option)
-		let syscmd .= ' --ctags-path=' . ctags_path
-		let syscmd .= ' --ctags-executable=' . ctags_option
-	endif
 	
 	if exists('b:TypesFileRecurse')
 		if b:TypesFileRecurse == 1

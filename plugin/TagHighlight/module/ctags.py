@@ -23,6 +23,7 @@ r'''
     (\t|$)            # It must be followed either by a tab or by the end of the line
     .*                # If it is followed by a tab, soak up the rest of the line; replace with the syntax keyword line
 ''', re.VERBOSE)
+field_const = re.compile(r'\bconst\b')
 
 def GenerateTags(options):
     print("Generating Tags")

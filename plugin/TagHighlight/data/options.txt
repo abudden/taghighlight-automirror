@@ -1,32 +1,30 @@
 recurse:
 	CommandLineSwitches:-r,-R,--recurse
+	VimOptionMap:Recurse
 	Type:bool
 	Default:False
 	Help:Recurse into subdirectories
  
 ctags_file:
 	CommandLineSwitches:--ctags-file
+	VimOptionMapper:CtagsOutputFile
 	Type:string
 	Default:tags
 	Help:CTAGS output filename
  
 types_prefix:
 	CommandLineSwitches:--types-prefix
+	VimOptionMap:TypesFilePrefix
 	Type:string
 	Default:types
 	Help:Vim Types file prefix
  
-ctags_dir:
-	CommandLineSwitches:--ctags-dir
-	Type:string
-	Default:None
-	Help:CTAGS Executable Directory
- 
-ctags_executable:
-	CommandLineSwitches:--ctags-executable
+ctags_exe_full:
+	CommandLineSwitches:--ctags-exe-full-path
+	VimOptionMap:CtagsExeFull
 	Type:string
 	Default:ctags
-	Help:Name of the CTAGS executable, with or without a full path
+	Help:CTAGS Executable Directory
  
 include_docs:
 	CommandLineSwitches:--include-docs
@@ -40,14 +38,16 @@ check_keywords:
 	Default:True
 	Help:Do not check validity of keywords (for speed)
  
-skip_matches:
+include_matches:
 	CommandLineSwitches:--include-invalid-keywords-as-matches
+	VimOptionMap:IncludeSynMatches
 	Type:bool
-	Default:True
+	Default:False
 	Help:Include invalid keywords as regular expression matches (may slow it loading)
  
 skip_vimkeywords:
 	CommandLineSwitches:--exclude-vim-keywords
+	VimOptionMap:SkipVimKeywords
 	Type:bool
 	Default:False
 	Help:Don't include Vim keywords (they have to be matched with regular expression matches, which is slower)
@@ -60,6 +60,7 @@ parse_constants:
  
 languages:
 	CommandLineSwitches:--include-language
+	VimOptionMapper:Languages
 	Type:list
 	Default:[]
 	Help:Only include specified languages
@@ -72,6 +73,7 @@ build_cscopedb:
  
 build_cscopedb_if_file_exists:
 	CommandLineSwitches:--build-cscopedb-if-cscope-file-exists
+	VimOptionMap:CheckForCScopeFiles
 	Type:bool
 	Default:False
 	Help:Also build a cscope database if cscope.files exists
@@ -96,12 +98,14 @@ type_file_location:
  
 include_locals:
 	CommandLineSwitches:--include-locals
+	VimOptionMap:IncludeLocals
 	Type:bool
 	Default:False
 	Help:Include local variables in the database
  
 use_existing_tagfile:
 	CommandLineSwitches:--use-existing-tagfile
+	VimOptionMap:DoNotGenerateTags
 	Type:bool
 	Default:False
 	Help:Do not generate tags if a tag file already exists

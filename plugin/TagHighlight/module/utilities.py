@@ -13,10 +13,18 @@ def print_timing(func):
         return res
     return wrapper
 
-class AttributeDict(dict):
+class TagHighlightOptionDict(dict):
     """Customised version of a dictionary that allows access by attribute."""
     def __getattr__(self, name):
         return self[name]
+
+    def __getitem__(self, name):
+        if name not in self:
+            from .options import AllOptions
+            for option in AllOptions:
+                if option['Destination'] == name:
+                    return option['Default']
+        return super(TagHighlightOptionDict, self).__getitem__(name)
 
     def __setattr__(self, name, value):
         self[name] = value

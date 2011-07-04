@@ -5,7 +5,7 @@ AllOptions = []
 
 def LoadOptionSpecification():
     options_file = os.path.join(config['data_directory'], 'options.txt')
-    global AllOptions
+    loaded_options = []
     fh = open(options_file, 'r')
     entry = None
     dest = None
@@ -15,7 +15,7 @@ def LoadOptionSpecification():
         if line.strip().endswith(':') and line[0] not in [' ','\t',':','#']:
             dest = line.strip()[:-1]
             if entry is not None:
-                AllOptions.append(entry)
+                loaded_options.append(entry)
             entry = {}
             entry['Destination'] = dest
         elif dest is not None and line.startswith('\t') and ':' in line:
@@ -27,21 +27,23 @@ def LoadOptionSpecification():
             entry[key] = value
 
     if entry is not None:
-        AllOptions.append(entry)
+        loaded_options.append(entry)
 
-    for entry in AllOptions:
+    global AllOptions
+    for entry in loaded_options:
         for key in RequiredKeys:
             if key not in entry:
                 raise Exception("Missing option {key} in option {dest}".format(key=key,dest=entry['Destination']))
-        if entry['Type'] == bool:
+        if entry['Type'] == 'bool':
             if entry['Default'] == 'True':
                 entry['Default'] = True
             else:
                 entry['Default'] = False
-        elif entry['Type'] == list:
+        elif entry['Type'] == 'list':
             if entry['Default'] == '[]':
                 entry['Default'] = []
             else:
                 entry['Default'] = entry['Default'].split(',')
+        AllOptions.append(entry)
 
 LoadOptionSpecification()

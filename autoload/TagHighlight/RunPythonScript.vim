@@ -22,6 +22,8 @@ catch
 endtry
 let g:loaded_TagHLRunPythonScript = 1
 
+let s:python_variant = 'None'
+
 " This script is responsible for finding a means of running the python app.
 " If vim is compiled with python support (and we can run a simple test
 " command), use that method.  If not, but python is in the path, use it to
@@ -37,7 +39,71 @@ function! s:GetPath()
 	return path
 endfunction
 
-function! s:FindExeInPath(file)
+function! TagHighlight#RunPythonScript#RunGenerator(options)
+	" Will only actually load the options once
+	call TagHighlight#RunPythonScript#LoadScriptOptions()
+
+	if s:python_variant == 'None'
+		call TagHighlight#RunPythonScript#FindPython()
+	endif
+
+	if index(["if_pyth","if_pyth3"], s:python_variant) != -1
+		let add_to_py_path = substitute(g:TagHighlightSettings['PluginPath'], '\\', '/','g')
+		let PY = s:python_cmd[0]
+		exe PY 'import sys'
+		exe PY 'sys.path = ["'.add_to_py_path.'"] + sys.path'
+		exe PY 'from module.utilities import TagHighlightOptionDict' 
+		exe PY 'from module.worker import RunWithOptions'
+		exe PY 'options = TagHighlightOptionDict()'
+		" We're using the custom interpreter: create an options object
+		for option in g:TagHighlightSettings['ScriptOptions']
+			if has_key(option, 'VimOptionMap') && has_key(a:options, option['VimOptionMap'])
+				" We can handle this one automatically
+				let pyoption = 'options["'.option['Destination'].'"]'
+				if option['Type'] == 'bool'
+					if a:options[option['VimOptionMap']]
+						exe PY pyoption '= True'
+					else
+						exe PY pyoption '= False'
+					endif
+				elseif option['Type'] == 'string'
+					exe PY pyoption '= """'.a:options[option['VimOptionMap']].'"""'
+				elseif option['Type'] == 'list'
+					exe PY pyoption '= []'
+					for entry in a:options[option['VimOptionMap']]
+						exe PY pyoption '+= ["""' . entry . '"""]'
+					endfor
+				endif
+			endif
+		endfor
+		exe PY 'RunWithOptions(options)'
+	elseif index(["python","compiled"], s:python_variant) != -1
+		let args = s:python_cmd[:]
+		" We're calling the script externally, build a list of arguments
+		for option in g:TagHighlightSettings['ScriptOptions']
+			if has_key(option, 'VimOptionMap') && has_key(a:options, option['VimOptionMap'])
+				" We can handle this one automatically
+				if option['Type'] == 'bool'
+					if ((a:options[option['VimOptionMap']] && option['Default'] == 'False')
+								\ || ( ! a:options[option['VimOptionMap']] && option['Default'] == 'True'))
+						let args += [option['CommandLineSwitches']]
+					endif
+				elseif option['Type'] == 'string'
+					let args += [option['CommandLineSwitches'] . '=' . a:options[option['VimOptionMap']]]
+				elseif option['Type'] == 'list'
+					for entry in a:options[option['VimOptionMap']]
+						let args += [option['CommandLineSwitches'] . '=' . entry]
+					endfor
+				endif
+			endif
+		endfor
+		let sysoutput = system(join(args, " "))
+	else
+		throw "Tag highlighter: invalid or not implemented python variant"
+	endif
+endfunction
+
+function! TagHighlight#RunPythonScript#FindExeInPath(file)
 	let full_file = a:file
 	if has("win32") || has("win32unix")
 		if a:file !~ '.exe$'
@@ -55,6 +121,41 @@ function! s:FindExeInPath(file)
 	let file_exe = substitute(file_exe, '\\', '/', 'g')
 	return file_exe
 endfunction
+
+function! TagHighlight#RunPythonScript#LoadScriptOptions()
+	if has_key(g:TagHighlightSettings, 'ScriptOptions')
+		return
+	endif
+
+	let g:TagHighlightSettings['ScriptOptions'] = []
+	let entries = readfile(g:TagHighlightSettings['PluginPath'] . '/data/options.txt')
+	
+	let dest = ''
+	let option = {}
+	for entry in entries
+		if entry[len(entry)-1] == ':'
+			if dest != ''
+				let g:TagHighlightSettings['ScriptOptions'] += [deepcopy(option)]
+				let option = {}
+			endif
+			let dest = entry[:len(entry)-2]
+			let option['Destination'] = dest
+			echo "Dest:".dest
+		elseif dest != '' && entry[0] == "\t" && stridx(entry, ':') != -1
+			let parts = split(entry[1:], ':')
+			if parts[0] == 'CommandLineSwitches' && stridx(parts[1], ',') != -1
+				" Only take the first option for the command line switches
+				let parts[1] = split(parts[1], ',')[0]
+			endif
+			let option[parts[0]] = parts[1]
+			echo "Option:".parts[0]."=".parts[1]
+		endif
+	endfor
+	if dest != ''
+		let g:TagHighlightSettings['ScriptOptions'] += [option]
+	endif
+endfunction
+
 
 function! TagHighlight#RunPythonScript#GetPythonVersion()
 	" Assumes that python path is set correctly
@@ -111,6 +212,7 @@ function! TagHighlight#RunPythonScript#FindPython()
 					endif
 					unlet g:taghl_findpython_testvar
 					let s:python_variant = 'if_pyth3'
+					let s:python_cmd = ['py3']
 				endtry
 			elseif variant == 'if_pyth' && has('python')
 				" Check whether the python 2 interface works
@@ -123,6 +225,7 @@ function! TagHighlight#RunPythonScript#FindPython()
 					endif
 					unlet g:taghl_findpython_testvar
 					let s:python_variant = 'if_pyth'
+					let s:python_cmd = ['py']
 				endtry
 			elseif variant == 'python'
 				" Try calling an external python
@@ -133,12 +236,14 @@ function! TagHighlight#RunPythonScript#FindPython()
 					" We've found python, it's probably usable
 					let s:python_variant = 'python'
 					let s:python_path = python_path
+					let s:python_cmd = [python_path, g:TagHighlightSettings['PluginPath'] . '/TagHighlight.py']
 				else
 					" See if it's in the path
-					let python_path = s:FindExeInPath('python')
+					let python_path = TagHighlight#RunPythonScript#FindExeInPath('python')
 					if python_path != 'None'
 						let s:python_variant = 'python'
 						let s:python_path = python_path
+						let s:python_cmd = [python_path, g:TagHighlightSettings['PluginPath'] . '/TagHighlight.py']
 					endif
 				endif
 			elseif variant == 'compiled'
@@ -148,7 +253,7 @@ function! TagHighlight#RunPythonScript#FindPython()
 					let compiled_highlighter = split(globpath(&rtp, "plugin/TagHighlight/Compiled/Win32/TagHighlight.exe"), "\n")
 					if len(compiled_highlighter) > 0  && executable(compiled_highlighter[0])
 						let s:python_variant = 'compiled'
-						let s:highlighter_path = compiled_highlighter[0]
+						let s:python_cmd = [compiled_highlighter[0]]
 					endif
 				endif
 			endif

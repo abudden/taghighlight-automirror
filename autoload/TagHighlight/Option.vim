@@ -21,7 +21,6 @@ catch
 	finish
 endtry
 let g:loaded_TagHLOption = 1
-let s:opt_prefix = 'TagHL'
 
 " TODO: Options should be customisable per project (following the same method
 " as looking for tags/types... look for options file).
@@ -31,19 +30,40 @@ function! TagHighlight#Option#GetOption(name, default)
 
 	" Option priority (highest first):
 	" * buffer dictionary,
-	" * buffer variable,
 	" * global dictionary,
-	" * global variable
 	if has_key(g:TagHighlightSettings, a:name)
 		let opt = g:TagHighlightSettings[a:name]
-	elseif exists('g:' . s:opt_prefix . a:name)
-		exe 'let opt = g:' . s:opt_prefix . a:name
 	endif
 	if exists('b:TagHighlightSettings') && has_key(b:TagHighlightSettings, a:name)
 		let opt = b:TagHighlightSettings[a:name]
-	elseif exists('b:' . s:opt_prefix . a:name)
-		exe 'let opt = b:' . s:opt_prefix . a:name
 	endif
 	return opt
 endfunction
 
+function! TagHighlight#Option#CopyOptions()
+	" Skip a few keys to speed copying
+	let skip_keys = ["ScriptOptions","AllTypes","ExtensionLookup"]
+	let result = {}
+	for key in keys(g:TagHighlightSettings)
+		if type(g:TagHighlightSettings[key]) == type([])
+			let result[key] = g:TagHighlightSettings[key][:]
+		elseif type(g:TagHighlightSettings[key]) == type({})
+			let result[key] = deepcopy(g:TagHighlightSettings[key])
+		else
+			let result[key] = g:TagHighlightSettings[key]
+		endif
+	endfor
+	if exists('b:TagHighlightSettings')
+		for key in keys(b:TagHighlightSettings)
+			if type(b:TagHighlightSettings[key]) == type([])
+				let result[key] = b:TagHighlightSettings[key][:]
+			elseif type(b:TagHighlightSettings[key]) == type({})
+				let result[key] = deepcopy(b:TagHighlightSettings[key])
+			else
+				let result[key] = b:TagHighlightSettings[key]
+			endif
+		endfor
+	endif
+
+	return result
+endfunction
