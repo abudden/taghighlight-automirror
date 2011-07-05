@@ -98,21 +98,23 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 		let explicit_location = explicit_location[:len(explicit_location)-2]
 	endif
 
-	" Result is [location, file name, exists]
-	let result = []
+	" Result contains 'Found','FullPath','Directory','Filename','Exists']
+	let result = {'Found': 0}
 
 	for search_mode in search_priority
 		if search_mode == 'Explicit' && explicit_location != 'NONE'
 			" Use explicit location, overriding everything else
-			let result += [explicit_location, filename]
+			let result['Directory'] = explicit_location
+			let result['Filename'] = filename
 		elseif search_mode == 'UpFromCurrent'
 			" Start in the current directory and search up
 			let new_dir = fnamemodify('.',':p:h')
 			let dir = ''
 			while new_dir != dir
 				let dir = new_dir
-				:f len(glob(dir . '/' . search_wildcard)) > 0
-					let result += [dir, filename]
+				if len(glob(dir . '/' . search_wildcard)) > 0
+					let result['Directory'] = dir
+					let result['Filename'] = filename
 					break
 				endif
 				let new_dir = fnamemodify(dir, ':h')
@@ -124,21 +126,26 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 			while new_dir != dir
 				let dir = new_dir
 				if len(glob(dir . '/' . search_wildcard)) > 0
-					let result += [dir, filename]
+					let result['Directory'] = dir
+					let result['Filename'] = filename
 					break
 				endif
 				let new_dir = fnamemodify(dir, ':h')
 			endwhile
 		elseif search_mode == 'CurrentExplicit'
-			let result += [fnamemodify('.',':p:h'), filename]
+			let result['Directory'] = fnamemodify(file,':p:h')
+			let result['Filename'] = filename
 		elseif search_mode == 'FileExplicit'
-			let result += [fnamemodify(file,':p:h'), filename]
+			let result['Directory'] = fnamemodify(file,':p:h')
+			let result['Filename'] = filename
 		endif
-		if len(result) > 0
-			if filereadable(result[0] . '/' . result[1])
-				let result += [1]
+		if has_key(result, 'Directory')
+			let result['FullPath'] = result['Directory'] . '/' . result['Filename']
+			let result['Found'] = 1
+			if filereadable(result['FullPath'])
+				let result['Exists'] = 1
 			else
-				let result += [0]
+				let result['Exists'] = 0
 			endif
 			break
 		endif

@@ -79,13 +79,12 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 endfunction
 
 function! TagHighlight#ReadTypes#FindTypeFiles(suffix)
-	" TODO: Initial implementation only supports current directory
 	let results = []
-	let filename = TagHighlight#Option#GetOption('TypesFilePrefix',"types") . '_' .
-				\ a:suffix .
-				\ '.vim'
-	if filereadable(filename)
-		let results += [filename]
+	" TODO: Currently only searches for a single types file; doesn't look
+	"       for library files
+	let search_result = TagHighlight#Find#LocateFile('TYPES', a:suffix)
+	if result['Found'] == 1 && result['Exists'] == 1
+		let results += [result['FullPath']]
 	endif
 	return results
 endfunction
