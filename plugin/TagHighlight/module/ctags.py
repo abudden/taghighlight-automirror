@@ -37,14 +37,14 @@ def GenerateTags(options):
     process = subprocess.Popen(ctags_cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
     (sout, serr) = process.communicate()
 
-    tagFile = open(options['ctags_file'], 'r')
+    tagFile = open(os.path.join(options['ctags_file_dir'], options['ctags_file']), 'r')
     tagLines = [line.strip() for line in tagFile]
     tagFile.close()
 
     # Also sort the file a bit better (tag, then kind, then filename)
     tagLines.sort(key=ctags_key)
 
-    tagFile = open(options['ctags_file'], 'w')
+    tagFile = open(os.path.join(options['ctags_file_dir'],options['ctags_file']), 'w')
     for line in tagLines:
         tagFile.write(line + "\n")
     tagFile.close()
@@ -67,7 +67,7 @@ def ParseTags(options):
                 languages.GetLanguageHandler(key)['PythonExtensionMatcher'] +
                 ')\t')
 
-    p = open(options['ctags_file'], 'r')
+    p = open(os.path.join(options['ctags_file_dir'],options['ctags_file']), 'r')
     while 1:
         line = p.readline()
         if not line:
@@ -104,7 +104,7 @@ def GetCommandArgs(options):
     args += ["--languages=" + ",".join(ctags_languages)]
 
     if options['ctags_file']:
-        args += ['-f', options['ctags_file']]
+        args += ['-f', os.path.join(options['ctags_file_dir'], options['ctags_file'])]
 
     if not options['include_docs']:
         args += ["--exclude=docs", "--exclude=Documentation"]

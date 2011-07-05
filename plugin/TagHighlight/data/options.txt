@@ -7,13 +7,20 @@ recurse:
  
 ctags_file:
 	CommandLineSwitches:--ctags-file
-	VimOptionMapper:CtagsOutputFile
+	VimOptionMap:CtagsOutputFile
 	Type:string
 	Default:tags
 	Help:CTAGS output filename
- 
-types_prefix:
-	CommandLineSwitches:--types-prefix
+
+ctags_file_dir:
+	CommandLineSwitches:--ctags-file-dir
+	VimOptionMap:CtagsFileLocation
+	Type:string
+	Default:.
+	Help:Location in which to store or find CTAGS output file
+
+types_file_prefix:
+	CommandLineSwitches:--types-file-prefix
 	VimOptionMap:TypesFilePrefix
 	Type:string
 	Default:types
@@ -60,7 +67,7 @@ parse_constants:
  
 languages:
 	CommandLineSwitches:--include-language
-	VimOptionMapper:Languages
+	VimOptionMap:Languages
 	Type:list
 	Default:[]
 	Help:Only include specified languages
@@ -84,14 +91,9 @@ cscope_dir:
 	Default:None
 	Help:CSCOPE Executable Directory
  
-type_file_prefix:
-	CommandLineSwitches:--type-prefix
-	Type:string
-	Default:types
-	Help:Specify the prefix for the generated types files
- 
-type_file_location:
-	CommandLineSwitches:--type-file-location
+types_file_location:
+	CommandLineSwitches:--types-file-location
+	VimOptionMap:TypesFileLocation
 	Type:string
 	Default:.
 	Help:Specify the location for the generated types files

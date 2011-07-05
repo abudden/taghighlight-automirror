@@ -83,8 +83,8 @@ function! TagHighlight#ReadTypes#FindTypeFiles(suffix)
 	" TODO: Currently only searches for a single types file; doesn't look
 	"       for library files
 	let search_result = TagHighlight#Find#LocateFile('TYPES', a:suffix)
-	if result['Found'] == 1 && result['Exists'] == 1
-		let results += [result['FullPath']]
+	if search_result['Found'] == 1 && search_result['Exists'] == 1
+		let results += [search_result['FullPath']]
 	endif
 	return results
 endfunction

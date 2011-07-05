@@ -51,6 +51,16 @@ function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
 		" in the path
 		let RunOptions['CtagsExeFull'] = TagHighlight#RunPythonScript#FindExePath(ctags_option)
 	endif
+
+	let tag_file_info = TagHighlight#Find#LocateFile('TAGS', '')
+	if tag_file_info['Found'] == 1
+		let RunOptions['CtagsFileLocation'] = tag_file_info['Directory']
+	endif
+
+	let types_file_info = TagHighlight#Find#LocateFile('TYPES', '*')
+	if types_file_info['Found'] == 1
+		let RunOptions['TypesFileLocation'] = types_file_info['Directory']
+	endif
 	
 	" Find the cscope path
 

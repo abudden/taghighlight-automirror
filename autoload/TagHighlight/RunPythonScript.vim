@@ -47,6 +47,8 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 		call TagHighlight#RunPythonScript#FindPython()
 	endif
 
+	echomsg "Using variant: " .s:python_variant
+
 	if index(["if_pyth","if_pyth3"], s:python_variant) != -1
 		let add_to_py_path = substitute(g:TagHighlightSettings['PluginPath'], '\\', '/','g')
 		let PY = s:python_cmd[0]
@@ -55,25 +57,34 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 		exe PY 'from module.utilities import TagHighlightOptionDict' 
 		exe PY 'from module.worker import RunWithOptions'
 		exe PY 'options = TagHighlightOptionDict()'
+		let handled_options = []
 		" We're using the custom interpreter: create an options object
 		for option in g:TagHighlightSettings['ScriptOptions']
 			if has_key(option, 'VimOptionMap') && has_key(a:options, option['VimOptionMap'])
 				" We can handle this one automatically
 				let pyoption = 'options["'.option['Destination'].'"]'
 				if option['Type'] == 'bool'
+					let handled_options += [option['VimOptionMap']]
 					if a:options[option['VimOptionMap']]
 						exe PY pyoption '= True'
 					else
 						exe PY pyoption '= False'
 					endif
 				elseif option['Type'] == 'string'
+					let handled_options += [option['VimOptionMap']]
 					exe PY pyoption '= """'.a:options[option['VimOptionMap']].'"""'
 				elseif option['Type'] == 'list'
+					let handled_options += [option['VimOptionMap']]
 					exe PY pyoption '= []'
 					for entry in a:options[option['VimOptionMap']]
 						exe PY pyoption '+= ["""' . entry . '"""]'
 					endfor
 				endif
+			endif
+		endfor
+		for check_opt in keys(a:options)
+			if index(handled_options, check_opt) == -1
+				echomsg "Unhandled run option: " . check_opt
 			endif
 		endfor
 		exe PY 'RunWithOptions(options)'
