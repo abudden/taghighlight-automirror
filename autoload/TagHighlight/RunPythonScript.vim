@@ -82,17 +82,22 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 		" We're calling the script externally, build a list of arguments
 		for option in g:TagHighlightSettings['ScriptOptions']
 			if has_key(option, 'VimOptionMap') && has_key(a:options, option['VimOptionMap'])
+				if type(option['CommandLineSwitches']) == type([])
+					let switch = option['CommandLineSwitches'][0]
+				else
+					let switch = option['CommandLineSwitches']
+				endif
 				" We can handle this one automatically
 				if option['Type'] == 'bool'
 					if ((a:options[option['VimOptionMap']] && option['Default'] == 'False')
 								\ || ( ! a:options[option['VimOptionMap']] && option['Default'] == 'True'))
-						let args += [option['CommandLineSwitches']]
+						let args += [switch]
 					endif
 				elseif option['Type'] == 'string'
-					let args += [option['CommandLineSwitches'] . '=' . a:options[option['VimOptionMap']]]
+					let args += [switch . '=' . a:options[option['VimOptionMap']]]
 				elseif option['Type'] == 'list'
 					for entry in a:options[option['VimOptionMap']]
-						let args += [option['CommandLineSwitches'] . '=' . entry]
+						let args += [switch . '=' . entry]
 					endfor
 				endif
 			endif
