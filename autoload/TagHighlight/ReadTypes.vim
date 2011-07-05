@@ -69,10 +69,7 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 		exe 'syn clear' group
 	endfor
 	
-	let type_files = TagHighlight#ReadTypes#FindTypeFiles(
-				\ TagHighlight#Option#GetOption('TypesFilePrefix',"types") . '_' .
-				\ a:suffix .
-				\ '.vim')
+	let type_files = TagHighlight#ReadTypes#FindTypeFiles(a:suffix)
 	for fname in type_files
 		exe 'so' fname
 	endfor
@@ -81,11 +78,14 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 	call winrestview(savedView)
 endfunction
 
-function! TagHighlight#ReadTypes#FindTypeFiles(filename)
+function! TagHighlight#ReadTypes#FindTypeFiles(suffix)
 	" TODO: Initial implementation only supports current directory
 	let results = []
-	if filereadable(a:filename)
-		let results += [a:filename]
+	let filename = TagHighlight#Option#GetOption('TypesFilePrefix',"types") . '_' .
+				\ a:suffix .
+				\ '.vim'
+	if filereadable(filename)
+		let results += [filename]
 	endif
 	return results
 endfunction
