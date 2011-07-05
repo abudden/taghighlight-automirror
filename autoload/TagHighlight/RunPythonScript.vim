@@ -128,32 +128,13 @@ function! TagHighlight#RunPythonScript#LoadScriptOptions()
 	endif
 
 	let g:TagHighlightSettings['ScriptOptions'] = []
-	let entries = readfile(g:TagHighlightSettings['PluginPath'] . '/data/options.txt')
-	
-	let dest = ''
-	let option = {}
-	for entry in entries
-		if entry[len(entry)-1] == ':'
-			if dest != ''
-				let g:TagHighlightSettings['ScriptOptions'] += [deepcopy(option)]
-				let option = {}
-			endif
-			let dest = entry[:len(entry)-2]
-			let option['Destination'] = dest
-			echo "Dest:".dest
-		elseif dest != '' && entry[0] == "\t" && stridx(entry, ':') != -1
-			let parts = split(entry[1:], ':')
-			if parts[0] == 'CommandLineSwitches' && stridx(parts[1], ',') != -1
-				" Only take the first option for the command line switches
-				let parts[1] = split(parts[1], ',')[0]
-			endif
-			let option[parts[0]] = parts[1]
-			echo "Option:".parts[0]."=".parts[1]
-		endif
-	endfor
-	if dest != ''
+	let options = TagHighlight#LoadDataFile#LoadDataFile('options.txt')
+
+	for option_dest in keys(options)
+		let option = deepcopy(options[option_dest])
+		let option['Destination'] = option_dest
 		let g:TagHighlightSettings['ScriptOptions'] += [option]
-	endif
+	endfor
 endfunction
 
 
