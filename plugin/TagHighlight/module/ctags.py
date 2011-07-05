@@ -33,7 +33,9 @@ def GenerateTags(options):
     ctags_cmd = [options['ctags_exe_full']] + args
 
     #subprocess.call(" ".join(ctags_cmd), shell = (os.name != 'nt'))
-    subprocess.call(ctags_cmd)
+    # shell=True stops the command window popping up
+    process = subprocess.Popen(ctags_cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+    (sout, serr) = process.communicate()
 
     tagFile = open(options['ctags_file'], 'r')
     tagLines = [line.strip() for line in tagFile]
