@@ -25,10 +25,10 @@ let g:loaded_TagHLReadTypes = 1
 function! TagHighlight#ReadTypes#ReadTypesAutoDetect()
 	let extension = expand('%:e')
 	" echomsg "Reading types for extension " . extension
-	for key in keys(g:TagHighlightSettings['ExtensionLookup'])
+	for key in keys(g:TagHighlightPrivate['ExtensionLookup'])
 		let regex = '^'.key.'$'
 		if extension =~ regex
-			call TagHighlight#ReadTypes#ReadTypes(g:TagHighlightSettings['ExtensionLookup'][key])
+			call TagHighlight#ReadTypes#ReadTypes(g:TagHighlightPrivate['ExtensionLookup'][key])
 		endif
 	endfor
 endfunction
@@ -65,7 +65,7 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 	call TagHighlight#Debug#Print("Searching for types file", 'Status')
 
 	" Clear any existing syntax entries
-	for group in g:TagHighlightSettings['AllTypes']
+	for group in g:TagHighlightPrivate['AllTypes']
 		exe 'syn clear' group
 	endfor
 	

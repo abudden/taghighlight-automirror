@@ -23,7 +23,7 @@ endtry
 let g:loaded_TagHLLoadDataFile = 1
 
 function! TagHighlight#LoadDataFile#LoadDataFile(filename)
-	let filename = g:TagHighlightSettings['PluginPath'] . '/data/' . a:filename
+	let filename = g:TagHighlightPrivate['PluginPath'] . '/data/' . a:filename
 	return TagHighlight#LoadDataFile#LoadFile(filename)
 endfunction
 

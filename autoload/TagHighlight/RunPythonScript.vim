@@ -50,7 +50,7 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 	echomsg "Using variant: " .s:python_variant
 
 	if index(["if_pyth","if_pyth3"], s:python_variant) != -1
-		let add_to_py_path = substitute(g:TagHighlightSettings['PluginPath'], '\\', '/','g')
+		let add_to_py_path = substitute(g:TagHighlightPrivate['PluginPath'], '\\', '/','g')
 		let PY = s:python_cmd[0]
 		exe PY 'import sys'
 		exe PY 'sys.path = ["'.add_to_py_path.'"] + sys.path'
@@ -59,7 +59,7 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 		exe PY 'options = TagHighlightOptionDict()'
 		let handled_options = []
 		" We're using the custom interpreter: create an options object
-		for option in g:TagHighlightSettings['ScriptOptions']
+		for option in g:TagHighlightPrivate['ScriptOptions']
 			if has_key(option, 'VimOptionMap') && has_key(a:options, option['VimOptionMap'])
 				" We can handle this one automatically
 				let pyoption = 'options["'.option['Destination'].'"]'
@@ -91,7 +91,7 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 	elseif index(["python","compiled"], s:python_variant) != -1
 		let args = s:python_cmd[:]
 		" We're calling the script externally, build a list of arguments
-		for option in g:TagHighlightSettings['ScriptOptions']
+		for option in g:TagHighlightPrivate['ScriptOptions']
 			if has_key(option, 'VimOptionMap') && has_key(a:options, option['VimOptionMap'])
 				if type(option['CommandLineSwitches']) == type([])
 					let switch = option['CommandLineSwitches'][0]
@@ -139,17 +139,17 @@ function! TagHighlight#RunPythonScript#FindExeInPath(file)
 endfunction
 
 function! TagHighlight#RunPythonScript#LoadScriptOptions()
-	if has_key(g:TagHighlightSettings, 'ScriptOptions')
+	if has_key(g:TagHighlightPrivate, 'ScriptOptions')
 		return
 	endif
 
-	let g:TagHighlightSettings['ScriptOptions'] = []
+	let g:TagHighlightPrivate['ScriptOptions'] = []
 	let options = TagHighlight#LoadDataFile#LoadDataFile('options.txt')
 
 	for option_dest in keys(options)
 		let option = deepcopy(options[option_dest])
 		let option['Destination'] = option_dest
-		let g:TagHighlightSettings['ScriptOptions'] += [option]
+		let g:TagHighlightPrivate['ScriptOptions'] += [option]
 	endfor
 endfunction
 
@@ -233,14 +233,14 @@ function! TagHighlight#RunPythonScript#FindPython()
 					" We've found python, it's probably usable
 					let s:python_variant = 'python'
 					let s:python_path = python_path
-					let s:python_cmd = [python_path, g:TagHighlightSettings['PluginPath'] . '/TagHighlight.py']
+					let s:python_cmd = [python_path, g:TagHighlightPrivate['PluginPath'] . '/TagHighlight.py']
 				else
 					" See if it's in the path
 					let python_path = TagHighlight#RunPythonScript#FindExeInPath('python')
 					if python_path != 'None'
 						let s:python_variant = 'python'
 						let s:python_path = python_path
-						let s:python_cmd = [python_path, g:TagHighlightSettings['PluginPath'] . '/TagHighlight.py']
+						let s:python_cmd = [python_path, g:TagHighlightPrivate['PluginPath'] . '/TagHighlight.py']
 					endif
 				endif
 			elseif variant == 'compiled'
