@@ -40,8 +40,8 @@ let g:loaded_TagHLFind = 1
 " [gb]:TagHighlightSettings:
 "	DefaultDirModePriority:[Explicit,UpFromCurrent,UpFromFile,CurrentExplicit,FileExplicit]
 "	TagFileDirModePriority:["Default"] or as above
-"	TypesFileDirModePriority:As tag file, or ["WithTagFile"]
-"	ConfigFileDirModePriority:As type file or ["WithTypeFile"]
+"	TypesFileDirModePriority:As tag file
+"	ConfigFileDirModePriority:As tag file
 "	DirModeSearchWildcard:'' (look for tags file) or something specific (*.uvopt)?
 "
 " Explicit Locations:
