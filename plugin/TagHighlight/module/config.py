@@ -31,12 +31,19 @@ def SetDataDirectories():
 def LoadVersionInfo():
     global config
     config['version'] = {}
+    fh = open(os.path.join(config['data_directory'],'release.txt'),'r')
+    for line in fh:
+        if line.startswith('release:'):
+            config['release'] = line.strip().split(':')[1]
+            break
+    fh.close()
     try:
         fh = open(os.path.join(config['version_info_dir'],'version_info.txt'), 'r')
         for line in fh:
             if line.startswith('release_'):
                 parts = line.strip().split(':')
                 config['version'][parts[0]] = parts[1]
+        fh.close()
     except IOError:
         for name in ['clean','date','revno','revision_id']:
             config['version']['release_'+name] = 'Unreleased'

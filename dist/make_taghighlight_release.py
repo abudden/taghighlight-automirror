@@ -31,6 +31,24 @@ def Rglob(path, match):
             matches.append(os.path.join(root, filename))
     return matches
 
+def UpdateReleaseVersion():
+    release_file = os.path.join(vimfiles_dir,'plugin/TagHighlight/data/release.txt')
+    fh = open(release_file,'r')
+    lines = [i for i in fh]
+    fh.close()
+    release = 'INVALID'
+    fh = open(release_file, 'wb')
+    for line in lines:
+        if line.startswith('release:'):
+            parts = line.strip().split(':')
+            numbers = [int(i) for i in parts[1].split('.')]
+            release = '{0}.{1}.{2}'.format(numbers[0],numbers[1],numbers[2]+1))
+            fh.write('release:'+release+'\n')
+        else:
+            fh.write(line.strip() + '\n')
+    fh.close()
+    return release
+
 version_info_format = '''
 release_clean:{clean}
 release_date:{date}
@@ -114,13 +132,19 @@ def MakeWin32Compiled():
     pyinstaller_path = os.environ['WINPYINSTALLERDIR']
     MakeCompiled(pyexe, pyinstaller_path)
 
+def CheckInChanges(r):
+    args = BZR+['ci','-m','Release build {0}'.format(r)]
+    p = subprocess.Popen(args)
+    (stdout,stderr) = p.communicate()
 
 def main():
     version_file, clean = GenerateVersionInfo()
+    new_release = UpdateReleaseVersion()
 
     if clean:
         MakeZipFile()
         MakeWin32Compiled()
+        CheckInChanges(new_release)
     else:
         print("Distribution not clean: check into Bazaar before making release.")
 
