@@ -44,7 +44,7 @@ def GenerateVersionInfo():
     version_file = os.path.join(vimfiles_dir,'plugin/TagHighlight/data/version_info.txt')
     import re
     clean_re = re.compile('.*release_clean:([01]).*',re.DOTALL)
-    clean = True if clean_re.sub(r'\1', stdout) == 1 else False
+    clean = True if clean_re.sub(r'\1', stdout) == '1' else False
     # Write as binary for consistent line endings
     fh = open(version_file,'wb')
     fh.write(stdout)
