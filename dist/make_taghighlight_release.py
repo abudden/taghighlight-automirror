@@ -42,7 +42,7 @@ def UpdateReleaseVersion():
         if line.startswith('release:'):
             parts = line.strip().split(':')
             numbers = [int(i) for i in parts[1].split('.')]
-            release = '{0}.{1}.{2}'.format(numbers[0],numbers[1],numbers[2]+1))
+            release = '{0}.{1}.{2}'.format(numbers[0],numbers[1],numbers[2]+1)
             fh.write('release:'+release+'\n')
         else:
             fh.write(line.strip() + '\n')
