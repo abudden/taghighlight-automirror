@@ -43,9 +43,10 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 	" Will only actually load the options once
 	call TagHighlight#RunPythonScript#LoadScriptOptions()
 
-	if s:python_variant == 'None'
-		call TagHighlight#RunPythonScript#FindPython()
-	endif
+	" This will only search for python the first time or if
+	" the variant priority or forced variant preferences have
+	" changed.
+	call TagHighlight#RunPythonScript#FindPython()
 
 	echomsg "Using variant: " .s:python_variant
 
@@ -179,7 +180,6 @@ function! TagHighlight#RunPythonScript#GetPythonVersion()
 endfunction
 
 function! TagHighlight#RunPythonScript#FindPython()
-	let s:python_variant = 'None'
 	let forced_variant = TagHighlight#Option#GetOption('ForcedPythonVariant', 'None')
 	" Supported variants
 	let supported_variants = ['if_pyth3', 'if_pyth', 'python', 'compiled']
@@ -187,10 +187,21 @@ function! TagHighlight#RunPythonScript#FindPython()
 	let variant_priority = TagHighlight#Option#GetOption('PythonVariantPriority',
 				\ supported_variants)
 
+	" If we've run before and nothing has changed, just return
+	if s:python_variant != 'None'
+		if forced_variant == s:stored_forced_variant && s:stored_variant_priority == variant_priority
+			return s:python_variant
+		endif
+	endif
+
+	let s:python_variant = 'None'
 	" Make sure that the user specified variant is supported
 	if index(supported_variants, forced_variant) == -1
 		let forced_variant = 'None'
 	endif
+
+	let s:stored_forced_variant = forced_variant
+	let s:stored_variant_priority = variant_priority
 
 	" Make sure that all variants in the priority list are supported
 	call filter(variant_priority, 'index(supported_variants, v:val) != -1')
