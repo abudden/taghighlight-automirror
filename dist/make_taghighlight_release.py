@@ -12,14 +12,14 @@ import socket
 hostname = socket.gethostname()
 
 if hostname == 'UKBAT-651':
-    BZR='c/applications/development/languages/python/Scripts/bzr.bat'
+    BZR=['c/applications/development/languages/python/python.exe','c:/applications/development/languages/python/Scripts/bzr']
 else:
-    BZR='bzr'
-if BZR[1] == '/':
+    BZR=['bzr']
+if BZR[0][1] == '/':
     if sys.platform == 'win32':
-        BZR = BZR[0] + ':' + BZR[1:]
+        BZR[0] = BZR[0][0] + ':' + BZR[0][1:]
     elif sys.platform == 'cygwin':
-        BZR = '/cygdrive/' + BZR
+        BZR[0] = '/cygdrive/' + BZR[0]
 
 # Recursive glob function, from
 # http://stackoverflow.com/questions/2186525/use-a-glob-to-find-files-recursively-in-python#2186565
@@ -38,13 +38,14 @@ release_revid:{revision_id}
 """
 def GenerateVersionInfo():
     import subprocess
-    args = [BZR,'version-info','--custom','--template="'+version_info_format+'"']
+    args = BZR+['version-info','--custom','--template="'+version_info_format+'"']
     p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (stdout,stderr) = p.communicate()
     version_file = os.path.join(vimfiles_dir,'plugin/TagHighlight/data/version_info.txt')
     import re
     clean_re = re.compile('.*release_clean:([01]).*',re.DOTALL)
-    clean = True if clean_re.sub(r'\1', stdout) == '1' else False
+    clean_str = clean_re.sub(r'\1', stdout)
+    clean = True if clean_str == '1' else False
     # Write as binary for consistent line endings
     fh = open(version_file,'wb')
     fh.write(stdout)
