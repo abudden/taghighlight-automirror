@@ -142,7 +142,7 @@ def CheckInChanges(r):
     p = subprocess.Popen(args,stdout=subprocess.PIPE)
     (stdout,stderr) = p.communicate()
     if 'checkout of branch' not in stdout:
-        args = BZR+['push']
+        args = BZR+['push',':parent']
         p = subprocess.Popen(args)
         (stdout,stderr)=p.communicate()
 
