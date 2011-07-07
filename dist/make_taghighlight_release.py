@@ -30,12 +30,12 @@ def Rglob(path, match):
             matches.append(os.path.join(root, filename))
     return matches
 
-version_info_format = """
+version_info_format = '''
 release_clean:{clean}
 release_date:{date}
 release_revno:{revno}
 release_revid:{revision_id}
-"""
+'''
 def GenerateVersionInfo():
     import subprocess
     args = BZR+['version-info','--custom','--template="'+version_info_format+'"']
@@ -48,7 +48,9 @@ def GenerateVersionInfo():
     clean = True if clean_str == '1' else False
     # Write as binary for consistent line endings
     fh = open(version_file,'wb')
-    fh.write(stdout)
+    for line in stdout.split('\n'):
+        if line.startswith('release_'):
+            fh.write(line + '\n')
     fh.close()
     return version_file, clean
 
