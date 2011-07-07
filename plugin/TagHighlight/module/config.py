@@ -20,6 +20,9 @@ else:
     config['data_directory'] = os.path.abspath(
             os.path.join(os.path.dirname(__file__),
             '../data'))
+if not os.path.exists(config['data_directory']):
+    raise IOError("Data directory doesn't exist, have you installed the main distribution?")
+
 
 def SetInitialOptions(new_options):
     global config

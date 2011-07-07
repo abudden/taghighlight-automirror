@@ -5,6 +5,7 @@ import os
 import sys
 import zipfile
 import fnmatch
+import subprocess
 
 vimfiles_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),'..'))
 
@@ -37,7 +38,6 @@ release_revno:{revno}
 release_revid:{revision_id}
 '''
 def GenerateVersionInfo():
-    import subprocess
     args = BZR+['version-info','--custom','--template="'+version_info_format+'"']
     p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (stdout,stderr) = p.communicate()
@@ -90,11 +90,37 @@ def MakeZipFile():
     # Close the zipfile
     zipf.close()
 
+def MakeCompiled(pyexe, pyinstaller_path):
+    initial_dir = os.getcwd()
+    os.chdir(os.path.join(vimfiles_dir, 'plugin/TagHighlight'))
+    args = pyexe + [os.path.join(pyinstaller_path, 'Build.py'), '-y', 'TagHighlight.spec']
+    p = subprocess.Popen(args)#, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    (stdout,stderr) = p.communicate()
+    zipf = zipfile.ZipFile(os.path.join(vimfiles_dir,'dist','taghighlight_win32.zip'), 'w')
+    for f in Rglob(os.path.join(vimfiles_dir,'plugin/TagHighlight/Compiled/Win32'),'*'):
+        dirname = os.path.dirname(os.path.relpath(f,vimfiles_dir))
+        zipf.write(f,os.path.join(dirname, os.path.basename(f)), zipfile.ZIP_DEFLATED)
+    zipf.close()
+    os.chdir(initial_dir)
+
+def MakeWin32Compiled():
+    if 'WINPYTHON' in os.environ:
+        # Doesn't work with spaces in the path
+        # (doing the split to allow for running python
+        # with wine).
+        pyexe = os.environ['WINPYTHON'].split(' ')
+    else:
+        pyexe = ['python.exe']
+    pyinstaller_path = os.environ['WINPYINSTALLERDIR']
+    MakeCompiled(pyexe, pyinstaller_path)
+
+
 def main():
     version_file, clean = GenerateVersionInfo()
 
-    if clean:
+    if clean or True:
         MakeZipFile()
+        MakeWin32Compiled()
     else:
         print("Distribution not clean: check into Bazaar before making release.")
 
