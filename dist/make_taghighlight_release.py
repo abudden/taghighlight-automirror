@@ -2,10 +2,24 @@
 from __future__ import print_function
 
 import os
+import sys
 import zipfile
 import fnmatch
 
 vimfiles_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),'..'))
+
+import socket
+hostname = socket.gethostname()
+
+if hostname == 'UKBAT-651':
+    BZR='c/applications/development/languages/python/Scripts/bzr.bat'
+else:
+    BZR='bzr'
+if BZR[1] == '/':
+    if sys.platform == 'win32':
+        BZR = BZR[0] + ':' + BZR[1:]
+    elif sys.platform == 'cygwin':
+        BZR = '/cygdrive/' + BZR
 
 # Recursive glob function, from
 # http://stackoverflow.com/questions/2186525/use-a-glob-to-find-files-recursively-in-python#2186565
@@ -17,21 +31,22 @@ def Rglob(path, match):
     return matches
 
 version_info_format = """
-release_clean = True if {clean} == 1 else False
-release_date = '{date}'
-release_revno = {revno}
-release_revid = '{revision_id}'
+release_clean:{clean}
+release_date:{date}
+release_revno:{revno}
+release_revid:{revision_id}
 """
 def GenerateVersionInfo():
     import subprocess
-    args = ['bzr','version-info','--custom','--template="'+version_info_format+'"']
+    args = [BZR,'version-info','--custom','--template="'+version_info_format+'"']
     p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (stdout,stderr) = p.communicate()
-    version_file = os.path.join(vimfiles_dir,'plugin/TagHighlight/module/version_info.py')
+    version_file = os.path.join(vimfiles_dir,'plugin/TagHighlight/data/version_info.txt')
     import re
-    clean_re = re.compile('.*release_clean = True if (.) == 1 else False.*',re.DOTALL)
+    clean_re = re.compile('.*release_clean:([01]).*',re.DOTALL)
     clean = True if clean_re.sub(r'\1', stdout) == 1 else False
-    fh = open(version_file,'w')
+    # Write as binary for consistent line endings
+    fh = open(version_file,'wb')
     fh.write(stdout)
     fh.close()
     return version_file, clean
