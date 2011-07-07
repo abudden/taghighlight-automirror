@@ -139,9 +139,9 @@ def CheckInChanges(r):
 
 def main():
     version_file, clean = GenerateVersionInfo()
-    new_release = UpdateReleaseVersion()
 
     if clean:
+        new_release = UpdateReleaseVersion()
         MakeZipFile()
         MakeWin32Compiled()
         CheckInChanges(new_release)
