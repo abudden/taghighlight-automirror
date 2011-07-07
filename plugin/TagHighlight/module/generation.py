@@ -1,5 +1,6 @@
 from __future__ import print_function
 import os
+import re
 from .utilities import GenerateValidKeywordRange, IsValidKeyword
 
 vim_synkeyword_arguments = [
@@ -53,10 +54,22 @@ def CreateTypesFile(options, language, tags):
     # Add the ones not specified in priority
     allTypes += fullTypeList
 
+    patternREs = []
+    for pattern in options['skip_patterns']:
+        patternREs.append(re.compile(pattern))
+
     for thisType in allTypes:
         keystarter = 'syn keyword ' + thisType
         keycommand = keystarter
         for keyword in tags[thisType]:
+            skip_this = False
+            for pattern in patternREs:
+                if pattern.search(keyword) != None:
+                    skip_this = True
+                    break
+            if skip_this:
+                continue
+
             if options['check_keywords']:
                 # In here we should check that the keyword only matches
                 # vim's \k parameter (which will be different for different

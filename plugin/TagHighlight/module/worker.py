@@ -1,7 +1,6 @@
 from __future__ import print_function
 import sys
 import os
-from .options import AllOptions
 
 def RunWithOptions(options):
     from .config import config, SetInitialOptions, LoadLanguages

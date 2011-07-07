@@ -72,12 +72,12 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 					endif
 				elseif option['Type'] == 'string'
 					let handled_options += [option['VimOptionMap']]
-					exe PY pyoption '= """'.a:options[option['VimOptionMap']].'"""'
+					exe PY pyoption '= r"""'.a:options[option['VimOptionMap']].'"""'
 				elseif option['Type'] == 'list'
 					let handled_options += [option['VimOptionMap']]
 					exe PY pyoption '= []'
 					for entry in a:options[option['VimOptionMap']]
-						exe PY pyoption '+= ["""' . entry . '"""]'
+						exe PY pyoption '+= [r"""' . entry . '"""]'
 					endfor
 				endif
 			endif
