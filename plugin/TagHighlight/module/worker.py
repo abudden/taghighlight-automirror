@@ -15,6 +15,11 @@ def RunWithOptions(options):
 
     LoadLanguages()
 
+    if config['print_config']:
+        import pprint
+        pprint.pprint(config)
+        return
+
     if config['print_py_version']:
         print(sys.version)
         return

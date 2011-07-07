@@ -125,4 +125,10 @@ print_py_version:
 	Default:False
 	Help:Just print the version of python
 
+print_config:
+	CommandLineSwitches:--print-config
+	Type:bool
+	Default:False
+	Help:Parse the various options and then print the configuration and exit (for debugging)
+
 # vim: ff=unix:noet

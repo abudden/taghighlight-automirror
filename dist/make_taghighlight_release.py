@@ -118,7 +118,7 @@ def MakeWin32Compiled():
 def main():
     version_file, clean = GenerateVersionInfo()
 
-    if clean or True:
+    if clean:
         MakeZipFile()
         MakeWin32Compiled()
     else:
