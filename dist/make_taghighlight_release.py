@@ -136,6 +136,9 @@ def CheckInChanges(r):
     args = BZR+['ci','-m','Release build {0}'.format(r)]
     p = subprocess.Popen(args)
     (stdout,stderr) = p.communicate()
+    args = BZR+['tag','taghighlight-release-{0}'.format(r)]
+    p = subprocess.Popen(args)
+    (stdout,stderr) = p.communicate()
     # Check whether this is a checkout and if not,
     # push to the upstream branch
     args = BZR+['info']
