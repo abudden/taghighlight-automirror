@@ -1,6 +1,6 @@
 from .config import config
 import os
-from loaddata import LoadDataFile
+from .loaddata import LoadDataFile
 
 AllOptions = {}
 
