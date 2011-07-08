@@ -58,7 +58,6 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 	" a:which is 'TAGS', 'TYPES', 'CONFIG'
 	let default_priority = TagHighlight#Option#GetOption('DefaultDirModePriority',
 				\ ["Explicit","UpFromCurrent","UpFromFile","CurrentExplicit","FileExplicit"])
-	let search_wildcard = TagHighlight#Option#GetOption('DirModeSearchWildcard', '')
 
 	let file = '<afile>'
 	if len(expand(file)) == 0
@@ -87,8 +86,9 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 		throw "Unrecognised file"
 	endif
 
-	let search_wildcard = TagHighlight#Option#GetOption('DirModeSearchWildcard',
-				\ TagHighlight#Option#GetOption('CtagsOutputFile','tags'))
+	let search_wildcards = TagHighlight#Option#GetOption('DirModeSearchWildcard',
+				\ [TagHighlight#Option#GetOption('CtagsOutputFile','tags'),
+				\ TagHighlight#Option#GetOption('ProjectConfigFileName', 'taghl_config.txt')])
 
 	if search_priority[0] == 'Default'
 		let search_priority = default_priority
@@ -109,30 +109,18 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 			let result['Filename'] = filename
 		elseif search_mode == 'UpFromCurrent'
 			" Start in the current directory and search up
-			let new_dir = fnamemodify('.',':p:h')
-			let dir = ''
-			while new_dir != dir
-				let dir = new_dir
-				if len(glob(dir . '/' . search_wildcard)) > 0
-					let result['Directory'] = dir
-					let result['Filename'] = filename
-					break
-				endif
-				let new_dir = fnamemodify(dir, ':h')
-			endwhile
+			let dir = fnamemodify('.',':p:h')
+			let result = s:ScanUp(dir, search_wildcards)
+			if has_key(result, 'Directory')
+				let result['Filename'] = filename
+			endif
 		elseif search_mode == 'UpFromFile'
 			" Start in the directory containing the current file and search up
-			let new_dir = fnamemodify(file,':p:h')
-			let dir = ''
-			while new_dir != dir
-				let dir = new_dir
-				if len(glob(dir . '/' . search_wildcard)) > 0
-					let result['Directory'] = dir
-					let result['Filename'] = filename
-					break
-				endif
-				let new_dir = fnamemodify(dir, ':h')
-			endwhile
+			let dir = fnamemodify(file,':p:h')
+			let result = s:ScanUp(dir, search_wildcards)
+			if has_key(result, 'Directory')
+				let result['Filename'] = filename
+			endif
 		elseif search_mode == 'CurrentExplicit'
 			let result['Directory'] = fnamemodify(file,':p:h')
 			let result['Filename'] = filename
@@ -152,5 +140,27 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 		endif
 	endfor
 
+	return result
+endfunction
+
+function! s:ScanUp(dir, wildcards)
+	let result = {}
+	let new_dir = a:dir
+	let dir = ''
+	let found = 0
+	while new_dir != dir
+		let dir = new_dir
+		for wildcard in a:wildcards
+			if len(glob(dir . '/' . wildcard)) > 0
+				let result['Directory'] = dir
+				let found = 1
+				break
+			endif
+		endfor
+		if found
+			break
+		endif
+		let new_dir = fnamemodify(dir, ':h')
+	endwhile
 	return result
 endfunction

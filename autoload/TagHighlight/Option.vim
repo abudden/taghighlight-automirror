@@ -25,8 +25,21 @@ let g:loaded_TagHLOption = 1
 " TODO: Options should be customisable per project (following the same method
 " as looking for tags/types... look for options file).
 
+let s:log_defaults = 1
+let g:TagHighlightOptionDefaults = {}
+
 function! TagHighlight#Option#GetOption(name, default)
 	let opt = a:default
+
+	if s:log_defaults
+		if has_key(g:TagHighlightOptionDefaults, a:name)
+			if g:TagHighlightOptionDefaults[a:name] != a:default
+				echoerr "Different defaults proposed for option " . a:name . ": " . string(a:default) . " != " . string(g:TagHighlightOptionDefaults[a:name])
+			endif
+		else
+			let g:TagHighlightOptionDefaults[a:name] = a:default
+		endif
+	endif
 
 	" Option priority (highest first):
 	" * buffer dictionary,
@@ -41,8 +54,6 @@ function! TagHighlight#Option#GetOption(name, default)
 endfunction
 
 function! TagHighlight#Option#CopyOptions()
-	" Skip a few keys to speed copying
-	let skip_keys = ["ScriptOptions","AllTypes","ExtensionLookup"]
 	let result = {}
 	for key in keys(g:TagHighlightSettings)
 		if type(g:TagHighlightSettings[key]) == type([])

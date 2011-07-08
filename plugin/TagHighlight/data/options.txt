@@ -31,6 +31,7 @@ types_file_extension:
 	VimOptionMap:TypesFileExtension
 	Type:string
 	Default:taghl
+	Help:Extension for types file (by default 'taghl', which with default prefix gives types_c.taghl for C files).
 
 skip_patterns:
 	CommandLineSwitches:--add-skip-pattern
