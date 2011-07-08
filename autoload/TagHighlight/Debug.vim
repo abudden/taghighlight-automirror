@@ -6,7 +6,7 @@
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
 "            notice is copied with it. Like anything else that's free,
-"            <+$FILENAME$>.vim is provided *as is* and comes with no
+"            Debug.vim is provided *as is* and comes with no
 "            warranty of any kind, either expressed or implied. By using
 "            this plugin, you agree that in no event will the copyright
 "            holder be liable for any damages resulting from the use
