@@ -39,6 +39,17 @@ function! s:GetPath()
 	return path
 endfunction
 
+function! s:RunShellCommand(args)
+	let syscmd = ""
+	for arg in a:args
+		if len(syscmd) > 0
+			let syscmd += " "
+		endif
+		let syscmd += shellescape(arg)
+	endfor
+	return system(syscmd)
+endfunction
+
 function! TagHighlight#RunPythonScript#RunGenerator(options)
 	" Will only actually load the options once
 	call TagHighlight#RunPythonScript#LoadScriptOptions()
@@ -114,7 +125,7 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 				endif
 			endif
 		endfor
-		let sysoutput = system(join(args, " "))
+		let sysoutput = s:RunShellCommand(args)
 	else
 		throw "Tag highlighter: invalid or not implemented python variant"
 	endif
@@ -168,11 +179,9 @@ function! TagHighlight#RunPythonScript#GetPythonVersion()
 		let pyversion = g:taghl_getpythonversion
 		unlet g:taghl_getpythonversion
 	elseif s:python_variant == 'python'
-		let syscmd = shellescape(s:python_path) . " --version"
-		let pyversion = system(syscmd)
+		let pyversion = s:RunShellCommand([s:python_path,"--version"])
 	elseif s:python_variant == 'compiled'
-		let syscmd = shellescape(s:highlighter_path) . " --pyversion"
-		let pyversion = system(syscmd)
+		let pyversion = s:RunShellCommand([s:python_path,"--pyversion"])
 	else
 		let pyversion = 'ERROR'
 	endif
