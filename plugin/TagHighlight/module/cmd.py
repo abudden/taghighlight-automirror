@@ -10,37 +10,31 @@ from . import revision
 def ProcessCommandLine():
     parser = optparse.OptionParser(version=("Tag Highlight Types File Creator (revision %%prog) {0}".format(revision)))
 
-    required = ['CommandLineSwitches','Type','Default','Destination','Help']
-    for option in AllOptions:
-        for key in required:
-            if key not in option:
-                # TODO: Should be a critical debug error
-                print("Missing field for option:",repr(option))
-                return
-        if option['Type'] == 'bool':
-            if option['Default'] == True:
+    for dest in AllOptions.keys():
+        if AllOptions[dest]['Type'] == 'bool':
+            if AllOptions[dest]['Default'] == True:
                 action = 'store_false'
             else:
                 action = 'store_true'
-            parser.add_option(*option['CommandLineSwitches'],
+            parser.add_option(*AllOptions[dest]['CommandLineSwitches'],
                     action=action,
-                    default=option['Default'],
-                    dest=option['Destination'],
-                    help=option['Help'])
+                    default=AllOptions[dest]['Default'],
+                    dest=dest,
+                    help=AllOptions[dest]['Help'])
         else:
             optparse_type='string'
-            if option['Type'] == 'string':
+            if AllOptions[dest]['Type'] == 'string':
                 action='store'
-            elif option['Type'] == 'list':
+            elif AllOptions[dest]['Type'] == 'list':
                 action='append'
             else:
-                raise Exception('Unrecognised option type: ' + Option('Type'))
-            parser.add_option(*option['CommandLineSwitches'],
+                raise Exception('Unrecognised option type: ' + AllOptions[dest]['Type'])
+            parser.add_option(*AllOptions[dest]['CommandLineSwitches'],
                     action=action,
-                    default=option['Default'],
+                    default=AllOptions[dest]['Default'],
                     type=optparse_type,
-                    dest=option['Destination'],
-                    help=option['Help'])
+                    dest=dest,
+                    help=AllOptions[dest]['Help'])
 
     options, remainder = parser.parse_args()
 

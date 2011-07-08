@@ -2,6 +2,7 @@ import os
 import glob
 
 from .config import config
+from .loaddata import LoadDataFile, LoadFile, GlobData
 
 class Languages():
     registry = {}
@@ -10,15 +11,14 @@ class Languages():
         self.options = options
         self.kinds = None
 
+        language_list_entries = ['SkipList','Priority']
+
         # Import language specific modules: this will make them be parsed
         # and will add to the registry
-        defaults_file = os.path.join(config['data_directory'], 'language_defaults.txt')
-        self.defaults = self.ReadConfigFile(defaults_file)
+        self.defaults = LoadDataFile('language_defaults.txt', language_list_entries)
 
-        language_dir = os.path.join(config['data_directory'],'languages')
-        for language_file in glob.glob(os.path.join(language_dir, '*.txt')):
-            language_file = os.path.join(language_dir, language_file)
-            language_dict = self.ReadConfigFile(language_file)
+        for language_file in GlobData('languages/*.txt'):
+            language_dict = LoadDataFile(language_file, language_list_entries)
             language_dict['Filename'] = language_file
             language_dict = self.VerifyLanguage(language_dict)
             self.registry[language_dict['FriendlyName']] = language_dict
@@ -97,21 +97,13 @@ class Languages():
     def GetKindList(self, language=None):
         """Explicit list of kinds exported from ctags help."""
         if self.kinds is None:
-            kind_file = os.path.join(config['data_directory'], 'kinds.txt')
-            fh = open(kind_file, 'r')
+            kind_import = LoadDataFile('kinds.txt')
+            # Generate the kind database with 'ctags_' prefix on the keys
             self.kinds = {}
-            language_key = None
-            for line in fh:
-                if line[0] not in [' ','\t',':','#']:
-                    if line.strip().endswith(':'):
-                        language_key = line.strip()[:-1]
-                else:
-                    parts = line.strip().split(':')
-                    if len(parts) == 2 and language_key is not None:
-                        if language_key not in self.kinds:
-                            self.kinds[language_key] = {}
-                        self.kinds[language_key]['ctags_'+parts[0]] = parts[1]
-            fh.close()
+            for key in kind_import:
+                self.kinds[key] = {}
+                for kind in kind_import[key]:
+                    self.kinds[key]['ctags_'+kind] = kind_import[key][kind]
 
         if language is None:
             return self.kinds

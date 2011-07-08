@@ -3,6 +3,7 @@ import os
 
 from optparse import Values
 from .utilities import TagHighlightOptionDict
+from .loaddata import LoadFile, LoadDataFile, SetLoadDataDirectory
 
 config = TagHighlightOptionDict()
 
@@ -25,28 +26,25 @@ def SetDataDirectories():
                 '../data'))
         config['version_info_dir'] = config['data_directory']
 
+    SetLoadDataDirectory(config['data_directory'])
+
     if not os.path.exists(config['data_directory']):
         raise IOError("Data directory doesn't exist, have you installed the main distribution?")
 
 def LoadVersionInfo():
     global config
-    config['version'] = {}
-    fh = open(os.path.join(config['data_directory'],'release.txt'),'r')
-    for line in fh:
-        if line.startswith('release:'):
-            config['release'] = line.strip().split(':')[1]
-            break
-    fh.close()
+    data = LoadDataFile('release.txt')
+    config['release'] = data['release']
+
     try:
-        fh = open(os.path.join(config['version_info_dir'],'version_info.txt'), 'r')
-        for line in fh:
-            if line.startswith('release_'):
-                parts = line.strip().split(':')
-                config['version'][parts[0]] = parts[1]
-        fh.close()
+        config['version'] = LoadFile(os.path.join(config['version_info_dir'],'version_info.txt'))
     except IOError:
-        for name in ['clean','date','revno','revision_id']:
-            config['version']['release_'+name] = 'Unreleased'
+        config['version'] = {
+                'clean': 'Unreleased',
+                'date': 'Unreleased',
+                'revno': 'Unreleased',
+                'revision_id': 'Unreleased',
+                }
 
 def SetInitialOptions(new_options):
     global config
