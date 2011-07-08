@@ -26,6 +26,12 @@ types_file_prefix:
 	Default:types
 	Help:Vim Types file prefix
 
+types_file_extension:
+	CommandLineSwitches:--types-file-extension
+	VimOptionMap:TypesFileExtension
+	Type:string
+	Default:taghl
+
 skip_patterns:
 	CommandLineSwitches:--add-skip-pattern
 	VimOptionMap:SkipPatterns

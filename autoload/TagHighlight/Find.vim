@@ -73,7 +73,8 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 		let explicit_location = TagHighlight#Option#GetOption('TagFileDirectory', 'NONE')
 	elseif a:which == 'TYPES'
 		let filename = TagHighlight#Option#GetOption('TypesFilePrefix','types') . '_' .
-					\ a:suffix . '.vim'
+					\ a:suffix . "." .
+					\ TagHighlight#Option#GetOption('TypesFileExtension','taghl')
 		let search_priority = TagHighlight#Option#GetOption('TypesFileDirModePriority',
 					\ ['Default'])
 		let explicit_location = TagHighlight#Option#GetOption('TypesFileDirectory', 'NONE')
