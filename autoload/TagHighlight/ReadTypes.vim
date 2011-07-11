@@ -74,6 +74,12 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 		exe 'so' fname
 	endfor
 
+	" Now load any libraries that are relevant
+	let library_files = TagHighlight#Libraries#FindLibraryFiles(a:suffix)
+	for fname in library_files
+		exe 'so' fname
+	endfor
+
 	" Restore the view
 	call winrestview(savedView)
 endfunction
