@@ -38,8 +38,8 @@ function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
 	" handled manually.
 	
 	" Find the ctags path
-	let ctags_option = TagHighlight#Option#GetOption('CtagsExecutable', '')
-	if ctags_option == ''
+	let ctags_option = TagHighlight#Option#GetOption('CtagsExecutable')
+	if ctags_option == 'None'
 		" Option not set: search for 'ctags' in the path
 		let RunOptions['CtagsExeFull'] = TagHighlight#RunPythonScript#FindExeInPath('ctags')
 	elseif ctags_option =~ '[\\/]'

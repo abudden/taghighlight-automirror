@@ -1,3 +1,107 @@
+#####################
+# Vim-only options: #
+#####################
+
+disable_type_parsing:
+	VimOptionMap:DisableTypeParsing
+	Type:bool
+	Default:False
+	Help:Do not read types when opening a file
+
+parsing_skip_list:
+	VimOptionMap:ParsingSkipList
+	Type:list
+	Default:[]
+	Help:List of files for which the type reading should be disabled
+
+debug_level:
+	VimOptionMap:DebugLevel
+	Type:string
+	Default:Error
+	Help:Debug level for printing (how much debug output to produce)
+
+def_dir_mode_priority:
+	VimOptionMap:DefaultDirModePriority
+	Type:list
+	Default:Explicit,UpFromCurrent,UpFromFile,CurrentExplicit,FileExplicit
+	Help:List of methods (in order) to use when searching for tags/types etc
+
+config_file_name:
+	VimOptionMap:ProjectConfigFileName
+	Type:string
+	Default:taghl_config.txt
+	Help:File name for project specific configuration items
+
+tag_dir_mode_priority:
+	VimOptionMap:TagFileDirModePriority
+	Type:list
+	Default:Default
+	Help:Optional override for dir mode priority for tag files specifically
+
+types_dir_mode_priority:
+	VimOptionMap:TypesFileDirModePriority
+	Type:list
+	Default:Default
+	Help:Optional override for dir mode priority for types files specifically
+
+config_dir_mode_priority:
+	VimOptionMap:ProjectConfigFileDirModePriority
+	Type:list
+	Default:Default
+	Help:Optional override for dir mode priority for project config files specifically
+
+tag_file_directory:
+	VimOptionMap:TagFileDirectory
+	Type:string
+	Default:None
+	Help:Explicitly specified location for tag file (corresponding to Explicit search mode)
+
+types_file_directory:
+	VimOptionMap:TypesFileDirectory
+	Type:string
+	Default:None
+	Help:Explicitly specified location for types file (corresponding to Explicit search mode)
+
+config_file_directory:
+	VimOptionMap:ProjectConfigFileDirectory
+	Type:string
+	Default:None
+	Help:Explicitly specified location for project config file (corresponding to Explicit search mode)
+
+dir_mode_search_wildcards:
+	VimOptionMap:DirModeSearchWildcards
+	Type:list
+	Default:OPT(CtagsOutputFile),OPT(ProjectConfigFileName)
+	Help:When searching directories, wildcards to match against (if any matches, we'll use this directory)
+
+ctags_executable:
+	VimOptionMap:CtagsExecutable
+	Type:string
+	Default:None
+	Help:Name of the ctags executable, or full path to it
+
+forced_python_variant:
+	VimOptionMap:ForcedPythonVariant
+	Type:string
+	Default:None
+	Help:Force the use of a specific variant (see help for PythonVariantPriority)
+
+python_variant_priority:
+	VimOptionMap:PythonVariantPriority
+	Type:list
+	Default:if_pyth,if_pyth3,python,compiled
+	Help:Search order for deciding which variant to use
+
+path_to_python:
+	VimOptionMap:PathToPython
+	Type:string
+	Default:None
+	Help:Location of the python executable or None to search the path
+
+##########################
+# Python script options: #
+##########################
+
 recurse:
 	CommandLineSwitches:-r,-R,--recurse
 	VimOptionMap:Recurse

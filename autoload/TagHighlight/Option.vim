@@ -28,17 +28,37 @@ let g:loaded_TagHLOption = 1
 let s:log_defaults = 1
 let g:TagHighlightOptionDefaults = {}
 
-function! TagHighlight#Option#GetOption(name, default)
-	let opt = a:default
+function! TagHighlight#Option#LoadOptions()
+	if has_key(g:TagHighlightPrivate, 'PluginOptions')
+		return
+	endif
 
-	if s:log_defaults
-		if has_key(g:TagHighlightOptionDefaults, a:name)
-			if g:TagHighlightOptionDefaults[a:name] != a:default
-				echoerr "Different defaults proposed for option " . a:name . ": " . string(a:default) . " != " . string(g:TagHighlightOptionDefaults[a:name])
-			endif
-		else
-			let g:TagHighlightOptionDefaults[a:name] = a:default
+	let g:TagHighlightPrivate['PluginOptions'] = []
+	let options = TagHighlight#LoadDataFile#LoadDataFile('options.txt')
+
+	for option_dest in keys(options)
+		if has_key(options[option_dest], 'VimOptionMap')
+			let option = deepcopy(options[option_dest])
+			let option['Destination'] = option_dest
+			let g:TagHighlightPrivate['PluginOptions'] += [option]
 		endif
+	endfor
+endfunction
+
+function! TagHighlight#Option#GetOption(name)
+	" Check we've loaded the options
+	call TagHighlight#Option#LoadOptions()
+
+	" Check this option exists
+	let found = 0
+	for option in g:TagHighlightPrivate['PluginOptions']
+		if option['VimOptionMap'] == a:name
+			let found = 1
+			break
+		endif
+	endfor
+	if ! found
+		throw "Unrecognised option:" .a:name
 	endif
 
 	" Option priority (highest first):
@@ -49,6 +69,46 @@ function! TagHighlight#Option#GetOption(name, default)
 	endif
 	if exists('b:TagHighlightSettings') && has_key(b:TagHighlightSettings, a:name)
 		let opt = b:TagHighlightSettings[a:name]
+	endif
+
+	if ! exists('opt')
+		" We haven't found it, return the default
+		let default = option['Default']
+		if option['Type'] == 'list'
+			let opt = []
+			if type(default) == type('')
+				if default == '[]' || default == ''
+					let parsed_default = []
+				else
+					let parsed_default = [default]
+				endif
+			else
+				let parsed_default = default
+			endif
+			for part in parsed_default
+				if part =~ '^OPT(\k\+)$'
+					let value_name = part[4:len(part)-2]
+					let opt += [TagHighlight#Option#GetOption(value_name)]
+				else
+					let opt += [part]
+				endif
+			endfor
+		elseif option['Type'] == 'bool'
+			if default == 'True'
+				let opt = 1
+			elseif default == 'False'
+				let opt = 0
+			else
+				throw "Unrecognised bool value"
+			endif
+		elseif option['Type'] == 'string'
+			if default =~ '^OPT(\k\+)$'
+				let value_name = default[4:len(default)-2]
+				let opt = TagHighlight#Option#GetOption(value_name)
+			else
+				let opt = default
+			endif
+		endif
 	endif
 	return opt
 endfunction

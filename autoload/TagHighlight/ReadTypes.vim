@@ -43,12 +43,12 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 
 	" echomsg "Reading types of suffix " . a:suffix . " for file " . file
 
-	if TagHighlight#Option#GetOption('DisableTypeParsing', 0) == 1
+	if TagHighlight#Option#GetOption('DisableTypeParsing') == 1
 		call TagHighlight#Debug#Print("Type file parsing disabled", 'Status')
 		return
 	endif
 
-	let skiplist = TagHighlight#Option#GetOption('ParsingSkipList', [])
+	let skiplist = TagHighlight#Option#GetOption('ParsingSkipList')
 	if len(skiplist) > 0
 		let basename = expand(file . ':p:t')
 		let fullname = expand(file . ':p')

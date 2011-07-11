@@ -32,7 +32,7 @@ let TagHighlight#Debug#DebugLevels = [
 			\ ]
 
 function! TagHighlight#Debug#GetDebugLevel()
-	let debug_level = TagHighlight#Option#GetOption('DebugLevel', 'Error')
+	let debug_level = TagHighlight#Option#GetOption('DebugLevel')
 	let debug_num = index(g:TagHighlight#Debug#DebugLevels, debug_level)
 	if debug_num != -1
 		return debug_num

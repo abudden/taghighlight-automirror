@@ -56,8 +56,7 @@ let g:loaded_TagHLFind = 1
 
 function! TagHighlight#Find#LocateFile(which, suffix)
 	" a:which is 'TAGS', 'TYPES', 'CONFIG'
-	let default_priority = TagHighlight#Option#GetOption('DefaultDirModePriority',
-				\ ["Explicit","UpFromCurrent","UpFromFile","CurrentExplicit","FileExplicit"])
+	let default_priority = TagHighlight#Option#GetOption('DefaultDirModePriority')
 
 	let file = '<afile>'
 	if len(expand(file)) == 0
@@ -66,29 +65,24 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 
 	if a:which == 'TAGS'
 		" Suffix is ignored here
-		let filename = TagHighlight#Option#GetOption('CtagsOutputFile','tags')
-		let search_priority = TagHighlight#Option#GetOption('TagFileDirModePriority',
-					\ ['Default'])
-		let explicit_location = TagHighlight#Option#GetOption('TagFileDirectory', 'NONE')
+		let filename = TagHighlight#Option#GetOption('CtagsOutputFile')
+		let search_priority = TagHighlight#Option#GetOption('TagFileDirModePriority')
+		let explicit_location = TagHighlight#Option#GetOption('TagFileDirectory')
 	elseif a:which == 'TYPES'
-		let filename = TagHighlight#Option#GetOption('TypesFilePrefix','types') . '_' .
+		let filename = TagHighlight#Option#GetOption('TypesFilePrefix') . '_' .
 					\ a:suffix . "." .
-					\ TagHighlight#Option#GetOption('TypesFileExtension','taghl')
-		let search_priority = TagHighlight#Option#GetOption('TypesFileDirModePriority',
-					\ ['Default'])
-		let explicit_location = TagHighlight#Option#GetOption('TypesFileDirectory', 'NONE')
+					\ TagHighlight#Option#GetOption('TypesFileExtension')
+		let search_priority = TagHighlight#Option#GetOption('TypesFileDirModePriority')
+		let explicit_location = TagHighlight#Option#GetOption('TypesFileDirectory')
 	elseif a:which == 'CONFIG'
-		let filename = TagHighlight#Option#GetOption('ProjectConfigFileName', 'taghl_config.txt')
-		let search_priority = TagHighlight#Option#GetOption('ConfigFileDirModePriority',
-					\ ['Default'])
-		let explicit_location = TagHighlight#Option#GetOption('ProjectConfigFileDirectory', 'NONE')
+		let filename = TagHighlight#Option#GetOption('ProjectConfigFileName')
+		let search_priority = TagHighlight#Option#GetOption('ProjectConfigFileDirModePriority')
+		let explicit_location = TagHighlight#Option#GetOption('ProjectConfigFileDirectory')
 	else
 		throw "Unrecognised file"
 	endif
 
-	let search_wildcards = TagHighlight#Option#GetOption('DirModeSearchWildcard',
-				\ [TagHighlight#Option#GetOption('CtagsOutputFile','tags'),
-				\ TagHighlight#Option#GetOption('ProjectConfigFileName', 'taghl_config.txt')])
+	let search_wildcards = TagHighlight#Option#GetOption('DirModeSearchWildcards')
 
 	if search_priority[0] == 'Default'
 		let search_priority = default_priority

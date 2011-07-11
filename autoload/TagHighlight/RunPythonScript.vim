@@ -52,7 +52,7 @@ endfunction
 
 function! TagHighlight#RunPythonScript#RunGenerator(options)
 	" Will only actually load the options once
-	call TagHighlight#RunPythonScript#LoadScriptOptions()
+	call TagHighlight#Option#LoadOptions()
 
 	" This will only search for python the first time or if
 	" the variant priority or forced variant preferences have
@@ -71,8 +71,12 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 		exe PY 'options = TagHighlightOptionDict()'
 		let handled_options = []
 		" We're using the custom interpreter: create an options object
-		for option in g:TagHighlightPrivate['ScriptOptions']
-			if has_key(option, 'VimOptionMap') && has_key(a:options, option['VimOptionMap'])
+		" All options supported by both Vim and the Python script must
+		" have VimOptionMap and CommandLineSwitches keys
+		for option in g:TagHighlightPrivate['PluginOptions']
+			if has_key(option, 'VimOptionMap') && 
+						\ has_key(option, 'CommandLineSwitches') &&
+						\ has_key(a:options, option['VimOptionMap'])
 				" We can handle this one automatically
 				let pyoption = 'options["'.option['Destination'].'"]'
 				if option['Type'] == 'bool'
@@ -104,7 +108,9 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 		let args = s:python_cmd[:]
 		" We're calling the script externally, build a list of arguments
 		for option in g:TagHighlightPrivate['ScriptOptions']
-			if has_key(option, 'VimOptionMap') && has_key(a:options, option['VimOptionMap'])
+			if has_key(option, 'VimOptionMap') && 
+						\ has_key(option, 'CommandLineSwitches') &&
+						\ has_key(a:options, option['VimOptionMap'])
 				if type(option['CommandLineSwitches']) == type([])
 					let switch = option['CommandLineSwitches'][0]
 				else
@@ -150,22 +156,6 @@ function! TagHighlight#RunPythonScript#FindExeInPath(file)
 	return file_exe
 endfunction
 
-function! TagHighlight#RunPythonScript#LoadScriptOptions()
-	if has_key(g:TagHighlightPrivate, 'ScriptOptions')
-		return
-	endif
-
-	let g:TagHighlightPrivate['ScriptOptions'] = []
-	let options = TagHighlight#LoadDataFile#LoadDataFile('options.txt')
-
-	for option_dest in keys(options)
-		let option = deepcopy(options[option_dest])
-		let option['Destination'] = option_dest
-		let g:TagHighlightPrivate['ScriptOptions'] += [option]
-	endfor
-endfunction
-
-
 function! TagHighlight#RunPythonScript#GetPythonVersion()
 	" Assumes that python path is set correctly
 	if s:python_variant == 'if_pyth3'
@@ -189,12 +179,11 @@ function! TagHighlight#RunPythonScript#GetPythonVersion()
 endfunction
 
 function! TagHighlight#RunPythonScript#FindPython()
-	let forced_variant = TagHighlight#Option#GetOption('ForcedPythonVariant', 'None')
+	let forced_variant = TagHighlight#Option#GetOption('ForcedPythonVariant')
 	" Supported variants
 	let supported_variants = ['if_pyth3', 'if_pyth', 'python', 'compiled']
 	" Priority of those variants (default is that specified above)
-	let variant_priority = TagHighlight#Option#GetOption('PythonVariantPriority',
-				\ supported_variants)
+	let variant_priority = TagHighlight#Option#GetOption('PythonVariantPriority')
 
 	" If we've run before and nothing has changed, just return
 	if s:python_variant != 'None'
@@ -248,7 +237,7 @@ function! TagHighlight#RunPythonScript#FindPython()
 				" Try calling an external python
 				
 				" Has a specific path to python been set?
-				let python_path = TagHighlight#Option#GetOption('PathToPython', 'None')
+				let python_path = TagHighlight#Option#GetOption('PathToPython')
 				if python_path != 'None' && executable(python_path)
 					" We've found python, it's probably usable
 					let s:python_variant = 'python'

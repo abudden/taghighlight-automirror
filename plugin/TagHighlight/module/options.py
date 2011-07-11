@@ -15,7 +15,11 @@ def LoadOptionSpecification():
         # Check we've got all of the required keys
         for key in RequiredKeys:
             if key not in AllOptions[dest]:
-                raise Exception("Missing option {key} in option {dest}".format(key=key,dest=dest))
+                if 'VimOptionMap' in AllOptions[dest]:
+                    # This is probably just a Vim option: ignore
+                    pass
+                else:
+                    raise Exception("Missing option {key} in option {dest}".format(key=key,dest=dest))
         # Handle special types of options
         if AllOptions[dest]['Type'] == 'bool':
             if AllOptions[dest]['Default'] == 'True':
