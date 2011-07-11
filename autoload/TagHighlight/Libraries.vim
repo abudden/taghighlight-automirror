@@ -28,7 +28,7 @@ function! TagHighlight#Libraries#LoadLibraries()
 		return
 	endif
 
-	let g:TagHighlightPrivate['LibraryPath'] = g:TagHighlightPrivate['PluginPath'] . '/library_types'
+	let g:TagHighlightPrivate['LibraryPath'] = g:TagHighlightPrivate['PluginPath'] . '/standard_libraries'
 	let g:TagHighlightPrivate['Libraries'] = {}
 	let library_config_files = split(glob(g:TagHighlightPrivate['LibraryPath'] . '/*/library_types.txt'), '\n')
 
