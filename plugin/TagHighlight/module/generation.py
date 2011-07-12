@@ -81,19 +81,20 @@ def CreateTypesFile(options, language, tags):
                 # be worth optimising IsValidKeyword at some point.
                 if not IsValidKeyword(keyword, iskeyword):
                     matchDone = False
+                    if options['include_matches']:
 
-                    patternCharacters = "/@#':"
-                    charactersToEscape = '\\' + '~[]*.$^'
+                        patternCharacters = "/@#':"
+                        charactersToEscape = '\\' + '~[]*.$^'
 
-                    for patChar in patternCharacters:
-                        if keyword.find(patChar) == -1:
-                            escapedKeyword = keyword
-                            for ch in charactersToEscape:
-                                escapedKeyword = escapedKeyword.replace(ch, '\\' + ch)
-                            if options['include_matches']:
-                                matchEntries.add('syn match ' + thisType + ' ' + patChar + escapedKeyword + patChar)
-                            matchDone = True
-                            break
+                        for patChar in patternCharacters:
+                            if keyword.find(patChar) == -1:
+                                escapedKeyword = keyword
+                                for ch in charactersToEscape:
+                                    escapedKeyword = escapedKeyword.replace(ch, '\\' + ch)
+                                if options['include_matches']:
+                                    matchEntries.add('syn match ' + thisType + ' ' + patChar + escapedKeyword + patChar)
+                                matchDone = True
+                                break
 
                     if not matchDone:
                         print("Skipping keyword '" + keyword + "'")
