@@ -1,24 +1,6 @@
-# The name of the library
 LibraryName:Android SDK
-# The types file (or files: comma separated)
-# that make up the library: each will be loaded
-# if the file extension matches and the check
-# passes (see CheckMode)
 TypesFiles:android.taghl
 TypesSuffixes:java
-# The CheckMode, one of:
-# - MatchStart
-# - MatchEnd
-# - Always
-# - Custom
-# MatchStart will compare the regular expressions
-# MatchREs against the first MatchLines lines of
-# the source file (default 30).  MatchEnd is
-# similar, but starts at the end of the file.
-# Always will force the file to always be loaded.
-# Custom will run CustomFunction which should
-# return 'Load' if the library should be loaded or
-# 'Skip' if the library shouldn't
 CheckMode:MatchStart
 MatchREs:^\s*import\s\+android\.
 MatchLines:30
