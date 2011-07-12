@@ -162,7 +162,11 @@ def CreateTypesFile(options, language, tags):
 
     try:
         for line in vimtypes_entries:
-            fh.write(line.encode('ascii'))
+            try:
+                fh.write(line.encode('ascii'))
+            except UnicodeDecodeError:
+                print("Error decoding line '{0!r}'".format(line))
+                fh.write('echoerr "Types generation error"\n'.encode('ascii'))
             fh.write('\n'.encode('ascii'))
     except IOError:
         sys.stderr.write("ERROR: Couldn't write {file} contents\n".format(file=outfile))
