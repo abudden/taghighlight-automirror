@@ -22,6 +22,8 @@ def CreateTypesFile(options, language, tags):
     tag_types = list(tags.keys())
     tag_types.sort()
 
+    print("Writing types file\n")
+
     language_handler = options['language_handler'].GetLanguageHandler(language)
 
     if options['check_keywords']:
@@ -148,6 +150,7 @@ def CreateTypesFile(options, language, tags):
     else:
         type_file_name = options['types_file_prefix'] + '_' + language_handler['Suffix'] + '.' + options['types_file_extension']
     filename = os.path.join(options['types_file_location'], type_file_name)
+    print("Filename is {0}\n".format(filename))
 
     try:
         # Have to open in binary mode as we want to write with Unix line endings
