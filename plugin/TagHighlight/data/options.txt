@@ -102,6 +102,13 @@ path_to_python:
 # Python script options: #
 ##########################
 
+source_root:
+	CommandLineSwitches:-d,--source-root
+	VimOptionMap:SourceDir
+	Type:string
+	Default:.
+	Help:Location of source files to scan
+
 recurse:
 	CommandLineSwitches:-r,-R,--recurse
 	VimOptionMap:Recurse
@@ -122,6 +129,13 @@ ctags_file_dir:
 	Type:string
 	Default:.
 	Help:Location in which to store or find CTAGS output file
+
+types_file_name_override:
+	CommandLineSwitches:--types-file-name-override
+	VimOptionMap:TypesFileNameForce
+	Type:string
+	Default:None
+	Help:Force types filename to be a specific string (as opposed to prefix + _ + suffix + . + extension).
 
 types_file_prefix:
 	CommandLineSwitches:--types-file-prefix

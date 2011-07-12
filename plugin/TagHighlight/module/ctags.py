@@ -125,9 +125,9 @@ def GetCommandArgs(options):
     # Must be last as it includes the file list:
     if options['recurse']:
         args += ['--recurse']
-        args += ['.']
+        args += [options['source_root']]
     else:
-        args += glob.glob('*')
+        args += glob.glob(os.path.join(options['source_root'],'*'))
 
     return args
 
