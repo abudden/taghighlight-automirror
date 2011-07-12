@@ -71,7 +71,10 @@ def ParseTags(options):
 
     p = open(os.path.join(options['ctags_file_dir'],options['ctags_file']), 'r')
     while 1:
-        line = p.readline()
+        try:
+            line = p.readline()
+        except UnicodeDecodeError:
+            continue
         if not line:
             break
 

@@ -28,7 +28,7 @@ def CreateTypesFile(options, language, tags):
 
     if options['check_keywords']:
         iskeyword = GenerateValidKeywordRange(language_handler['IsKeyword'])
-        if config['print_debug']:
+        if options['print_debug']:
             print("Is Keyword is {0!r}".format(iskeyword))
 
     matchEntries = set()
@@ -119,6 +119,10 @@ def CreateTypesFile(options, language, tags):
 
     # Sort the matches
     matchEntries = sorted(list(matchEntries))
+
+    if (len(matchEntries) + len(vimtypes_entries)) == 0:
+        # All keywords have been filtered out, give up
+        return
 
     vimtypes_entries.append('')
     vimtypes_entries += matchEntries

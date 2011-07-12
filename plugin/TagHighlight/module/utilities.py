@@ -56,6 +56,8 @@ class DictDict(dict):
             raise NotImplementedError
 
 def GenerateValidKeywordRange(iskeyword):
+    # Generally obeys Vim's iskeyword setting, but
+    # only allows characters in ascii range
     ValidKeywordSets = iskeyword.split(',')
     rangeMatcher = re.compile('^(?P<from>(?:\d+|\S))-(?P<to>(?:\d+|\S))$')
     falseRangeMatcher = re.compile('^^(?P<from>(?:\d+|\S))-(?P<to>(?:\d+|\S))$')
@@ -64,7 +66,7 @@ def GenerateValidKeywordRange(iskeyword):
         m = rangeMatcher.match(valid)
         fm = falseRangeMatcher.match(valid)
         if valid == '@':
-            for ch in [chr(i) for i in range(0,256)]:
+            for ch in [chr(i) for i in range(0,128)]:
                 if ch.isalpha():
                     validList.append(ch)
         elif m is not None:
@@ -80,6 +82,8 @@ def GenerateValidKeywordRange(iskeyword):
                 rangeTo = ord(m.group('to'))
 
             validRange = list(range(rangeFrom, rangeTo+1))
+            # Restrict to ASCII
+            validRange = [i for i in validRange if i < 128]
             for ch in [chr(i) for i in validRange]:
                 validList.append(ch)
 
@@ -102,7 +106,8 @@ def GenerateValidKeywordRange(iskeyword):
 
         elif len(valid) == 1:
             # Just a char
-            validList.append(valid)
+            if ord(valid) < 128:
+                validList.append(valid)
 
         else:
             raise ValueError('Unrecognised iskeyword part: ' + valid)
