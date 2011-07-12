@@ -156,6 +156,7 @@ def CreateLibraryTypes(library):
     options['languages'] = [library['Language']]
     options['types_file_location'] = output_dir
     options['source_root'] = library_source_dir
+    options['check_keywords'] = True
     RunWithOptions(options)
 
 Run()

@@ -256,4 +256,10 @@ print_config:
 	Default:False
 	Help:Parse the various options and then print the configuration and exit (for debugging)
 
+print_debug:
+	CommandLineSwitches:--print-debug
+	Type:bool
+	Default:False
+	Help:Print debug to console.
+
 # vim: ff=unix:noet
