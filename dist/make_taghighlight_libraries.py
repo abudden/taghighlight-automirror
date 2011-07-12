@@ -25,6 +25,7 @@ if not os.path.exists(tools_dir):
 fLog = open(os.path.join(library_root, 'log_%s.txt' % time.strftime('%Y%m%d_%H%M%S')), 'w')
 
 repo_location = os.path.join(tools_dir, 'repo')
+
 libraries = [
         {
             'Name': 'Android',
@@ -33,10 +34,23 @@ libraries = [
             'Language': 'java',
             'ToolFetchCommands': [['wget', '-O', repo_location, '--no-check-certificate', 'https://android.git.kernel.org/repo'],
                 ['chmod','a+x',repo_location]],
+            'CanUpdate': True,
             'UpdateCommands': [[repo_location, 'sync']],
             'GetStart': 'InDirectory',
             'GetCommands': [[repo_location,'init','-u','git://android.git.kernel.org/platform/manifest.git'],
                 [repo_location, 'sync']],
+            'SkipPatterns': [],
+        },
+        {
+            'Name': 'JDK',
+            'Directory': 'jdk',
+            'Output': 'jdk.taghl',
+            'Language': 'java',
+            'ToolFetchCommands': [],
+            'CanUpdate': True,
+            'UpdateCommands': [['hg','pull','-u']],
+            'GetStart': 'AboveDirectory',
+            'GetCommands': [['hg','clone','http://hg.openjdk.java.net/jdk7/jdk7/jdk']],
             'SkipPatterns': [],
         },
         {
@@ -45,6 +59,7 @@ libraries = [
             'Output': 'qt4.taghl',
             'Language': 'c',
             'ToolFetchCommands': [],
+            'CanUpdate': True,
             'UpdateCommands': [['git','pull']],
             'GetStart': 'AboveDirectory',
             'GetCommands': [['git','clone','git://gitorious.org/qt/qt.git','qt4']],
@@ -56,6 +71,7 @@ libraries = [
             'Output': 'wxwidgets.taghl',
             'Language': 'c',
             'ToolFetchCommands': [],
+            'CanUpdate': True,
             'UpdateCommands': [['svn','update']],
             'GetStart': 'AboveDirectory',
             'GetCommands': [['svn','co','http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk','wxwidgets']],
@@ -67,6 +83,7 @@ libraries = [
             'Output': 'wxpython.taghl',
             'Language': 'python',
             'ToolFetchCommands': [],
+            'CanUpdate': True,
             'UpdateCommands': [['svn','update']],
             'GetStart': 'AboveDirectory',
             'GetCommands': [['svn','co','http://svn.wxwidgets.org/svn/wx/wxPython/trunk','wxpython']],
@@ -78,6 +95,7 @@ libraries = [
             'Output': 'pyside.taghl',
             'Language': 'python',
             'ToolFetchCommands': [],
+            'CanUpdate': True,
             'UpdateCommands': [['git','pull']],
             'GetStart': 'AboveDirectory',
             'GetCommands': [['git','clone','git://gitorious.org/pyside/pyside.git','pyside']],
@@ -98,13 +116,19 @@ def Run():
 def CreateLibraryTypes(library):
     os.chdir(library_root)
     library_source_dir = os.path.join(library_root, library['Directory'])
+    done = False
     if os.path.exists(library_source_dir):
-        # We've downloaded this before, just run the update commands
-        os.chdir(library_source_dir)
-        for command in library['UpdateCommands']:
-            p = subprocess.Popen(command, stdout=fLog, stderr=fLog)
-            p.communicate()
-    else:
+        if library['CanUpdate']:
+            # We've downloaded this before, just run the update commands
+            os.chdir(library_source_dir)
+            for command in library['UpdateCommands']:
+                p = subprocess.Popen(command, stdout=fLog, stderr=fLog)
+                p.communicate()
+            done = True
+        else:
+            import shutil
+            shutil.rmtree(library_source_dir)
+    if not done:
         # New project, we need to get any required tools and then download
         # the source from scratch
         for command in library['ToolFetchCommands']:
