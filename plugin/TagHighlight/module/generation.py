@@ -28,6 +28,8 @@ def CreateTypesFile(options, language, tags):
 
     if options['check_keywords']:
         iskeyword = GenerateValidKeywordRange(language_handler['IsKeyword'])
+        if config['print_debug']:
+            print("Is Keyword is {0!r}".format(iskeyword))
 
     matchEntries = set()
     vimtypes_entries = []
