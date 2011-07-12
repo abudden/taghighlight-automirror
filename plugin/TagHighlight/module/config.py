@@ -64,6 +64,7 @@ def LoadLanguages():
         config['language_list'] = full_language_list
     else:
         config['language_list'] = [i for i in full_language_list if i in config['languages']]
+    print("Languages:\n\t{0!r}\n\t{1!r}".format(full_language_list, config['language_list']))
 
 SetDataDirectories()
 LoadVersionInfo()
