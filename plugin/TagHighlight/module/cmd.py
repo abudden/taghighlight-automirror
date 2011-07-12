@@ -11,6 +11,9 @@ def ProcessCommandLine():
     parser = optparse.OptionParser(version=("Tag Highlight Types File Creator (revision %%prog) {0}".format(revision)))
 
     for dest in AllOptions.keys():
+        if 'CommandLineSwitches' not in AllOptions[dest]:
+            # Vim-only option
+            continue
         if AllOptions[dest]['Type'] == 'bool':
             if AllOptions[dest]['Default'] == True:
                 action = 'store_false'
