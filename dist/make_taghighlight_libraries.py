@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from __future__ import print_function
 import os
 import sys
 import subprocess
@@ -30,7 +31,7 @@ libraries = [
             'Directory': 'android',
             'Output': 'android.taghl',
             'Language': 'java',
-            'ToolFetchCommands': [['wget', '-O', repo_location, 'https://android.git.kernel.org/repo'],
+            'ToolFetchCommands': [['wget', '-O', repo_location, '--no-check-certificate', 'https://android.git.kernel.org/repo'],
                 ['chmod','a+x',repo_location]],
             'UpdateCommands': [[repo_location, 'sync']],
             'GetStart': 'InDirectory',
