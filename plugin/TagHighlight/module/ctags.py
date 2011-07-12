@@ -30,11 +30,13 @@ def GenerateTags(options):
 
     args = GetCommandArgs(options)
 
+    os.chdir(options['source_root'])
+
     ctags_cmd = [options['ctags_exe_full']] + args
 
     #subprocess.call(" ".join(ctags_cmd), shell = (os.name != 'nt'))
     # shell=True stops the command window popping up
-    process = subprocess.Popen(ctags_cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+    process = subprocess.Popen(ctags_cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)#, shell=True)
     (sout, serr) = process.communicate()
 
     tagFile = open(os.path.join(options['ctags_file_dir'], options['ctags_file']), 'r')
@@ -125,7 +127,7 @@ def GetCommandArgs(options):
     # Must be last as it includes the file list:
     if options['recurse']:
         args += ['--recurse']
-        args += [options['source_root']]
+        args += ['.']
     else:
         args += glob.glob(os.path.join(options['source_root'],'*'))
 
