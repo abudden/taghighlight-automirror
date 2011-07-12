@@ -28,9 +28,9 @@ repo_location = os.path.join(tools_dir, 'repo')
 
 libraries = [
         {
-            'Name': 'Android',
+            'Name': 'Android SDK',
             'Directory': 'android',
-            'Output': 'android.taghl',
+            'Output': 'android_sdk.taghl',
             'Language': 'java',
             'ToolFetchCommands': [['wget', '-O', repo_location, '--no-check-certificate', 'https://android.git.kernel.org/repo'],
                 ['chmod','a+x',repo_location]],

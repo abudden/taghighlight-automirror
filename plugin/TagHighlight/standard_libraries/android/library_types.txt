@@ -1,5 +1,5 @@
 LibraryName:Android SDK
-TypesFiles:android.taghl
+TypesFiles:android_sdk.taghl
 TypesSuffixes:java
 CheckMode:MatchStart
 MatchREs:^\s*import\s\+android\.
