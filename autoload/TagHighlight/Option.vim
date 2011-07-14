@@ -108,6 +108,15 @@ function! TagHighlight#Option#GetOption(name)
 			else
 				let opt = default
 			endif
+		elseif option['Type'] == 'dict'
+			" This is a complex one: just assume it's valid Vim script
+			if type(default) == type([])
+				" Probably a multi-entry dict that has automatically been
+				" split: rejoin
+				let opt = eval(join(default, ', '))
+			else
+				let opt = eval(default)
+			endif
 		endif
 	endif
 	return opt

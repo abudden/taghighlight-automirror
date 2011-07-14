@@ -48,10 +48,19 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 		return
 	endif
 
+	let fullname = expand(file . ':p')
+
+	let hooks = TagHighlight#Option#GetOption('Hooks')
+	" Call Pre Read hooks (if any)
+	if has_key(hooks, 'PreRead')
+		for preread_hook in hooks['PreRead']
+			exe 'call' preread_hook . '(fullname, a:suffix)'
+		endfor
+	endif
+
 	let skiplist = TagHighlight#Option#GetOption('ParsingSkipList')
 	if len(skiplist) > 0
 		let basename = expand(file . ':p:t')
-		let fullname = expand(file . ':p')
 		if index(skiplist, basename) != -1
 			call TagHighlight#Debug#Print("Skipping file due to basename match", 'Status')
 			return
@@ -93,6 +102,13 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 	if has_key(g:TagHighlightPrivate['SpecialSyntaxHandlers'], a:suffix)
 		for handler in g:TagHighlightPrivate['SpecialSyntaxHandlers'][a:suffix]
 			exe 'call' handler . '()'
+		endfor
+	endif
+
+	" Call Post Read Hooks (if any)
+	if has_key(hooks, 'PostRead')
+		for postread_hook in hooks['PostRead']
+			exe 'call' postread_hook . '(fullname, a:suffix)'
 		endfor
 	endif
 

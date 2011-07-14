@@ -25,6 +25,14 @@ let g:loaded_TagHLGeneration = 1
 function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
 	" Initial very simple implementation
 	
+	" Call any PreUpdate hooks
+	let hooks = TagHighlight#Option#GetOption('Hooks')
+	if has_key(hooks, 'PreUpdate')
+		for preupdate_hook in hooks['PreUpdate']
+			exe 'call' preupdate_hook . '()'
+		endfor
+	endif
+	
 	" Start with a copy of the settings so that we can tweak things
 	let RunOptions = TagHighlight#Option#CopyOptions()
 	if a:recurse
@@ -62,7 +70,11 @@ function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
 		let RunOptions['TypesFileLocation'] = types_file_info['Directory']
 	endif
 	
-	" Find the cscope path
-
 	call TagHighlight#RunPythonScript#RunGenerator(RunOptions)
+
+	if has_key(hooks, 'PostUpdate')
+		for postupdate_hook in hooks['PostUpdate']
+			exe 'call' postupdate_hook . '()'
+		endfor
+	endif
 endfunction

@@ -43,6 +43,10 @@ function! TagHighlight#LoadDataFile#LoadFile(filename)
 			elseif stridx(entry, ':') != -1
 				" This is key:value, so it's a simple dictionary entry
 				let parts = split(entry, ':')
+				" Rather coarse replacement of split(x,y,n)
+				if len(parts) > 2
+					let parts[1] = join(parts[1:], ':')
+				endif
 				if stridx(parts[1], ',') != -1
 					" This entry is a list
 					let result[parts[0]] = split(parts[1], ',')
@@ -67,6 +71,10 @@ function! TagHighlight#LoadDataFile#LoadFile(filename)
 				endif
 				" Handle the entry (without the preceding tab)
 				let parts = split(entry[1:], ':')
+				" Rather coarse replacement of split(x,y,n)
+				if len(parts) > 2
+					let parts[1] = join(parts[1:], ':')
+				endif
 				if stridx(parts[1], ',') != -1
 					" This entry is a list
 					let result[top_key][parts[0]] = split(parts[1], ',')

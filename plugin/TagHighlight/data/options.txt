@@ -98,6 +98,12 @@ path_to_python:
 	Default:None
 	Help:Location of the python executable or None to search the path
 
+hooks:
+	VimOptionMap:Hooks
+	Type:dict
+	Default:{'PreUpdate': [], 'PostUpdate': [], 'PreRead': [], 'PostRead': []}
+	Help:Hooks dictionary (each entry is a list of strings containing functions to call; read functions take current file name and types suffix as parameters).
+
 ##########################
 # Python script options: #
 ##########################
