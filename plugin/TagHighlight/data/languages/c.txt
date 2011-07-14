@@ -4,5 +4,6 @@ PythonExtensionMatcher:(c|cc|cpp|h|hpp|cxx|hxx)
 VimExtensionMatcher:\(c\|cc\|cpp\|h\|hpp\|cxx\|hxx\)
 Suffix:c
 SkipList:p
+SpecialSyntaxHandlers:TagHighlight#SpecialHandlers#CRainbowHandler
 
 # vim: ff=unix:noet

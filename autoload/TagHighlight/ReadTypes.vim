@@ -80,6 +80,13 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 		exe 'so' fname
 	endfor
 
+	" Handle any special cases
+	if has_key(g:TagHighlightPrivate['SpecialSyntaxHandlers'], a:suffix)
+		for handler in g:TagHighlightPrivate['SpecialSyntaxHandlers'][a:suffix]
+			exe 'call' handler . '()'
+		endfor
+	endif
+
 	" Restore the view
 	call winrestview(savedView)
 endfunction

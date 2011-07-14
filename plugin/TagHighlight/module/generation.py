@@ -127,30 +127,10 @@ def CreateTypesFile(options, language, tags):
     vimtypes_entries.append('')
     vimtypes_entries += matchEntries
 
-    AddList = 'add='
-    for thisType in allTypes:
-        if thisType in typesUsedByLanguage:
-            if AddList != 'add=':
-                AddList += ','
-            AddList += thisType
-
     if options['include_locals']:
         LocalTagType = ',CTagsLocalVariable'
     else:
         LocalTagType = ''
-
-    if language in ['c',]:
-        vimtypes_entries.append('')
-        vimtypes_entries.append("if exists('b:hlrainbow') && !exists('g:nohlrainbow')")
-        vimtypes_entries.append('\tsyn cluster cBracketGroup ' + AddList + LocalTagType)
-        vimtypes_entries.append('\tsyn cluster cCppBracketGroup ' + AddList + LocalTagType)
-        vimtypes_entries.append('\tsyn cluster cCurlyGroup ' + AddList + LocalTagType)
-        vimtypes_entries.append('\tsyn cluster cParenGroup ' + AddList + LocalTagType)
-        vimtypes_entries.append('\tsyn cluster cCppParenGroup ' + AddList + LocalTagType)
-        vimtypes_entries.append('endif')
-    if language in ['java',]:
-        vimtypes_entries.append('')
-        vimtypes_entries.append('syn cluster javaTop ' + AddList + LocalTagType)
 
     if options['types_file_name_override'] is not None and options['types_file_name_override'] != 'None':
         type_file_name = options['types_file_name_override']
