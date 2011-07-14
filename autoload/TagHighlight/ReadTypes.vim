@@ -68,16 +68,25 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 	for group in g:TagHighlightPrivate['AllTypes']
 		exe 'syn clear' group
 	endfor
+
+	let b:TagHighlightLoadedLibraries = []
 	
 	let type_files = TagHighlight#ReadTypes#FindTypeFiles(a:suffix)
 	for fname in type_files
 		exe 'so' fname
+		let b:TagHighlightLoadedLibraries +=
+					\ [{
+					\     'Name': 'Local',
+					\     'Filename': fnamemodify(fname, ':t'),
+					\     'Path': fnamemodify(fname, ':p'),
+					\ }]
 	endfor
 
 	" Now load any libraries that are relevant
 	let library_files = TagHighlight#Libraries#FindLibraryFiles(a:suffix)
-	for fname in library_files
-		exe 'so' fname
+	for lib in library_files
+		exe 'so' lib['Path']
+		let b:TagHighlightLoadedLibraries += [lib]
 	endfor
 
 	" Handle any special cases

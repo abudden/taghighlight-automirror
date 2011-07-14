@@ -128,7 +128,14 @@ function! TagHighlight#Libraries#FindLibraryFiles(suffix)
 			endif
 		endif
 		if load
-			let libraries_to_load += library['TypesFileFullPaths']
+			for full_path in library['TypesFileFullPaths']
+				let libraries_to_load += 
+							\ [{
+							\     'Name': library['LibraryName'],
+							\     'Filename': fnamemodify(full_path, ':t'),
+							\     'Path': full_path,
+							\ }]
+			endfor
 		else
 			"echomsg "No match:" . library['LibraryName']
 		endif
