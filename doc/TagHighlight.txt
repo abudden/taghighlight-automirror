@@ -192,15 +192,23 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 <
 	Project Options                  *taghl_config.txt*
 
+	    ... TODO
+
 	Buffer Options                   *b:TagHighlightSettings*
 	
-	    ...
+	    ... TODO
 
 2.4.2 Option Summary                     *TagHighlight-option-list*         {{{3
 
+    ... TODO
+
 2.4.3 Option Details                     *TagHighlight-option-details*      {{{3
 
+    ... TODO
+
 2.5 Installation                         *TagHighlight-install*             {{{2
+
+    ... TODO (mention uninstalling ctags_highlighter)
 
 ==============================================================================
 3. TagHighlight Customisation            *TagHighlight-custom*              {{{1
@@ -287,6 +295,8 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 4. Troubleshooting                       *TagHighlight-troubleshooting*     {{{1
 
+    ... TODO
+
 ==============================================================================
 5. Feature Wishlist                      *TagHighlight-wishlist*            {{{1
 
@@ -306,6 +316,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 6. TagHighlight History                *TagHighlight-history*               {{{1
 
+TODO:
 rXXX : Xth XXX 2011        : Significant refactor of all the code.  Reworked
 			     the way options are set (can now be set globally,
 			     per buffer or in a project configuration file).
