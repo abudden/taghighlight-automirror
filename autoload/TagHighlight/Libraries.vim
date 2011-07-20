@@ -79,17 +79,53 @@ function! TagHighlight#Libraries#LoadLibraries()
 	endfor
 endfunction
 
+function! TagHighlight#Libraries#FindUserLibraries()
+	" Open any explicitly configured libraries
+	let user_library_dir = TagHighlight#Option#GetOption('UserLibraryDir')
+	let user_libraries = TagHighlight#Option#GetOption('UserLibraries')
+
+	let libraries_to_load = []
+
+	for library in user_libraries
+		" If it looks like an absolute path, just load it
+		if (library[1] == ':' || library['0'] == '/') && filereadable(library)
+			let libraries_to_load +=
+						\ [{
+						\     'Name': 'User Library',
+						\     'Filename': fnamemodify(library, ':t'),
+						\     'Path': fnamemodify(library, '%:p'),
+						\ }]
+		" Otherwise, try appending to the library dir
+		elseif filereadable(user_library_dir . '/' . library)
+			let library_path = user_library_dir . '/' . library
+			let libraries_to_load +=
+						\ [{
+						\     'Name': 'User Library',
+						\     'Filename': fnamemodify(library_path, ':t'),
+						\     'Path': fnamemodify(library_path, '%:p'),
+						\ }]
+		else
+			echomsg "Cannot load user library " . library
+		endif
+	endfor
+	return libraries_to_load
+endfunction
+
 function! TagHighlight#Libraries#FindLibraryFiles(suffix)
 	" Should only actually read the libraries once
 	call TagHighlight#Libraries#LoadLibraries()
 
 	let libraries_to_load = []
+	let forced_standard_libraries = TagHighlight#Option#GetOption('ForcedStandardLibraries')
 
 	for library in values(g:TagHighlightPrivate['Libraries'])
 		let load = 0
 		if index(library['TypesSuffixes'], a:suffix) != -1
 			" Suffix is in the list of acceptable ones
-			if library['CheckMode'] == 'Always'
+			if index(forced_standard_libraries, library['LibraryName']) != -1
+				"echomsg "Library(".library['LibraryName']."): Forced"
+				let load = 1
+			elseif library['CheckMode'] == 'Always'
 				"echomsg "Library(".library['LibraryName']."): Always"
 				let load = 1
 			elseif library['CheckMode'] == 'MatchStart'

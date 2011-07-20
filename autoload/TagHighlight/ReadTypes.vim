@@ -93,6 +93,13 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 					\ }]
 	endfor
 
+	" Load user libraries
+	let user_library_files = TagHighlight#Libraries#FindUserLibraries()
+	for lib in user_library_files
+		exe 'so' lib['Path']
+		let b:TagHighlightLoadedLibraries += [lib]
+	endfor
+
 	" Now load any libraries that are relevant
 	let library_files = TagHighlight#Libraries#FindLibraryFiles(a:suffix)
 	for lib in library_files

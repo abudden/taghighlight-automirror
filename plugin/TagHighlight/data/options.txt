@@ -104,6 +104,24 @@ hooks:
 	Default:{'PreUpdate': [], 'PostUpdate': [], 'PreRead': [], 'PostRead': []}
 	Help:Hooks dictionary (each entry is a list of strings containing functions to call; read functions take current file name and types suffix as parameters).
 
+forced_standard_libraries:
+	VimOptionMap:ForcedStandardLibraries
+	Type:list
+	Default:[]
+	Help:List of standard libraries which we should load regardless of whether the matchers match (as long as suffix is correct).
+
+user_libraries:
+	VimOptionMap:UserLibraries
+	Type:list
+	Default:[]
+	Help:List of user libraries to load (either relative to UserLibraryDir or absolute).
+
+user_library_dir:
+	VimOptionMap:UserLibraryDir
+	Type:string
+	Default:.
+	Help:Location of user libraries that are specified with relative paths.
+
 ##########################
 # Python script options: #
 ##########################
