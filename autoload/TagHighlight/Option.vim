@@ -28,6 +28,19 @@ let g:loaded_TagHLOption = 1
 let s:log_defaults = 1
 let g:TagHighlightOptionDefaults = {}
 
+function! TagHighlight#Option#LoadOptionFileIfPresent()
+	let option_file = TagHighlight#Find#LocateFile('CONFIG', '')
+
+	" Check whether we've found the option file
+	if ! option_file['Exists']
+		return
+	endif
+
+	" Got an option file, load it in:
+	let b:TagHighlightConfigFileOptions = TagHighlight#LoadDataFile#LoadFile(option_file['FullPath'])
+
+endfunction
+
 function! TagHighlight#Option#LoadOptions()
 	if has_key(g:TagHighlightPrivate, 'PluginOptions')
 		return
@@ -63,63 +76,67 @@ function! TagHighlight#Option#GetOption(name)
 
 	" Option priority (highest first):
 	" * buffer dictionary,
+	" * config file dictionary
 	" * global dictionary,
-	if has_key(g:TagHighlightSettings, a:name)
-		let opt = g:TagHighlightSettings[a:name]
-	endif
-	if exists('b:TagHighlightSettings') && has_key(b:TagHighlightSettings, a:name)
-		let opt = b:TagHighlightSettings[a:name]
-	endif
+	for var in ["g:TagHighlightSettings","b:TagHighlightConfigFileOptions","b:TagHighlightSettings"]
+		if exists(var)
+			exe 'let present = has_key(' . var . ', a:name)'
+			if present
+				exe 'let opt = ' . var . '[a:name]'
+			endif
+		endif
+	endfor
 
 	if ! exists('opt')
 		" We haven't found it, return the default
-		let default = option['Default']
-		if option['Type'] == 'list'
-			let opt = []
-			if type(default) == type('')
-				if default == '[]' || default == ''
-					let parsed_default = []
-				else
-					let parsed_default = [default]
-				endif
+		let opt = option['Default']
+	endif
+
+	if option['Type'] == 'list'
+		let result = []
+		if type(opt) == type('')
+			if opt == '[]' || opt == ''
+				let parsed_opt = []
 			else
-				let parsed_default = default
+				let parsed_opt = [opt]
 			endif
-			for part in parsed_default
-				if part =~ '^OPT(\k\+)$'
-					let value_name = part[4:len(part)-2]
-					let opt += [TagHighlight#Option#GetOption(value_name)]
-				else
-					let opt += [part]
-				endif
-			endfor
-		elseif option['Type'] == 'bool'
-			if default == 'True'
-				let opt = 1
-			elseif default == 'False'
-				let opt = 0
+		else
+			let parsed_opt = opt
+		endif
+		for part in parsed_opt
+			if part =~ '^OPT(\k\+)$'
+				let value_name = part[4:len(part)-2]
+				let result += [TagHighlight#Option#GetOption(value_name)]
 			else
-				throw "Unrecognised bool value"
+				let result += [part]
 			endif
-		elseif option['Type'] == 'string'
-			if default =~ '^OPT(\k\+)$'
-				let value_name = default[4:len(default)-2]
-				let opt = TagHighlight#Option#GetOption(value_name)
-			else
-				let opt = default
-			endif
-		elseif option['Type'] == 'dict'
-			" This is a complex one: just assume it's valid Vim script
-			if type(default) == type([])
-				" Probably a multi-entry dict that has automatically been
-				" split: rejoin
-				let opt = eval(join(default, ', '))
-			else
-				let opt = eval(default)
-			endif
+		endfor
+	elseif option['Type'] == 'bool'
+		if opt == 'True' || opt == 1
+			let result = 1
+		elseif opt == 'False' || opt == 0
+			let result = 0
+		else
+			throw "Unrecognised bool value"
+		endif
+	elseif option['Type'] == 'string'
+		if opt =~ '^OPT(\k\+)$'
+			let value_name = opt[4:len(opt)-2]
+			let result = TagHighlight#Option#GetOption(value_name)
+		else
+			let result = opt
+		endif
+	elseif option['Type'] == 'dict'
+		" This is a complex one: just assume it's valid Vim script
+		if type(opt) == type([])
+			" Probably a multi-entry dict that has automatically been
+			" split: rejoin
+			let result = eval(join(opt, ', '))
+		else
+			let result = eval(opt)
 		endif
 	endif
-	return opt
+	return result
 endfunction
 
 function! TagHighlight#Option#CopyOptions()

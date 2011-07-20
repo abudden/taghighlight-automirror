@@ -75,6 +75,7 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 		let search_priority = TagHighlight#Option#GetOption('TypesFileDirModePriority')
 		let explicit_location = TagHighlight#Option#GetOption('TypesFileDirectory')
 	elseif a:which == 'CONFIG'
+		" Suffix is ignored here
 		let filename = TagHighlight#Option#GetOption('ProjectConfigFileName')
 		let search_priority = TagHighlight#Option#GetOption('ProjectConfigFileDirModePriority')
 		let explicit_location = TagHighlight#Option#GetOption('ProjectConfigFileDirectory')
@@ -94,7 +95,7 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 	endif
 
 	" Result contains 'Found','FullPath','Directory','Filename','Exists']
-	let result = {'Found': 0}
+	let result = {}
 
 	for search_mode in search_priority
 		if search_mode == 'Explicit' && explicit_location != 'NONE'
@@ -133,6 +134,10 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 			break
 		endif
 	endfor
+
+	if ! has_key(result, 'Directory')
+		let result = {'Found': 0}
+	endif
 
 	return result
 endfunction

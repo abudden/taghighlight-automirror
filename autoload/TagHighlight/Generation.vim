@@ -23,6 +23,7 @@ endtry
 let g:loaded_TagHLGeneration = 1
 
 function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
+	call TagHighlight#Option#LoadOptionFileIfPresent()
 	" Initial very simple implementation
 	
 	" Call any PreUpdate hooks

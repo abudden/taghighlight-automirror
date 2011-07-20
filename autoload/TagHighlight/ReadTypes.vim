@@ -36,6 +36,8 @@ endfunction
 function! TagHighlight#ReadTypes#ReadTypes(suffix)
 	let savedView = winsaveview()
 
+	call TagHighlight#Option#LoadOptionFileIfPresent()
+
 	let file = '<afile>'
 	if len(expand(file)) == 0
 		let file = '%'
