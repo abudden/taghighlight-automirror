@@ -76,7 +76,7 @@ def MakeZipFile():
     # List of paths to include (either explicit files or paths to search)
     paths = {
             '.py': ['plugin/TagHighlight',__file__],
-            '.vim': ['plugin/tag_highlight.vim','autoload/TagHighlight'],
+            '.vim': ['plugin/TagHighlight.vim','autoload/TagHighlight'],
             '.txt': ['plugin/TagHighlight/data','plugin/TagHighlight/instructions.txt'],
             '.spec': ['plugin/TagHighlight/TagHighlight.spec'],
             }
