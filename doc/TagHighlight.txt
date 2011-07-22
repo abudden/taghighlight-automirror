@@ -103,7 +103,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	    This command operates in the same way as |UpdateTypesFile| except
 	    that it looks for source files recursively into subdirectories.
 	    It automatically excludes directories named either "docs" or
-	    "Documentation".  See also |b:TypesFileRecurse|.
+	    "Documentation".  See also |TagHL-Recurse|.
 
 	:UpdateTypesFileOnly             *UpdateTypesFileOnly*
 
@@ -200,11 +200,155 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 2.4.2 Option Summary                     *TagHighlight-option-list*         {{{3
 
-    ... TODO
+    There are a lot of options for TagHighlight.  They are mentioned in this
+    section, grouped by their purpose.  You can find an alphabetical list with
+    more details in |TagHighlight-option-details|.  Along side each option
+    name is a link, starting with TagHL- and then the option name (to avoid
+    namespace clashes with other plugins).  Use CTRL-] on the TagHL- prefixed
+    option name to jump to detailed help on it.
+	
+    What files to scan:
+    	Languages                        *TagHL-Languages*
+    	ParsingSkipList                  *TagHL-ParsingSkipList*
+    	Recurse                          *TagHL-Recurse*
+    	SourceDir                        *TagHL-SourceDir*
+
+    What to include in the generated types file
+    	IncludeLocals                    *TagHL-IncludeLocals*
+    	IncludeSynMatches                *TagHL-IncludeSynMatches*
+    	SkipPatterns                     *TagHL-SkipPatterns*
+    	SkipVimKeywords                  *TagHL-SkipVimKeywords*
+
+    Customisation:
+    	Hooks                            *TagHL-Hooks*
+
+    Disabling built-in functionality:
+    	DisableTypeParsing               *TagHL-DisableTypeParsing*
+    	DoNotGenerateTags                *TagHL-DoNotGenerateTags*
+
+    How to Run The Python App:
+    	ForcedPythonVariant              *TagHL-ForcedPythonVariant*
+    	PathToPython                     *TagHL-PathToPython*
+    	PythonVariantPriority            *TagHL-PythonVariantPriority*
+
+    Locations of Files (normal):
+    	DirModeSearchWildcards           *TagHL-DirModeSearchWildcards*
+    	DefaultDirModePriority           *TagHL-DefaultDirModePriority*
+
+    Location and name of Project Configuration File:
+    	ProjectConfigFileDirModePriority *TagHL-ProjectConfigFileDirModePriority*
+    	ProjectConfigFileDirectory       *TagHL-ProjectConfigFileDirectory*
+    	ProjectConfigFileName            *TagHL-ProjectConfigFileName*
+
+    Location and name of tag file:
+    	TagFileDirModePriority           *TagHL-TagFileDirModePriority*
+    	TagFileDirectory                 *TagHL-TagFileDirectory*
+    	TagFileName		         *TagHL-TagFileName*
+
+    Location and name of types file:
+    	TypesFileDirModePriority         *TagHL-TypesFileDirModePriority*
+    	TypesFileDirectory               *TagHL-TypesFileDirectory*
+    	TypesFileExtension               *TagHL-TypesFileExtension*
+    	TypesFileLocation                *TagHL-TypesFileLocation*
+    	TypesFileNameForce               *TagHL-TypesFileNameForce*
+    	TypesFilePrefix                  *TagHL-TypesFilePrefix*
+
+    Libraries:
+    	ForcedStandardLibraries          *TagHL-ForcedStandardLibraries*
+    	UserLibraries                    *TagHL-UserLibraries*
+    	UserLibraryDir                   *TagHL-UserLibraryDir*
+
+    Debugging:
+	DebugLevel                       *TagHL-DebugLevel*
+
+    Internal Use Only:
+	CtagsExeFull                     *TagHL-CtagsExeFull*
+    	CtagsExecutable                  *TagHL-CtagsExecutable*
+    	CtagsFileLocation                *TagHL-CtagsFileLocation*
 
 2.4.3 Option Details                     *TagHighlight-option-details*      {{{3
 
     ... TODO
+
+    CtagsExeFull			 *TagHL-CtagsExeFull*
+	Used internally to tell the python part of the application where ctags
+	is.  Do not use this option as it will be automatically overwritten.
+	Instead, see |TagHL-CtagsExecutable|.
+	
+    CtagsExecutable                      *TagHL-CtagsExecutable*
+	
+    CtagsFileLocation                    *TagHL-CtagsFileLocation*
+	Used internally to handle the location of the tag file.  Do not use
+	this option as it will be automatically overwritten.  Instead, see
+	|TagHL-DefaultDirModePriority|, |TagHL-TagFileDirModePriority| and
+	|TagHL-TagFileDirectory|.
+
+	See also |TagHL-TagFileName|.
+	
+    DebugLevel                           *TagHL-DebugLevel*
+	
+    DefaultDirModePriority               *TagHL-DefaultDirModePriority*
+	
+    DirModeSearchWildcards               *TagHL-DirModeSearchWildcards*
+	
+    DisableTypeParsing                   *TagHL-DisableTypeParsing*
+	
+    DoNotGenerateTags                    *TagHL-DoNotGenerateTags*
+	
+    ForcedPythonVariant                  *TagHL-ForcedPythonVariant*
+	
+    ForcedStandardLibraries              *TagHL-ForcedStandardLibraries*
+	
+    Hooks                                *TagHL-Hooks*
+	
+    IncludeLocals                        *TagHL-IncludeLocals*
+	
+    IncludeSynMatches                    *TagHL-IncludeSynMatches*
+	
+    Languages                            *TagHL-Languages*
+	
+    ParsingSkipList                      *TagHL-ParsingSkipList*
+	
+    PathToPython                         *TagHL-PathToPython*
+	
+    ProjectConfigFileDirModePriority     *TagHL-ProjectConfigFileDirModePriority*
+	
+    ProjectConfigFileDirectory           *TagHL-ProjectConfigFileDirectory*
+	
+    ProjectConfigFileName                *TagHL-ProjectConfigFileName*
+	
+    PythonVariantPriority                *TagHL-PythonVariantPriority*
+	
+    Recurse                              *TagHL-Recurse*
+	
+    SkipPatterns                         *TagHL-SkipPatterns*
+	
+    SkipVimKeywords                      *TagHL-SkipVimKeywords*
+	
+    SourceDir                            *TagHL-SourceDir*
+	
+    TagFileDirModePriority               *TagHL-TagFileDirModePriority*
+	
+    TagFileDirectory                     *TagHL-TagFileDirectory*
+	
+    TagFileName		                 *TagHL-TagFileName*
+	
+    TypesFileDirModePriority             *TagHL-TypesFileDirModePriority*
+	
+    TypesFileDirectory                   *TagHL-TypesFileDirectory*
+	
+    TypesFileExtension                   *TagHL-TypesFileExtension*
+	
+    TypesFileLocation                    *TagHL-TypesFileLocation*
+	
+    TypesFileNameForce                   *TagHL-TypesFileNameForce*
+	
+    TypesFilePrefix                      *TagHL-TypesFilePrefix*
+	
+    UserLibraries                        *TagHL-UserLibraries*
+	
+    UserLibraryDir                       *TagHL-UserLibraryDir*
+	
 
 2.5 Installation                         *TagHighlight-install*             {{{2
 

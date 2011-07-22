@@ -71,7 +71,7 @@ config_file_directory:
 dir_mode_search_wildcards:
 	VimOptionMap:DirModeSearchWildcards
 	Type:list
-	Default:OPT(CtagsOutputFile),OPT(ProjectConfigFileName)
+	Default:OPT(TagFileName),OPT(ProjectConfigFileName)
 	Help:When searching directories, wildcards to match against (if any matches, we'll use this directory)
 
 ctags_executable:
@@ -142,7 +142,7 @@ recurse:
  
 ctags_file:
 	CommandLineSwitches:--ctags-file
-	VimOptionMap:CtagsOutputFile
+	VimOptionMap:TagFileName
 	Type:string
 	Default:tags
 	Help:CTAGS output filename

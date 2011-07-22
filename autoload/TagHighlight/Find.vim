@@ -48,7 +48,7 @@ let g:loaded_TagHLFind = 1
 "
 "  [gb]:TagHighlightSettings:
 "    TagFileDirectory:str (NONE)
-"    CtagsOutputFile:str (tags)
+"    TagFileName:str (tags)
 "    TypesFileDirectory:str (NONE)
 "    TypesPrefix:str (types)
 "    ProjectConfigFileName:str (taghl_config.txt)
@@ -65,7 +65,7 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 
 	if a:which == 'TAGS'
 		" Suffix is ignored here
-		let filename = TagHighlight#Option#GetOption('CtagsOutputFile')
+		let filename = TagHighlight#Option#GetOption('TagFileName')
 		let search_priority = TagHighlight#Option#GetOption('TagFileDirModePriority')
 		let explicit_location = TagHighlight#Option#GetOption('TagFileDirectory')
 	elseif a:which == 'TYPES'
