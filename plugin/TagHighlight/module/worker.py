@@ -7,9 +7,6 @@ def RunWithOptions(options):
 
     SetInitialOptions(options)
 
-    if config['cscope_dir'] is not None:
-        config['cscope_exe_full'] = config['cscope_dir'] + '/' + 'cscope'
-
     if config['use_existing_tagfile'] and not os.path.exists(config['ctags_file']):
         config['use_existing_tagfile'] = False
 
@@ -24,11 +21,8 @@ def RunWithOptions(options):
         print(sys.version)
         return
 
-    from .cscope import GenerateCScopeDBIfRequired
     from .ctags import GenerateTags, ParseTags
     from .generation import CreateTypesFile
-
-    GenerateCScopeDBIfRequired(config)
 
     if not config['use_existing_tagfile']:
         GenerateTags(config)

@@ -1,2 +1,0 @@
-def GenerateCScopeDBIfRequired(options):
-    pass

@@ -228,25 +228,6 @@ languages:
 	Default:[]
 	Help:Only include specified languages
  
-build_cscopedb:
-	CommandLineSwitches:--build-cscopedb
-	Type:bool
-	Default:False
-	Help:Also build a cscope database
- 
-build_cscopedb_if_file_exists:
-	CommandLineSwitches:--build-cscopedb-if-cscope-file-exists
-	VimOptionMap:CheckForCScopeFiles
-	Type:bool
-	Default:False
-	Help:Also build a cscope database if cscope.files exists
- 
-cscope_dir:
-	CommandLineSwitches:--cscope-dir
-	Type:string
-	Default:None
-	Help:CSCOPE Executable Directory
- 
 types_file_location:
 	CommandLineSwitches:--types-file-location
 	VimOptionMap:TypesFileLocation
