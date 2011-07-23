@@ -39,6 +39,7 @@ function! TagHighlight#Option#LoadOptionFileIfPresent()
 	" Got an option file, load it in:
 	let b:TagHighlightConfigFileOptions = TagHighlight#LoadDataFile#LoadFile(option_file['FullPath'])
 
+	return option_file
 endfunction
 
 function! TagHighlight#Option#LoadOptions()

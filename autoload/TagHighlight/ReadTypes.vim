@@ -52,13 +52,11 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 
 	let fullname = expand(file . ':p')
 
-	let hooks = TagHighlight#Option#GetOption('Hooks')
 	" Call Pre Read hooks (if any)
-	if has_key(hooks, 'PreRead')
-		for preread_hook in hooks['PreRead']
-			exe 'call' preread_hook . '(fullname, a:suffix)'
-		endfor
-	endif
+	let preread_hooks = TagHighlight#Option#GetOption('PreReadHooks')
+	for preread_hook in preread_hooks
+		exe 'call' preread_hook . '(fullname, a:suffix)'
+	endfor
 
 	let skiplist = TagHighlight#Option#GetOption('ParsingSkipList')
 	if len(skiplist) > 0
@@ -115,11 +113,10 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 	endif
 
 	" Call Post Read Hooks (if any)
-	if has_key(hooks, 'PostRead')
-		for postread_hook in hooks['PostRead']
-			exe 'call' postread_hook . '(fullname, a:suffix)'
-		endfor
-	endif
+	let postread_hooks = TagHighlight#Option#GetOption('PostReadHooks')
+	for postread_hook in postread_hooks
+		exe 'call' postread_hook . '(fullname, a:suffix)'
+	endfor
 
 	" Restore the view
 	call winrestview(savedView)

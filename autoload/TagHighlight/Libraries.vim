@@ -118,6 +118,10 @@ function! TagHighlight#Libraries#FindLibraryFiles(suffix)
 	let libraries_to_load = []
 	let forced_standard_libraries = TagHighlight#Option#GetOption('ForcedStandardLibraries')
 
+	if TagHighlight#Option#GetOption('DisableStandardLibraries')
+		return []
+	endif
+
 	for library in values(g:TagHighlightPrivate['Libraries'])
 		let load = 0
 		if index(library['TypesSuffixes'], a:suffix) != -1

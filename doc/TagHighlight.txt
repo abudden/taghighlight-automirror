@@ -192,11 +192,52 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 <
 	Project Options                  *taghl_config.txt*
 
-	    ... TODO
+	    Project options are set in a text file in the project directory.
+	    The location of this file can be specified using the options
+	    |TagHL-ProjectConfigDirModePriority| and (if an explicit location
+	    is needed) |TagHL-ProjectConfigFileDirectory|.  By default. the
+	    file name of the project config file is "taghl_config.txt".  If
+	    for any reason you need to change this, it can be customised using
+	    the option |TagHL-ProjectConfigFileName| (this probably needs to
+	    be a Global option set in |g:TagHighlightSettings|.
+
+	    The format of the project config file is a simple text file with
+	    colons used to delimit keys and values.  A simple example would
+	    look like this:
+>
+		Recurse:True
+		SkipPatterns:Skip.*,AnotherPattern\d+
+		IncludeLocals:1
+		UserLibraryDir:c:/user_libraries
+		PythonVariantPriority:
+			if_pyth
+			if_pyth3
+			python
+			compiled
+<
+	    Most lines start with an option name (there is no leading
+	    whitespace on these lines).  The option name is everything up to
+	    the colon.  After the colon is the value.
+	    
+	    For boolean options (such as Recurse and IncludeLocals in the
+	    example above), any of True, 1, False or 0 are acceptable (note:
+	    True and False are case sensitive).
+	    
+	    For string entries (such as UserLibraryDir above), all of the text
+	    after the first colon is treated as the value.
+	    
+	    For list entries (such as SkipPatterns and PythonVariantPriority
+	    above), you can either put all the entries on one line with commas
+	    to separate them, or you can put one entry on each subsequeunt
+	    line with a tab character at the start of the line.
 
 	Buffer Options                   *b:TagHighlightSettings*
 	
-	    ... TODO
+	    Buffer specific options are set in a buffer-local |Dictionary| in
+	    the same way as the global options in |g:TagHighlightSettings|.
+	    The name of this |Dictionary| is |b:TagHighlightSettings|.  See
+	    the description for |g:TagHighlightSettings| for usage
+	    instructions.
 
 2.4.2 Option Summary                     *TagHighlight-option-list*         {{{3
 
@@ -208,63 +249,145 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
     option name to jump to detailed help on it.
 	
     What files to scan:
-    	Languages                        *TagHL-Languages*
-    	ParsingSkipList                  *TagHL-ParsingSkipList*
-    	Recurse                          *TagHL-Recurse*
-    	SourceDir                        *TagHL-SourceDir*
+
+    	Languages                        Link:|TagHL-Languages|
+	    List of languages to scan when generating highlighter.
+
+    	ParsingSkipList                  Link:|TagHL-ParsingSkipList|
+	   List of files for which types highlighter should not be loaded.
+
+    	Recurse                          Link:|TagHL-Recurse|
+	   When generating tags, recurse into subdirectories.
+
+    	SourceDir                        Link:|TagHL-SourceDir|
+	   Explicit location of the source code that you want to scan.
 
     What to include in the generated types file
-    	IncludeLocals                    *TagHL-IncludeLocals*
-    	IncludeSynMatches                *TagHL-IncludeSynMatches*
-    	SkipPatterns                     *TagHL-SkipPatterns*
-    	SkipVimKeywords                  *TagHL-SkipVimKeywords*
+
+    	IncludeLocals                    Link:|TagHL-IncludeLocals|
+	   Include local variables (not context aware) in types highlighter.
+
+    	IncludeSynMatches                Link:|TagHL-IncludeSynMatches|
+	   Include syntax matches in highlighter (see warning in details).
+
+    	SkipPatterns                     Link:|TagHL-SkipPatterns|
+	   List of python REs for keywords that should be skipped.
+
+    	SkipVimKeywords                  Link:|TagHL-SkipVimKeywords|
+	   Don't include vim keywords in highlighter.
 
     Customisation:
-    	Hooks                            *TagHL-Hooks*
+
+    	PreReadHooks                     Link:|TagHL-PreReadHooks|
+	   List of functions to call before reading types.
+
+    	PostReadHooks                    Link:|TagHL-PostReadHooks|
+	   List of functions to call after reading types.
+
+    	PreUpdateHooks                   Link:|TagHL-PreUpdateHooks|
+	   List of functions to call before updating types.
+
+    	PostUpdateHooks                  Link:|TagHL-PostUpdateHooks|
+	   List of functions to call after updating types.
 
     Disabling built-in functionality:
-    	DisableTypeParsing               *TagHL-DisableTypeParsing*
-    	DoNotGenerateTags                *TagHL-DoNotGenerateTags*
+
+    	DisableTypeParsing               Link:|TagHL-DisableTypeParsing|
+	   Don't read types highlighter (disable highlight functionality).
+
+    	DoNotGenerateTags                Link:|TagHL-DoNotGenerateTags|
+	   Don't generate tags (use an existing tags file).
 
     How to Run The Python App:
-    	ForcedPythonVariant              *TagHL-ForcedPythonVariant*
-    	PathToPython                     *TagHL-PathToPython*
-    	PythonVariantPriority            *TagHL-PythonVariantPriority*
+
+    	ForcedPythonVariant              Link:|TagHL-ForcedPythonVariant|
+	   Specify specific python variant to use.
+
+    	PathToPython                     Link:|TagHL-PathToPython|
+	   Specify path to python executable.
+
+    	PythonVariantPriority            Link:|TagHL-PythonVariantPriority|
+	   Specify priority order of different python variants.
 
     Locations of Files (normal):
-    	DirModeSearchWildcards           *TagHL-DirModeSearchWildcards*
-    	DefaultDirModePriority           *TagHL-DefaultDirModePriority*
+
+    	DirModeSearchWildcards           Link:|TagHL-DirModeSearchWildcards|
+	   What to search for when deciding which directory to use.
+
+    	DefaultDirModePriority           Link:|TagHL-DefaultDirModePriority|
+	   Which directories to search by default.
 
     Location and name of Project Configuration File:
-    	ProjectConfigFileDirModePriority *TagHL-ProjectConfigFileDirModePriority*
-    	ProjectConfigFileDirectory       *TagHL-ProjectConfigFileDirectory*
-    	ProjectConfigFileName            *TagHL-ProjectConfigFileName*
+
+    	ProjectConfigFileDirModePriority Link:|TagHL-ProjectConfigFileDirModePriority|
+	   Which directories to search for project config file.
+
+    	ProjectConfigFileDirectory       Link:|TagHL-ProjectConfigFileDirectory|
+	   Explicit location for project config file.
+
+    	ProjectConfigFileName            Link:|TagHL-ProjectConfigFileName|
+	   File name for project config file.
 
     Location and name of tag file:
-    	TagFileDirModePriority           *TagHL-TagFileDirModePriority*
-    	TagFileDirectory                 *TagHL-TagFileDirectory*
-    	TagFileName		         *TagHL-TagFileName*
+
+    	TagFileDirModePriority           Link:|TagHL-TagFileDirModePriority|
+	   Which directories to search for tag file.
+
+    	TagFileDirectory                 Link:|TagHL-TagFileDirectory|
+	   Explicit location for tag file.
+
+    	TagFileName		         Link:|TagHL-TagFileName|
+	   File name for tag file.
 
     Location and name of types file:
-    	TypesFileDirModePriority         *TagHL-TypesFileDirModePriority*
-    	TypesFileDirectory               *TagHL-TypesFileDirectory*
-    	TypesFileExtension               *TagHL-TypesFileExtension*
-    	TypesFileLocation                *TagHL-TypesFileLocation*
-    	TypesFileNameForce               *TagHL-TypesFileNameForce*
-    	TypesFilePrefix                  *TagHL-TypesFilePrefix*
+
+    	TypesFileDirModePriority         Link:|TagHL-TypesFileDirModePriority|
+	   Which directories to search for types highlighter file.
+
+    	TypesFileDirectory               Link:|TagHL-TypesFileDirectory|
+	   Explicit location for types highlighter file.
+
+    	TypesFileExtension               Link:|TagHL-TypesFileExtension|
+	   File extension for types highlighter file.
+
+    	TypesFileNameForce               Link:|TagHL-TypesFileNameForce|
+	   Force an explicit file name for the types highlighter file.
+
+    	TypesFilePrefix                  Link:|TagHL-TypesFilePrefix|
+	   Prefix for the types highlighter file.
 
     Libraries:
-    	ForcedStandardLibraries          *TagHL-ForcedStandardLibraries*
-    	UserLibraries                    *TagHL-UserLibraries*
-    	UserLibraryDir                   *TagHL-UserLibraryDir*
+
+	DisableStandardLibraries         Link:|TagHL-DisableStandardLibraries|
+	    Don't try loading standard libraries.
+
+    	ForcedStandardLibraries          Link:|TagHL-ForcedStandardLibraries|
+	   Always load specified standard libraries.
+
+    	UserLibraries                    Link:|TagHL-UserLibraries|
+	   List of user libraries that should be loaded.
+
+    	UserLibraryDir                   Link:|TagHL-UserLibraryDir|
+	   Location of user libraries specified with relative path.
 
     Debugging:
-	DebugLevel                       *TagHL-DebugLevel*
+
+	DebugLevel                       Link:|TagHL-DebugLevel|
+	    How much debugging information should be printed.
 
     Internal Use Only:
-	CtagsExeFull                     *TagHL-CtagsExeFull*
-    	CtagsExecutable                  *TagHL-CtagsExecutable*
-    	CtagsFileLocation                *TagHL-CtagsFileLocation*
+
+	CtagsExeFull                     Link:|TagHL-CtagsExeFull|
+	    Internal use only.
+
+    	CtagsExecutable                  Link:|TagHL-CtagsExecutable|
+	   Internal use only.
+
+    	CtagsFileLocation                Link:|TagHL-CtagsFileLocation|
+	   Internal use only.
+
+    	TypesFileLocation                Link:|TagHL-TypesFileLocation|
+	   Internal use only.
 
 2.4.3 Option Details                     *TagHighlight-option-details*      {{{3
 
@@ -291,6 +414,8 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	
     DirModeSearchWildcards               *TagHL-DirModeSearchWildcards*
 	
+    DisableStandardLibraries             *TagHL-DisableStandardLibraries*
+	
     DisableTypeParsing                   *TagHL-DisableTypeParsing*
 	
     DoNotGenerateTags                    *TagHL-DoNotGenerateTags*
@@ -298,8 +423,6 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
     ForcedPythonVariant                  *TagHL-ForcedPythonVariant*
 	
     ForcedStandardLibraries              *TagHL-ForcedStandardLibraries*
-	
-    Hooks                                *TagHL-Hooks*
 	
     IncludeLocals                        *TagHL-IncludeLocals*
 	
@@ -310,6 +433,14 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
     ParsingSkipList                      *TagHL-ParsingSkipList*
 	
     PathToPython                         *TagHL-PathToPython*
+	
+    PreReadHooks                         *TagHL-PreReadHooks*
+	
+    PostReadHooks                        *TagHL-PostReadHooks*
+	
+    PreUpdateHooks                       *TagHL-PreUpdateHooks*
+	
+    PostUpdateHooks                      *TagHL-PostUpdateHooks*
 	
     ProjectConfigFileDirModePriority     *TagHL-ProjectConfigFileDirModePriority*
 	
@@ -340,6 +471,10 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
     TypesFileExtension                   *TagHL-TypesFileExtension*
 	
     TypesFileLocation                    *TagHL-TypesFileLocation*
+	Used internally to tell the python part of the application where the
+	types file should be stored.  Do not use this option as it will be
+	automatically overwritten.  Instead, see |TagHL-TypesFileDirectory|
+	and |TagHL-TypesFileDirModePriority|.
 	
     TypesFileNameForce                   *TagHL-TypesFileNameForce*
 	

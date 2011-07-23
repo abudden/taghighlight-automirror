@@ -23,16 +23,14 @@ endtry
 let g:loaded_TagHLGeneration = 1
 
 function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
-	call TagHighlight#Option#LoadOptionFileIfPresent()
+	let option_file_info = TagHighlight#Option#LoadOptionFileIfPresent()
 	" Initial very simple implementation
 	
 	" Call any PreUpdate hooks
-	let hooks = TagHighlight#Option#GetOption('Hooks')
-	if has_key(hooks, 'PreUpdate')
-		for preupdate_hook in hooks['PreUpdate']
-			exe 'call' preupdate_hook . '()'
-		endfor
-	endif
+	let preupdate_hooks = TagHighlight#Option#GetOption('PreUpdateHooks')
+	for preupdate_hook in preupdate_hooks
+		exe 'call' preupdate_hook . '()'
+	endfor
 	
 	" Start with a copy of the settings so that we can tweak things
 	let RunOptions = TagHighlight#Option#CopyOptions()
@@ -70,12 +68,27 @@ function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
 	if types_file_info['Found'] == 1
 		let RunOptions['TypesFileLocation'] = types_file_info['Directory']
 	endif
+
+	if ! has_key(RunOptions, 'SourceDir')
+		" The source directory has not been set.  If a project config file was
+		" found, use that directory.  If not, but a types file was found,
+		" use that directory.  If not, but a tag file was found, use that
+		" directory.  If not, use the current directory.
+		if option_file_info['Found'] == 1
+			let RunOptions['SourceDir'] = option_file_info['Directory']
+		elseif types_file_info['Found'] == 1
+			let RunOptions['SourceDir'] = types_file_info['Directory']
+		elseif tag_file_info['Found'] == 1
+			let RunOptions['SourceDir'] = tag_file_info['Directory']
+		else
+			let RunOptions['SourceDir'] = '.'
+		endif
+	endif
 	
 	call TagHighlight#RunPythonScript#RunGenerator(RunOptions)
 
-	if has_key(hooks, 'PostUpdate')
-		for postupdate_hook in hooks['PostUpdate']
-			exe 'call' postupdate_hook . '()'
-		endfor
-	endif
+	let postupdate_hooks = TagHighlight#Option#GetOption('PostUpdateHooks')
+	for postupdate_hook in postupdate_hooks
+		exe 'call' postupdate_hook . '()'
+	endfor
 endfunction

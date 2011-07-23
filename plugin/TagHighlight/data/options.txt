@@ -98,6 +98,30 @@ path_to_python:
 	Default:None
 	Help:Location of the python executable or None to search the path
 
+pre_read_hooks:
+	VimOptionMap:PreReadHooks
+	Type:list
+	Default:[]
+	Help:List of function names to run before reading types.
+
+post_read_hooks:
+	VimOptionMap:PostReadHooks
+	Type:list
+	Default:[]
+	Help:List of function names to run after reading types.
+
+pre_update_hooks:
+	VimOptionMap:PreUpdateHooks
+	Type:list
+	Default:[]
+	Help:List of function names to run before updating types.
+
+post_update_hooks:
+	VimOptionMap:PostUpdateHooks
+	Type:list
+	Default:[]
+	Help:List of function names to run after updating types.
+
 hooks:
 	VimOptionMap:Hooks
 	Type:dict
@@ -109,6 +133,12 @@ forced_standard_libraries:
 	Type:list
 	Default:[]
 	Help:List of standard libraries which we should load regardless of whether the matchers match (as long as suffix is correct).
+
+disable_standard_libraries:
+	VimOptionMap:DisableStandardLibraries
+	Type:bool
+	Default:False
+	Help:Don't try to load standard libraries.
 
 user_libraries:
 	VimOptionMap:UserLibraries
