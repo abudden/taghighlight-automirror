@@ -657,6 +657,35 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		Option Type: String
 
 	PythonVariantPriority                *TagHL-PythonVariantPriority*
+		The python part of |TagHighlight| can be run in a number of ways,
+		depending on your system configuration.  For most users, this should
+		be handled completely automatically, but if you want to customise
+		things, this option is the best way to start.  There are currently
+		four supported python variants:
+
+			if_pyth3: When using this variant, the python code will be run
+			          using the Python 3.x interface built into Vim.  If using
+			          a Vim that is compiled with +python/dyn and
+			          +python3/dyn, be aware that this may cause problems if
+			          you want to use the python 2.x interface.  See the
+			          details on case 4 under |:py3file|.
+
+			if_pyth:  When using this variant, the python code will be run
+			          using the Python 2.x (at least version 2.6 required)
+			          interface built into Vim.  See the comments above
+			          regarding potential conflicts between the two python
+			          versions.
+
+			python:   When using this variant. the python code will be run
+			          using the version of python that is in the path or
+			          specified with the option |TagHL-PathToPython|.
+
+			compiled: When using this variant, the compiled executable version
+			          of the python part of the plugin will be used (so no
+			          system version of python is required).  Note that this
+			          requires the compiled version to be installed as it is
+			          not part of the main distribution.  See the installation
+					  guide for more information: |TagHighlight-install|.
 
 		Option Type: List
 
