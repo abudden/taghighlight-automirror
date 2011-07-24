@@ -23,7 +23,7 @@ debug_level:
 def_dir_mode_priority:
 	VimOptionMap:DefaultDirModePriority
 	Type:list
-	Default:Explicit,UpFromCurrent,UpFromFile,CurrentExplicit,FileExplicit
+	Default:Explicit,UpFromFile,CurrentDirectory
 	Help:List of methods (in order) to use when searching for tags/types etc
 
 config_file_name:
@@ -68,11 +68,29 @@ config_file_directory:
 	Default:None
 	Help:Explicitly specified location for project config file (corresponding to Explicit search mode)
 
-dir_mode_search_wildcards:
-	VimOptionMap:DirModeSearchWildcards
+default_dir_mode_search_wildcards:
+	VimOptionMap:DefaultDirModeSearchWildcards
 	Type:list
 	Default:OPT(TagFileName),OPT(ProjectConfigFileName)
 	Help:When searching directories, wildcards to match against (if any matches, we'll use this directory)
+
+config_dir_mode_search_wildcards:
+	VimOptionMap:ProjectConfigFileSearchWildcards
+	Type:list
+	Default:Default
+	Help:When searching directories for project config files, wildcards to match against (if any matches, we'll use this directory)
+
+tag_dir_mode_search_wildcards:
+	VimOptionMap:TagFileSearchWildcards
+	Type:list
+	Default:Default
+	Help:When searching directories for tag files, wildcards to match against (if any matches, we'll use this directory)
+
+types_dir_mode_search_wildcards:
+	VimOptionMap:TypesFileDirModeSearchWildcards
+	Type:list
+	Default:Default
+	Help:When searching directories for types files, wildcards to match against (if any matches, we'll use this directory)
 
 ctags_executable:
 	VimOptionMap:CtagsExecutable

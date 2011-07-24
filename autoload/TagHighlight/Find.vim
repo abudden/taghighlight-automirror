@@ -38,11 +38,11 @@ let g:loaded_TagHLFind = 1
 " Option structure:
 "
 " [gb]:TagHighlightSettings:
-"	DefaultDirModePriority:[Explicit,UpFromCurrent,UpFromFile,CurrentExplicit,FileExplicit]
+"	DefaultDirModePriority:[Explicit,UpFromCurrent,UpFromFile,CurrentDirectory,FileDirectory]
 "	TagFileDirModePriority:["Default"] or as above
 "	TypesFileDirModePriority:As tag file
 "	ConfigFileDirModePriority:As tag file
-"	DirModeSearchWildcard:'' (look for tags file) or something specific (*.uvopt)?
+"	DefaultDirModeSearchWildcard:'' (look for tags file) or something specific (*.uvopt)?
 "
 " Explicit Locations:
 "
@@ -57,6 +57,7 @@ let g:loaded_TagHLFind = 1
 function! TagHighlight#Find#LocateFile(which, suffix)
 	" a:which is 'TAGS', 'TYPES', 'CONFIG'
 	let default_priority = TagHighlight#Option#GetOption('DefaultDirModePriority')
+	let default_search_wildcards = TagHighlight#Option#GetOption('DefaultDirModeSearchWildcards')
 
 	let file = '<afile>'
 	if len(expand(file)) == 0
@@ -68,22 +69,27 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 		let filename = TagHighlight#Option#GetOption('TagFileName')
 		let search_priority = TagHighlight#Option#GetOption('TagFileDirModePriority')
 		let explicit_location = TagHighlight#Option#GetOption('TagFileDirectory')
+		let search_wildcards = TagHighlight#Option#GetOption('TagFileSearchWildcards')
 	elseif a:which == 'TYPES'
 		let filename = TagHighlight#Option#GetOption('TypesFilePrefix') . '_' .
 					\ a:suffix . "." .
 					\ TagHighlight#Option#GetOption('TypesFileExtension')
 		let search_priority = TagHighlight#Option#GetOption('TypesFileDirModePriority')
 		let explicit_location = TagHighlight#Option#GetOption('TypesFileDirectory')
+		let search_wildcards = TagHighlight#Option#GetOption('TypesFileSearchWildcards')
 	elseif a:which == 'CONFIG'
 		" Suffix is ignored here
 		let filename = TagHighlight#Option#GetOption('ProjectConfigFileName')
 		let search_priority = TagHighlight#Option#GetOption('ProjectConfigFileDirModePriority')
 		let explicit_location = TagHighlight#Option#GetOption('ProjectConfigFileDirectory')
+		let search_wildcards = TagHighlight#Option#GetOption('ProjectConfigFileSearchWildcards')
 	else
 		throw "Unrecognised file"
 	endif
 
-	let search_wildcards = TagHighlight#Option#GetOption('DirModeSearchWildcards')
+	if search_wildcards[0] == 'Default'
+		let search_wildcards = default_search_wildcards
+	endif
 
 	if search_priority[0] == 'Default'
 		let search_priority = default_priority
@@ -116,10 +122,10 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 			if has_key(result, 'Directory')
 				let result['Filename'] = filename
 			endif
-		elseif search_mode == 'CurrentExplicit'
+		elseif search_mode == 'CurrentDirectory'
 			let result['Directory'] = fnamemodify(file,':p:h')
 			let result['Filename'] = filename
-		elseif search_mode == 'FileExplicit'
+		elseif search_mode == 'FileDirectory'
 			let result['Directory'] = fnamemodify(file,':p:h')
 			let result['Filename'] = filename
 		endif
