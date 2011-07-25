@@ -4,10 +4,14 @@ Author:     A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 		Remove NOSPAM.
 
 Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
-		The VIM LICENCE applies to all files that constitute the
-		TagHighlight distribution.  See |copyright| except use
-		TagHighlight instead of "Vim".
-		NO WARRANTY, EXPRESS OR IMPLIED. USE AT-YOUR-OWN-RISK.
+            Permission is hereby granted to use and distribute this code,
+            with or without modifications, provided that this copyright
+            notice is copied with it. Like anything else that's free,
+            the TagHighlight plugin is provided *as is* and comes with no
+            warranty of any kind, either expressed or implied. By using
+            this plugin, you agree that in no event will the copyright
+            holder be liable for any damages resulting from the use
+            of this software.
 
 ==============================================================================
 1. Contents                   *TagHighlight* *TagHighlight-contents*          {{{1
@@ -1045,9 +1049,9 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	3. In that file, add the following fields in Key:Value format (one per
 	   line):
 
-		FriendlyName - Whatever you prefer to call the language
+		FriendlyName - Whatever you prefer to call the language.
 
-		CTagsName - Whatever ctags refers to the language as
+		CTagsName - Whatever ctags refers to the language as.
 
 		PythonExtensionMatcher - A python regular expression that matches
 					 the extensions of files that are written
@@ -1058,7 +1062,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 		Suffix - Whatever you would like the generated files to be named,
 			 e.g. for C code, the suffix is c and the generated files
-			 are by default called types_c.taghl
+			 are by default called types_c.taghl.
 
 	4. Optionally, add other fields as required:
 
@@ -1148,11 +1152,13 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 	- Make it work better with paths containing spaces.
 
+	- Add more debugging capability and write the troubleshooting section of
+	  the manual.
+
 ==============================================================================
 7. TagHighlight History                *TagHighlight-history*               {{{1
 
-TODO:
-rXXX : Xth XXX 2011        : Significant refactor of all the code.  Reworked
+2.0.0: 25th July 2011      : Significant refactor of all the code.  Reworked
 							 the way options are set (can now be set globally,
 							 per buffer or in a project configuration file).
 							 All options now moved into dictionaries to
