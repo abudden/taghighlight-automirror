@@ -87,7 +87,7 @@ tag_dir_mode_search_wildcards:
 	Help:When searching directories for tag files, wildcards to match against (if any matches, we'll use this directory)
 
 types_dir_mode_search_wildcards:
-	VimOptionMap:TypesFileDirModeSearchWildcards
+	VimOptionMap:TypesFileSearchWildcards
 	Type:list
 	Default:Default
 	Help:When searching directories for types files, wildcards to match against (if any matches, we'll use this directory)
