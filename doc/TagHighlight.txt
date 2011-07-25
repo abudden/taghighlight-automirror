@@ -23,6 +23,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	2.4.2 Option Summary                     |TagHighlight-option-list|
 	2.4.3 Option Details                     |TagHighlight-option-details|
 	2.5   Installation                       |TagHighlight-install|
+	2.5.1 Requirements                       |TagHighlight-requirements|
 
 	3.    Standard Libraries                 |TagHighlight-standard-libraries|
 
@@ -49,11 +50,12 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	The idea was based on the comments in |tag-highlight|, but I wanted to
 	take it a little further.
 
-	This is achieved through a little python script to interact with ctags and
-	to parse the result and a small Vim script that makes Vim read the
-	resulting files.  Finally, a new command (:UpdateTypesFile) is added (with
-	optional !  for recursive operation) to keep the generated files up to
-	date.
+	This is achieved through a python script (also available as a compiled
+	executable if you don't have python: see |TagHighlight-requirements|) to
+	interact with ctags and to parse the result and a Vim script that makes
+	Vim read the resulting files.  Finally, a new command (|:UpdateTypesFile|)
+	is added (with optional ! for recursive operation) to keep the generated
+	files up to date.
 
 	At present, the highlighter supports the following languages:
 
@@ -78,8 +80,8 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 >
 		http://ctags.sourceforge.net
 <
-	Adding more languages is extremely simple, see
-	|TagHighlight-adding|.
+	Adding more languages is extremely simple (as long as they're supported by
+	Exuberant ctags); see |TagHighlight-adding|.
 
 					                     *TagHighlight-website*
 
@@ -831,7 +833,93 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 2.5 Installation                         *TagHighlight-install*             {{{2
 
-	... TODO (mention uninstalling ctags_highlighter)
+2.5.1 Requirements                       *TagHighlight-requirements*        {{{3
+
+	|TagHighlight| consists of some Vim scripts and some Python scripts.  The
+	Vim scripts require a relatively recent Vim (at least version 7).  To use
+	the python 3 interface, version 7.3 is required.
+
+	As described in |TagHL-PythonVariantPriority|, there are a number of
+	different ways you can run the Python part of the application.  If your
+	Vim has the python interface compiled in, with python version 2.6 or
+	greater and it works, you can use that to run the python code (you'll need
+	python installed on your system).  If you have the python3 interface, you
+	can also use that.  Alternatively, if you have python 2.6 or above
+	(including python 3), you can use that.  Finally, there is a (separately
+	distributed) compiled version if you don't have python on your system.
+
+2.5.2 Installation Guide                 *TagHighlight-install-guide*       {{{3
+
+	Uninstalling ctags_highlighter:
+
+		This plugin replaces the previous version, which was called
+		ctags_highlighter.  Please delete ctags_highlighter before using this
+		plugin.  The files you need to delete (if present) in your ~/.vim or
+		vimfiles directory are:
+
+		* mktypes.py
+		* extra_source/mktypes (delete the entire folder)
+		* doc/ctags_highlighting.txt
+		* plugin/ctags_highlighting.vim
+		* types_qt4.vim (if you installed the GUI types addon)
+		* types_wx.vim (if you installed the GUI types addon)
+		* types_wxpy.vim (if you installed the GUI types addon)
+		* types_android.vim (if you installed the GUI types addon)
+		* types_jdk.vim (if you installed the GUI types addon)
+	
+	Installing the main plugin:
+
+		The TagHighlight plugin is distributed as a zip file.  If you are
+		using the pathogen plugin, create a directory called TagHighlight in
+		~/.vim/bundle or vimfiles/bundle.  Unzip the zip file directly into
+		the new directory.  If you are not using the pathogen plugin, simply
+		unzip the zip file directly into your ~/.vim or vimfiles directory.
+
+	Updating the help tags:
+
+		If you use pathogen, run:
+>
+			:call pathogen#helptags()
+<
+		Otherwise, use:
+>
+			:helptags ~/.vim/doc
+<
+		or:
+>
+			:helptags path/to/vimfiles/doc
+<
+		as appropriate.
+	
+	Installing the compiled version of the python code:
+
+		If you want to use the compiled version of the plugin (if you do not
+		have python on your system), download the zip file for your chosen
+		platform (or both Windows and Linux if you use the same vim
+		configuration directory on both platforms) and unzip in the same
+		location as the main plugin (~/.vim or ~/.vim/bundle/TagHighlight
+		depending on whether you use pathogen).
+
+	Installing the standard libraries:
+
+		If you want support for highlighting of standard libraries (see
+		|TagHighlight-standard-libraries|), unzip that zip file in the same
+		place as the main plugin (~/.vim or ~/.vim/bundle/TagHighlight
+		depending on whether you use pathogen).
+
+	Uninstalling:
+
+		If you use pathogen and have followed the pathogen install
+		instructions above, you should be able to simply delete
+		~/.vim/bundle/TagHighlight.
+
+		If you don't use pathogen, the files/directories to delete (all
+		relative to ~/.vim or vimfiles) are:
+
+		* plugin/TagHighlight.vim
+		* plugin/TagHighlight (entire directory)
+		* autoload/TagHighlight (entire directory)
+		* doc/TagHighlight.txt
 
 ==============================================================================
 3. Standard Libraries                    *TagHighlight-standard-libraries*  {{{1
@@ -874,23 +962,41 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	4. Optionally, add other fields as required:
 
 		SkipList - Any specific ctags "kinds" (single characters referring
-			   to types of tags) that you want to omit from the types
-			   file.  For example, for C code, function prototypes are
-			   omitted (function definitions are included) by setting
-			   SkipList to p.  To include multiple items, separate
-			   each item with a comma.  To see a list of kinds for a
-			   language, use:
+			       to types of tags) that you want to omit from the types
+			       file.  For example, for C code, function prototypes are
+			       omitted (function definitions are included) by setting
+			       SkipList to p.  To include multiple items, separate
+			       each item with a comma.  To see a list of kinds for a
+			       language, use:
 >
-				ctags --list-kinds
+						ctags --list-kinds
 <
 		SpecialSyntaxHandlers - This is for unusual cases where particular
-					syntax commands are required for a given
-					language.  Add any functions you want to
-					call here.  As an example, for Java code,
-					all syntax items must be added to the
-					javaTop cluster; this is done in a special
-					syntax handler.  For most languages this
-					is unnecessary.
+					            syntax commands are required for a given
+					            language.  Add any functions you want to
+					            call here.  As an example, for Java code,
+					            all syntax items must be added to the
+					            javaTop cluster; this is done in a special
+					            syntax handler.  For most languages this
+					            is unnecessary.
+
+		Priority - Where a tag name is used for multiple different types (e.g.
+		           as a defined name and as a typedef), it can only be
+		           highlighted as one or the other (Vim is not aware of the
+		           context of the keyword).  The priority defines whether it
+		           should (in this case) be highlighted as a defined name or
+		           as a typedef.  The default priority order is shown in
+		           plugin/TagHighlight/data/language_defaults.txt.  Entries
+		           not included in the priority list are treated in
+		           alphabetical order after the ones that are in the priority
+				   list.  If the default priority is not appropriate for the
+				   new language, it can be overridden in the language
+				   definition.
+
+		IsKeyword - Most source files have Vim's |'iskeyword'| option set to
+		            @,48-57,_,192-255.  If that is incorrect for the language
+					that you are defining, it can be changed in the new
+					language definition.  Generally not really required.
 
 	5. Add a modeline for consistency:
 >
