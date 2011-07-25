@@ -107,7 +107,7 @@ forced_python_variant:
 python_variant_priority:
 	VimOptionMap:PythonVariantPriority
 	Type:list
-	Default:if_pyth,if_pyth3,python,compiled
+	Default:if_pyth3,if_pyth,python,compiled
 	Help:Search order for deciding which variant to use
 
 path_to_python:
