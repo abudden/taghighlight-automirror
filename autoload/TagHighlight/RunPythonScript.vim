@@ -261,6 +261,12 @@ function! TagHighlight#RunPythonScript#FindPython()
 						let s:python_variant = 'compiled'
 						let s:python_cmd = [compiled_highlighter[0]]
 					endif
+				elseif has("unix")
+					let compiled_highlighter = split(globpath(&rtp, "plugin/TagHighlight/Compiled/Linux/TagHighlight.exe"), "\n")
+					if len(compiled_highlighter) > 0  && executable(compiled_highlighter[0])
+						let s:python_variant = 'compiled'
+						let s:python_cmd = [compiled_highlighter[0]]
+					endif
 				endif
 			endif
 		endif

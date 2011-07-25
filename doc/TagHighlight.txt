@@ -1158,6 +1158,9 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 7. TagHighlight History                *TagHighlight-history*               {{{1
 
+2.0.1: 25th July 2011      : Added provisional support for a Linux compiled
+                             version.
+
 2.0.0: 25th July 2011      : Significant refactor of all the code.  Reworked
 							 the way options are set (can now be set globally,
 							 per buffer or in a project configuration file).
@@ -1168,17 +1171,17 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 							 for using the python interface (either 2.6+ or
 							 3.0+), or using a system python (either 2.6+ or
 							 3.0+) or using a compiled version on either
-							 Windows or Linux.  Improved library
-							 implementation to improve loading method and ease
-							 generation of standard libraries.  Added support
-							 for user libraries.  Improved language handlers
-							 (now configured from a single text file).
-							 Renamed project from ctags_highlighter to
-							 TagHighlight.  New revision numbering scheme.
-							 Changed default types file extension.  Allow
-							 complete customisation of location and name of
-							 types and tags files.  Allow specific keywords to
-							 be skipped when generating types files.  Added
+							 Windows.  Improved library implementation to
+							 improve loading method and ease generation of
+							 standard libraries.  Added support for user
+							 libraries.  Improved language handlers (now
+							 configured from a single text file).  Renamed
+							 project from ctags_highlighter to TagHighlight.
+							 New revision numbering scheme.  Changed default
+							 types file extension.  Allow complete
+							 customisation of location and name of types and
+							 tags files.  Allow specific keywords to be
+							 skipped when generating types files.  Added
 							 support for pre-read, post-read, pre-update and
 							 post-update hooks to allow further customisation.
 
