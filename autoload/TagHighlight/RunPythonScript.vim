@@ -1,7 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    25/07/2011
-"   Version: 1
+"   Date:    26/07/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -262,7 +261,7 @@ function! TagHighlight#RunPythonScript#FindPython()
 						let s:python_cmd = [compiled_highlighter[0]]
 					endif
 				elseif has("unix")
-					let compiled_highlighter = split(globpath(&rtp, "plugin/TagHighlight/Compiled/Linux/TagHighlight.exe"), "\n")
+					let compiled_highlighter = split(globpath(&rtp, "plugin/TagHighlight/Compiled/Linux/TagHighlight"), "\n")
 					if len(compiled_highlighter) > 0  && executable(compiled_highlighter[0])
 						let s:python_variant = 'compiled'
 						let s:python_cmd = [compiled_highlighter[0]]

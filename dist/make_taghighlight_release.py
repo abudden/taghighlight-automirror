@@ -108,14 +108,14 @@ def MakeZipFile():
     # Close the zipfile
     zipf.close()
 
-def MakeCompiled(pyexe, pyinstaller_path):
+def MakeCompiled(pyexe, pyinstaller_path, zipfilename, platform_dir):
     initial_dir = os.getcwd()
     os.chdir(os.path.join(vimfiles_dir, 'plugin/TagHighlight'))
     args = pyexe + [os.path.join(pyinstaller_path, 'Build.py'), '-y', 'TagHighlight.spec']
     p = subprocess.Popen(args)#, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (stdout,stderr) = p.communicate()
-    zipf = zipfile.ZipFile(os.path.join(vimfiles_dir,'dist','taghighlight_win32.zip'), 'w')
-    for f in Rglob(os.path.join(vimfiles_dir,'plugin/TagHighlight/Compiled/Win32'),'*'):
+    zipf = zipfile.ZipFile(os.path.join(vimfiles_dir,'dist',zipfilename), 'w')
+    for f in Rglob(os.path.join(vimfiles_dir,'plugin/TagHighlight/Compiled/'+platform_dir),'*'):
         dirname = os.path.dirname(os.path.relpath(f,vimfiles_dir))
         zipf.write(f,os.path.join(dirname, os.path.basename(f)), zipfile.ZIP_DEFLATED)
     zipf.close()
@@ -130,7 +130,18 @@ def MakeWin32Compiled():
     else:
         pyexe = ['python.exe']
     pyinstaller_path = os.environ['WINPYINSTALLERDIR']
-    MakeCompiled(pyexe, pyinstaller_path)
+    MakeCompiled(pyexe, pyinstaller_path, 'taghighlight_win32.zip', 'Win32')
+
+def MakeWin32Compiled():
+    if 'PYTHON' in os.environ:
+        # Doesn't work with spaces in the path
+        # (doing the split to allow for running python
+        # with wine).
+        pyexe = os.environ['PYTHON']
+    else:
+        pyexe = ['python']
+    pyinstaller_path = os.environ['PYINSTALLERDIR']
+    MakeCompiled(pyexe, pyinstaller_path, 'taghighlight_linux.zip', 'Win32')
 
 def CheckInChanges(r):
     args = BZR+['ci','-m','Release build {0}'.format(r)]
@@ -156,6 +167,7 @@ def main():
         new_release = UpdateReleaseVersion()
         MakeZipFile()
         MakeWin32Compiled()
+        MakeLinuxCompiled()
         CheckInChanges(new_release)
     else:
         print("Distribution not clean: check into Bazaar before making release.")
