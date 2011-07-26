@@ -132,7 +132,7 @@ def MakeWin32Compiled():
     pyinstaller_path = os.environ['WINPYINSTALLERDIR']
     MakeCompiled(pyexe, pyinstaller_path, 'taghighlight_win32.zip', 'Win32')
 
-def MakeWin32Compiled():
+def MakeLinuxCompiled():
     if 'PYTHON' in os.environ:
         # Doesn't work with spaces in the path
         # (doing the split to allow for running python
@@ -141,7 +141,7 @@ def MakeWin32Compiled():
     else:
         pyexe = ['python']
     pyinstaller_path = os.environ['PYINSTALLERDIR']
-    MakeCompiled(pyexe, pyinstaller_path, 'taghighlight_linux.zip', 'Win32')
+    MakeCompiled(pyexe, pyinstaller_path, 'taghighlight_linux.zip', 'Linux')
 
 def CheckInChanges(r):
     args = BZR+['ci','-m','Release build {0}'.format(r)]
