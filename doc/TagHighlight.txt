@@ -1158,6 +1158,8 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 7. TagHighlight History                *TagHighlight-history*               {{{1
 
+2.0.3: 26th July 2011      : Added missing documentation to zip file!
+
 2.0.2: 26th July 2011      : Improved Linux compiled version support.
 
 2.0.1: 25th July 2011      : Added provisional support for a Linux compiled
