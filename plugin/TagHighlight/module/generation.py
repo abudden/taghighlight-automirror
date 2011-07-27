@@ -113,7 +113,7 @@ def CreateTypesFile(options, language, tags):
                                 matchDone = True
                                 break
 
-                    if not matchDone:
+                    if not matchDone and options['debug_level'] == 'Information':
                         print("Skipping keyword '" + keyword + "'")
 
                     continue

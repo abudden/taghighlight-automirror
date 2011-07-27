@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    26/07/2011
+"   Date:    27/07/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -42,11 +42,18 @@ function! s:RunShellCommand(args)
 	let syscmd = ""
 	for arg in a:args
 		if len(syscmd) > 0
-			let syscmd += " "
+			let syscmd .= " "
 		endif
-		let syscmd += shellescape(arg)
+		if stridx(arg, " ") != -1
+			let syscmd .= shellescape(arg)
+		else
+			let syscmd .= arg
+		endif
 	endfor
-	return system(syscmd)
+	echomsg syscmd
+	let result = system(syscmd)
+	echo result
+	return result
 endfunction
 
 function! TagHighlight#RunPythonScript#RunGenerator(options)
@@ -106,7 +113,7 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 	elseif index(["python","compiled"], s:python_variant) != -1
 		let args = s:python_cmd[:]
 		" We're calling the script externally, build a list of arguments
-		for option in g:TagHighlightPrivate['ScriptOptions']
+		for option in g:TagHighlightPrivate['PluginOptions']
 			if has_key(option, 'VimOptionMap') && 
 						\ has_key(option, 'CommandLineSwitches') &&
 						\ has_key(a:options, option['VimOptionMap'])
@@ -115,6 +122,13 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 				else
 					let switch = option['CommandLineSwitches']
 				endif
+				if switch[:1] == "--"
+					let as_one = 1
+				elseif switch[:0] == "-"
+					let as_one = 0
+				else
+					echoerr "Invalid configuration for option " . option['VimOptionMap']
+				endif
 				" We can handle this one automatically
 				if option['Type'] == 'bool'
 					if ((a:options[option['VimOptionMap']] && option['Default'] == 'False')
@@ -122,10 +136,18 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 						let args += [switch]
 					endif
 				elseif option['Type'] == 'string'
-					let args += [switch . '=' . a:options[option['VimOptionMap']]]
+					if as_one == 1
+						let args += [switch . '=' . a:options[option['VimOptionMap']]]
+					else
+						let args += [switch, a:options[option['VimOptionMap']]]
+					endif
 				elseif option['Type'] == 'list'
 					for entry in a:options[option['VimOptionMap']]
-						let args += [switch . '=' . entry]
+						if as_one == 1
+							let args += [switch . '=' . entry]
+						else
+							let args += [switch, entry]
+						endif
 					endfor
 				endif
 			endif
@@ -151,7 +173,7 @@ function! TagHighlight#RunPythonScript#FindExeInPath(file)
 	else
 		return 'None'
 	endif
-	let file_exe = substitute(file_exe, '\\', '/', 'g')
+	"let file_exe = substitute(file_exe, '\\', '/', 'g')
 	return file_exe
 endfunction
 
@@ -186,12 +208,17 @@ function! TagHighlight#RunPythonScript#FindPython()
 
 	" If we've run before and nothing has changed, just return
 	if s:python_variant != 'None'
-		if forced_variant == s:stored_forced_variant && s:stored_variant_priority == variant_priority
+		if forced_variant == s:stored_forced_variant
+					\ && s:stored_variant_priority == variant_priority
+					\ && s:python_path == TagHighlight#Option#GetOption("PathToPython")
 			return s:python_variant
 		endif
 	endif
 
 	let s:python_variant = 'None'
+	let s:python_cmd = []
+	let s:python_path = ""
+
 	" Make sure that the user specified variant is supported
 	if index(supported_variants, forced_variant) == -1
 		let forced_variant = 'None'
@@ -279,6 +306,9 @@ function! TagHighlight#RunPythonScript#FindPython()
 	if s:python_variant != 'None'
 		" Consider checking that it's valid
 		if TagHighlight#Debug#GetDebugLevelName() == 'Information'
+			echomsg "Python variant is " . s:python_variant
+			echomsg "Python Command is " . join(s:python_cmd, " ")
+			echomsg "Python Path is " . s:python_path
 			let pyversion = TagHighlight#RunPythonScript#GetPythonVersion()
 			call TagHighlight#Debug#Print("Python version reported as: " . pyversion,
 						\ 'Information')

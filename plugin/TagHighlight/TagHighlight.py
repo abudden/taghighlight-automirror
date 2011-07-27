@@ -20,7 +20,6 @@ import sys
 def main():
     from module.cmd import ProcessCommandLine
     from module.worker import RunWithOptions
-
     options = ProcessCommandLine()
     RunWithOptions(options)
 

@@ -14,12 +14,6 @@ parsing_skip_list:
 	Default:[]
 	Help:List of files for which the type reading should be disabled
 
-debug_level:
-	VimOptionMap:DebugLevel
-	Type:string
-	Default:Error
-	Help:Debug level for printing (how much debug output to produce)
-
 def_dir_mode_priority:
 	VimOptionMap:DefaultDirModePriority
 	Type:list
@@ -173,6 +167,13 @@ user_library_dir:
 ##########################
 # Python script options: #
 ##########################
+
+debug_level:
+	CommandLineSwitches:--debug
+	VimOptionMap:DebugLevel
+	Type:string
+	Default:Error
+	Help:Debug level for printing (how much debug output to produce)
 
 source_root:
 	CommandLineSwitches:-d,--source-root

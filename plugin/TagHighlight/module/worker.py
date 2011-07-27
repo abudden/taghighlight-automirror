@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Tag Highlighter:
 #   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-#   Date:    25/07/2011
+#   Date:    27/07/2011
 # Copyright: Copyright (C) 2009-2011 A. S. Budden
 #            Permission is hereby granted to use and distribute this code,
 #            with or without modifications, provided that this copyright
@@ -22,6 +22,9 @@ def RunWithOptions(options):
 
     SetInitialOptions(options)
 
+    if config['debug_level'] == 'Information':
+        print("Running types highlighter generator")
+
     if config['use_existing_tagfile'] and not os.path.exists(config['ctags_file']):
         config['use_existing_tagfile'] = False
 
@@ -36,7 +39,7 @@ def RunWithOptions(options):
         print(sys.version)
         return
 
-    from .ctags import GenerateTags, ParseTags
+    from .ctags_interface import GenerateTags, ParseTags
     from .generation import CreateTypesFile
 
     if not config['use_existing_tagfile']:
