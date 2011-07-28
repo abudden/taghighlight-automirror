@@ -1038,15 +1038,24 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 	1. Run ctags --list-languages and check that the required language is
 	   present.
+	   
+	2. If you're using a custom version of ctags highlighter with extra
+	   languages, you may need to add the details to the kind list in
+	   plugin/TagHighlight/data/kinds.txt (for most standard languages, this
+	   won't be necessary).  To do this, run:
+>
+			ctags --list-kinds=all
+<
+	   and examine the entries for your language.
 
-	2. Create a new file in plugin/TagHighlight/data/languages/ with a .txt
+	3. Create a new file in plugin/TagHighlight/data/languages/ with a .txt
 	   extension (the file name can be anything you want).  Set the fileformat
 	   to be 'unix' for consistency and don't expand tabs in case you need to
 	   add any multi-line lists:
 >
-		set ff=unix noet
+			set ff=unix noet
 <
-	3. In that file, add the following fields in Key:Value format (one per
+	4. In that file, add the following fields in Key:Value format (one per
 	   line):
 
 		FriendlyName - Whatever you prefer to call the language.
@@ -1064,7 +1073,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 			 e.g. for C code, the suffix is c and the generated files
 			 are by default called types_c.taghl.
 
-	4. Optionally, add other fields as required:
+	5. Optionally, add other fields as required:
 
 		SkipList - Any specific ctags "kinds" (single characters referring
 			       to types of tags) that you want to omit from the types
@@ -1103,13 +1112,13 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 					that you are defining, it can be changed in the new
 					language definition.  Generally not really required.
 
-	5. Add a modeline for consistency:
+	6. Add a modeline for consistency:
 >
-	# vim: ff=unix:noet
+		# vim: ff=unix:noet
 <
-	5. Test your new language!
+	7. Test your new language!
 
-	6. Send me a copy for inclusion in the main distribution.
+	8. Send me a copy for inclusion in the main distribution.
 
 4.1.1 Example                            *TagHighlight-add-example*         {{{3
 
@@ -1157,6 +1166,10 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 ==============================================================================
 7. TagHighlight History                *TagHighlight-history*               {{{1
+
+2.0.5: 28th July 2011      : Bug fix in Java special handler.  Added
+                             description of how to add languages not supported
+                             by standard ctags.
 
 2.0.4: 27th July 2011      : Fixed bug in python interface (old variable
                              name); renamed ctags interface python code to
