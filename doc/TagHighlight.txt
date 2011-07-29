@@ -429,6 +429,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		system names Exuberant ctags in that way).
 
 		Option Type: String
+		Default: "ctags"
 
 	CtagsFileLocation                    *TagHL-CtagsFileLocation*
 		Used internally to handle the location of the tag file.  Do not use
@@ -449,6 +450,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		everything that's happening).
 
 		Option Type: String
+		Default: "Error"
 
 	DefaultDirModePriority               *TagHL-DefaultDirModePriority*
 		There are several 'DirModePriority' options in addition to this one.
@@ -506,6 +508,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		use Vim's current working directory.
 
 		Option Type: List
+		Default: ["Explicit", "UpFromFile", "CurrentDirectory"]
 
 	DefaultDirModeSearchWildcards        *TagHL-DefaultDirModeSearchWildcards*
 		This option contains the wildcards that should be checked for when
@@ -514,6 +517,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		project configuration file is found or a tags file is found.
 
 		Option Type: List
+		Default: [value of TagFileName option, value of ProjectConfigFileName option]
 
 	DisableStandardLibraries             *TagHL-DisableStandardLibraries*
 		If installed, the standard libraries will automatically be loaded if
@@ -523,12 +527,14 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		libraries, see |TagHighlight-standard-libraries|.
 
 		Option Type: Boolean
+		Default: False
 
 	DisableTypeParsing                   *TagHL-DisableTypeParsing*
 		This option disables loading of types highlighter files: no custom
 		types will be highlighted.
 
 		Option Type: Boolean
+		Default: False
 
 	DoNotGenerateTags                    *TagHL-DoNotGenerateTags*
 		If this option is set, calling |:UpdateTypesFile| will be functionally
@@ -536,6 +542,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		a tag file already exists and ctags will not be run.
 
 		Option Type: Boolean
+		Default: False (generate tags)
 
 	ForcedPythonVariant                  *TagHL-ForcedPythonVariant*
 		There are a number of different python variants that are supported for
@@ -545,6 +552,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		variant is not available).
 
 		Option Type: String
+		Default: None (unset)
 
 	ForcedStandardLibraries              *TagHL-ForcedStandardLibraries*
 		Any standard library names that are listed in this option will be
@@ -555,6 +563,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		see |TagHighlight-standard-libraries|.
 
 		Option Type: List
+		Default: [] (empty list)
 
 	IncludeLocals                        *TagHL-IncludeLocals*
 		If set to True or 1, local variables will be included in the types
@@ -566,6 +575,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		but I'd be interested to hear from anyone who has a good suggestion.
 
 		Option Type: Boolean
+		Default: False
 
 	IncludeSynMatches                    *TagHL-IncludeSynMatches*
 		If set to True or 1, tags that cannot be highlighted with the Vim
@@ -576,6 +586,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		caution.
 
 		Option Type: Boolean
+		Default: False
 
 	Languages                            *TagHL-Languages*
 		By default, when |:UpdateTypesFile| is run, any files that ctags
@@ -588,6 +599,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		set this option to ["c","python"].
 
 		Option Type: List
+		Default: [] (check all supported languages)
 
 	ParsingSkipList                      *TagHL-ParsingSkipList*
 		If you're editing a lot of files and for most you want tag highlight
@@ -596,6 +608,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		highlighter will not be loaded for those files.
 
 		Option Type: List
+		Default: [] (load types highlighter for all files)
 
 	PathToPython                         *TagHL-PathToPython*
 		When using the python variant "python" but with python not in the
@@ -603,6 +616,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		executable.  See |TagHL-PythonVariantPriority| for more information.
 
 		Option Type: String
+		Default: None (look in path if required)
 
 	PreReadHooks                         *TagHL-PreReadHooks*
 		Any function names that are listed in this option will be called
@@ -616,6 +630,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		definition file (see |TagHighlight-add-example|.
 
 		Option Type: List
+		Default: [] (no hooks)
 
 	PostReadHooks                        *TagHL-PostReadHooks*
 		Any function names that are listed in this option will be called
@@ -629,6 +644,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		definition file (see |TagHighlight-add-example|.
 
 		Option Type: List
+		Default: [] (no hooks)
 
 	PreUpdateHooks                       *TagHL-PreUpdateHooks*
 		Any function names that are listed in this option will be called
@@ -639,6 +655,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		case!  The function takes no arguments.
 
 		Option Type: List
+		Default: [] (no hooks)
 
 	PostUpdateHooks                      *TagHL-PostUpdateHooks*
 		Any function names that are listed in this option will be called
@@ -649,6 +666,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		The function takes no arguments.
 
 		Option Type: List
+		Default: [] (no hooks)
 
 	ProjectConfigFileDirModePriority     *TagHL-ProjectConfigFileDirModePriority*
 		This option is used to determine which directories to look in for a
@@ -656,6 +674,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		details.
 
 		Option Type: List
+		Default: ["Default"] (use DefaultDirModePriority value)
 
 	ProjectConfigFileDirectory           *TagHL-ProjectConfigFileDirectory*
 		If the dir mode priority for project config files (see the option
@@ -664,12 +683,14 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		unconditionally if the option has been set.
 
 		Option Type: String
+		Default: None (no explicit directory)
 
 	ProjectConfigFileName                *TagHL-ProjectConfigFileName*
 		This option allows customisation of the file name for project
 		configuration files.  The default file name is taghl_config.txt.
 
 		Option Type: String
+		Default: "taghl_config.txt"
 
 	PythonVariantPriority                *TagHL-PythonVariantPriority*
 		The python part of |TagHighlight| can be run in a number of ways,
@@ -703,6 +724,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 					  guide for more information: |TagHighlight-install|.
 
 		Option Type: List
+		Default: ["if_pyth3", "if_pyth", "python", "compiled"]
 
 	Recurse                              *TagHL-Recurse*
 		If this option is set to True or 1, any call to |:UpdateTypesFile|
@@ -714,6 +736,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		scanned.
 
 		Option Type: Boolean
+		Default: False (don't recurse)
 
 	SkipPatterns                         *TagHL-SkipPatterns*
 		Any (python) regular expressions listed in this option will be matched
@@ -723,6 +746,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		variables MyVarOne, MyVar, MyVariable, Number0, Number10 etc.
 
 		Option Type: List
+		Default: [] (no patterns)
 
 	SkipVimKeywords                      *TagHL-SkipVimKeywords*
 		As well as being unable to use "syn keyword" for tag names that
@@ -734,6 +758,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		option to True or 1.  See also |TagHL-IncludeSynMatches|.
 
 		Option Type: Boolean
+		Default: False (include Vim keywords)
 
 	SourceDir                            *TagHL-SourceDir*
 		If this option is set to an explicit directory, that directory will be
@@ -746,6 +771,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		used.
 
 		Option Type: String
+		Default: None (use normal scanning method)
 
 	TagFileDirModePriority               *TagHL-TagFileDirModePriority*
 		This option is used to determine which directories to look in for a
@@ -753,6 +779,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		tags.  See |TagHL-DefaultDirModePriority| for details.
 
 		Option Type: List
+		Default: ["Default"] (use DefaultDirModePriority value)
 
 	TagFileDirectory                     *TagHL-TagFileDirectory*
 		If the dir mode priority for tag files (see the option
@@ -761,6 +788,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		option has been set.
 
 		Option Type: String
+		Default: None (no explicit directory)
 
 	TagFileName                          *TagHL-TagFileName*
 		By default, the file generated by ctags containing the tags
@@ -768,6 +796,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		this, adjust this option appropriately.
 
 		Option Type: String
+		Default: "tags"
 
 	TypesFileDirModePriority             *TagHL-TypesFileDirModePriority*
 		This option is used to determine which directories to look in for a
@@ -776,6 +805,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		|TagHL-DefaultDirModePriority| for details.
 
 		Option Type: List
+		Default: ["Default"] (use DefaultDirModePriority value)
 
 	TypesFileDirectory                   *TagHL-TypesFileDirectory*
 		If the dir mode priority for types highlighter files (see the option
@@ -784,6 +814,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		option has been set.
 
 		Option Type: String
+		Default: None (no explicit directory)
 
 	TypesFileExtension                   *TagHL-TypesFileExtension*
 		By default, types highlighter files have taghl as an extension.  With
@@ -801,6 +832,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		an explicit filename, but I would discourage this.
 
 		Option Type: String
+		Default: "taghl"
 
 	TypesFileLocation                    *TagHL-TypesFileLocation*
 		Used internally to tell the python part of the application where the
@@ -814,6 +846,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		|TagHL-TypesFilePrefix| and |TagHL-TypesFileExtension|.
 
 		Option Type: String
+		Default: None (use normal rules for generating file name)
 
 	TypesFilePrefix                      *TagHL-TypesFilePrefix*
 		Use this to configure the prefix of the generated (and read) types
@@ -821,6 +854,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		information.
 
 		Option Type: String
+		Default: "types"
 
 	UserLibraries                        *TagHL-UserLibraries*
 		If you have some libraries that are used by your code, but which are
@@ -835,6 +869,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		set this option to ["mylibrary.taghl"].
 
 		Option Type: List
+		Default: [] (no user libraries)
 
 	UserLibraryDir                       *TagHL-UserLibraryDir*
 		Location of libraries specified with relative paths in the option
@@ -842,6 +877,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		more information.
 
 		Option Type: String
+		Default: "." (use current directory)
 
 ------------------------------------------------------------------------------
 
@@ -1166,6 +1202,9 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 ==============================================================================
 7. TagHighlight History                *TagHighlight-history*               {{{1
+
+2.0.6: xxth XXXX 2011      : Included description of defaults in
+                             documentation.
 
 2.0.5: 28th July 2011      : Bug fix in Java special handler.  Added
                              description of how to add languages not supported

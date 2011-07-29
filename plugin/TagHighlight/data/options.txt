@@ -179,7 +179,7 @@ source_root:
 	CommandLineSwitches:-d,--source-root
 	VimOptionMap:SourceDir
 	Type:string
-	Default:.
+	Default:None
 	Help:Location of source files to scan
 
 recurse:
