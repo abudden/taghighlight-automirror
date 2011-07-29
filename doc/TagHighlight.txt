@@ -222,15 +222,15 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		colons used to delimit keys and values.  A simple example would
 		look like this:
 >
-		Recurse:True
-		SkipPatterns:Skip.*,AnotherPattern\d+
-		IncludeLocals:1
-		UserLibraryDir:c:/user_libraries
-		PythonVariantPriority:
-			if_pyth
-			if_pyth3
-			python
-			compiled
+			Recurse:True
+			SkipPatterns:Skip.*,AnotherPattern\d+
+			IncludeLocals:1
+			UserLibraryDir:c:/user_libraries
+			PythonVariantPriority:
+				if_pyth
+				if_pyth3
+				python
+				compiled
 <
 		Most lines start with an option name (there is no leading
 		whitespace on these lines).  The option name is everything up to
