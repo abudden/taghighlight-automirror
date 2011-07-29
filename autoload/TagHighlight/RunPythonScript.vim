@@ -23,6 +23,23 @@ let g:loaded_TagHLRunPythonScript = 1
 
 let s:python_variant = 'None'
 
+" A simply python script that will try to import the print function
+" and will fail gracefully if the python version is too old.  It's
+" unlikely that the sys.hexversion check will ever fail as if the version
+" is older than 2.6, the import_check will have failed.  I've left it in,
+" however, in case I ever need to depend on 2.7
+let s:version_and_future_check = 
+			\ "try:\n" .
+			\ "    import import_check\n" .
+			\ "    import vim\n" .
+			\ "    import sys\n" .
+			\ "    vim.command('''let g:taghl_python_version = '%s' ''' % sys.version)\n" .
+			\ "    if sys.hexversion < 0x02060000:\n" .
+			\ "        raise ValueError('Incorrect python version')\n" .
+			\ "    vim.command('let g:taghl_python_operational = 1')\n" .
+			\ "except:\n" .
+			\ "    pass\n"
+
 " This script is responsible for finding a means of running the python app.
 " If vim is compiled with python support (and we can run a simple test
 " command), use that method.  If not, but python is in the path, use it to
@@ -68,10 +85,7 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 	echomsg "Using variant: " .s:python_variant
 
 	if index(["if_pyth","if_pyth3"], s:python_variant) != -1
-		let add_to_py_path = substitute(g:TagHighlightPrivate['PluginPath'], '\\', '/','g')
 		let PY = s:python_cmd[0]
-		exe PY 'import sys'
-		exe PY 'sys.path = ["'.add_to_py_path.'"] + sys.path'
 		exe PY 'from module.utilities import TagHighlightOptionDict' 
 		exe PY 'from module.worker import RunWithOptions'
 		exe PY 'options = TagHighlightOptionDict()'
@@ -177,28 +191,6 @@ function! TagHighlight#RunPythonScript#FindExeInPath(file)
 	return file_exe
 endfunction
 
-function! TagHighlight#RunPythonScript#GetPythonVersion()
-	" Assumes that python path is set correctly
-	if s:python_variant == 'if_pyth3'
-		py3 import sys
-		py3 vim.command('let g:taghl_getpythonversion = "{0}"'.format(sys.version))
-		let pyversion = g:taghl_getpythonversion
-		unlet g:taghl_getpythonversion
-	elseif s:python_variant == 'if_pyth'
-		py import sys
-		py vim.command('let g:taghl_getpythonversion = "%s"' % sys.version)
-		let pyversion = g:taghl_getpythonversion
-		unlet g:taghl_getpythonversion
-	elseif s:python_variant == 'python'
-		let pyversion = s:RunShellCommand([s:python_path,"--version"])
-	elseif s:python_variant == 'compiled'
-		let pyversion = s:RunShellCommand([s:python_path,"--pyversion"])
-	else
-		let pyversion = 'ERROR'
-	endif
-	return pyversion
-endfunction
-
 function! TagHighlight#RunPythonScript#FindPython()
 	let forced_variant = TagHighlight#Option#GetOption('ForcedPythonVariant')
 	" Supported variants
@@ -216,6 +208,7 @@ function! TagHighlight#RunPythonScript#FindPython()
 	endif
 
 	let s:python_variant = 'None'
+	let s:python_version = 'Unknown'
 	let s:python_cmd = []
 	let s:python_path = ""
 
@@ -227,6 +220,8 @@ function! TagHighlight#RunPythonScript#FindPython()
 	let s:stored_forced_variant = forced_variant
 	let s:stored_variant_priority = variant_priority
 
+	let add_to_py_path = substitute(g:TagHighlightPrivate['PluginPath'], '\\', '/','g')
+
 	" Make sure that all variants in the priority list are supported
 	call filter(variant_priority, 'index(supported_variants, v:val) != -1')
 
@@ -237,12 +232,20 @@ function! TagHighlight#RunPythonScript#FindPython()
 				" Check whether the python 3 interface works
 				let g:taghl_findpython_testvar = 0
 				try
+					py3 import sys
+					exe 'py3 sys.path = ["'.add_to_py_path.'"] + sys.path'
+					let g:taghl_python_operational = 0
+					exe 'py3' s:version_and_future_check
 					py3 import vim
-					py3 vim.command('let g:taghl_findpython_testvar = 1')
-					if g:taghl_findpython_testvar != 1
+
+					if g:taghl_python_operational != 1
 						throw "Python doesn't seem to be working"
 					endif
-					unlet g:taghl_findpython_testvar
+					let s:python_version = g:taghl_python_version
+					unlet g:taghl_python_operational
+					unlet g:taghl_python_version
+
+					" If we got this far, it should be working
 					let s:python_variant = 'if_pyth3'
 					let s:python_cmd = ['py3']
 				endtry
@@ -250,12 +253,20 @@ function! TagHighlight#RunPythonScript#FindPython()
 				" Check whether the python 2 interface works
 				let g:taghl_findpython_testvar = 0
 				try
+					py import sys
+					exe 'py sys.path = ["'.add_to_py_path.'"] + sys.path'
+					let g:taghl_python_operational = 0
+					exe 'py' s:version_and_future_check
 					py import vim
-					py vim.command('let g:taghl_findpython_testvar = 1')
-					if g:taghl_findpython_testvar != 1
+
+					if g:taghl_python_operational != 1
 						throw "Python doesn't seem to be working"
 					endif
-					unlet g:taghl_findpython_testvar
+					let s:python_version = g:taghl_python_version
+					unlet g:taghl_python_operational
+					unlet g:taghl_python_version
+
+					" If we got this far, it should be working
 					let s:python_variant = 'if_pyth'
 					let s:python_cmd = ['py']
 				endtry
@@ -278,6 +289,17 @@ function! TagHighlight#RunPythonScript#FindPython()
 						let s:python_cmd = [python_path, g:TagHighlightPrivate['PluginPath'] . '/TagHighlight.py']
 					endif
 				endif
+
+				" Now run some simple test code to make sure it works correctly and
+				" is a reasonable version
+				let result = s:RunShellCommand([s:python_path, g:TagHighlightPrivate['PluginPath'] . '/version_check.py'])
+				let lines = split(result, '\n')
+				let s:python_version = lines[1]
+				if lines[0] != 'OK'
+					let s:python_variant = 'None'
+					let s:python_path = ''
+					let s:python_cmd = []
+				endif
 			elseif variant == 'compiled'
 				" See if there's a compiled executable version of the
 				" highlighter
@@ -285,12 +307,14 @@ function! TagHighlight#RunPythonScript#FindPython()
 					let compiled_highlighter = split(globpath(&rtp, "plugin/TagHighlight/Compiled/Win32/TagHighlight.exe"), "\n")
 					if len(compiled_highlighter) > 0  && executable(compiled_highlighter[0])
 						let s:python_variant = 'compiled'
+						let s:python_version = 'Compiled Highlighter'
 						let s:python_cmd = [compiled_highlighter[0]]
 					endif
 				elseif has("unix")
 					let compiled_highlighter = split(globpath(&rtp, "plugin/TagHighlight/Compiled/Linux/TagHighlight"), "\n")
 					if len(compiled_highlighter) > 0  && executable(compiled_highlighter[0])
 						let s:python_variant = 'compiled'
+						let s:python_version = 'Compiled Highlighter'
 						let s:python_cmd = [compiled_highlighter[0]]
 					endif
 				endif
@@ -309,12 +333,11 @@ function! TagHighlight#RunPythonScript#FindPython()
 			echomsg "Python variant is " . s:python_variant
 			echomsg "Python Command is " . join(s:python_cmd, " ")
 			echomsg "Python Path is " . s:python_path
-			let pyversion = TagHighlight#RunPythonScript#GetPythonVersion()
-			call TagHighlight#Debug#Print("Python version reported as: " . pyversion,
+			call TagHighlight#Debug#Print("Python version reported as: " . s:python_version,
 						\ 'Information')
 		endif
 	else
-		throw "Tag highlighter: could not find python or the compiled version of the highlighter."
+		throw "Tag highlighter: could not find python (2.6+) or the compiled version of the highlighter."
 	endif
 
 	return s:python_variant
