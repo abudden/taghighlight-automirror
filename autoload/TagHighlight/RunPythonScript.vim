@@ -248,6 +248,8 @@ function! TagHighlight#RunPythonScript#FindPython()
 					" If we got this far, it should be working
 					let s:python_variant = 'if_pyth3'
 					let s:python_cmd = ['py3']
+				catch
+					" TODO: Debug message
 				endtry
 			elseif variant == 'if_pyth' && has('python')
 				" Check whether the python 2 interface works
@@ -269,6 +271,8 @@ function! TagHighlight#RunPythonScript#FindPython()
 					" If we got this far, it should be working
 					let s:python_variant = 'if_pyth'
 					let s:python_cmd = ['py']
+				catch
+					" TODO: Debug message
 				endtry
 			elseif variant == 'python'
 				" Try calling an external python
