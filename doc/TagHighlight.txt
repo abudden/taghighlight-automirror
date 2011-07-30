@@ -1203,6 +1203,8 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 7. TagHighlight History                *TagHighlight-history*               {{{1
 
+2.0.8: 30th July 2011      : Fixed erroneous function call.
+
 2.0.7: 30th July 2011      : Bug fix for exception handling.
 
 2.0.6: 29th July 2011      : Included description of defaults in
