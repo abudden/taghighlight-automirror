@@ -55,7 +55,7 @@ function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
 	else
 		" Option set but doesn't include path separator: search
 		" in the path
-		let RunOptions['CtagsExeFull'] = TagHighlight#RunPythonScript#FindExePath(ctags_option)
+		let RunOptions['CtagsExeFull'] = TagHighlight#RunPythonScript#FindExeInPath(ctags_option)
 	endif
 
 	let tag_file_info = TagHighlight#Find#LocateFile('TAGS', '')
