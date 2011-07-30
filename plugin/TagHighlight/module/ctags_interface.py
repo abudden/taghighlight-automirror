@@ -51,7 +51,14 @@ def GenerateTags(options):
 
     #subprocess.call(" ".join(ctags_cmd), shell = (os.name != 'nt'))
     # shell=True stops the command window popping up
-    process = subprocess.Popen(ctags_cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)#, shell=True)
+    # We don't use stdin, but have to define it in order
+    # to get round python bug 3905
+    # http://bugs.python.org/issue3905
+    process = subprocess.Popen(ctags_cmd,
+            stdin=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            stdout=subprocess.PIPE
+            )#, shell=True)
     (sout, serr) = process.communicate()
 
     tagFile = open(os.path.join(options['ctags_file_dir'], options['ctags_file']), 'r')
