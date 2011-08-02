@@ -1,7 +1,7 @@
 *TagHighlight.txt*       Tag Highlighting
 
 Author:     A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
-		Remove NOSPAM.
+			Remove NOSPAM.
 
 Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
             Permission is hereby granted to use and distribute this code,
@@ -24,8 +24,9 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	2.3   Colouring                          |TagHighlight-colours|
 	2.4   Configuration                      |TagHighlight-config|
 	2.4.1 How to Set Options                 |TagHighlight-how-options|
-	2.4.2 Option Summary                     |TagHighlight-option-list|
-	2.4.3 Option Details                     |TagHighlight-option-details|
+	2.4.2 Example Configurations             |TagHighlight-example-configs||
+	2.4.3 Option Summary                     |TagHighlight-option-list|
+	2.4.4 Option Details                     |TagHighlight-option-details|
 	2.5   Installation                       |TagHighlight-install|
 	2.5.1 Requirements                       |TagHighlight-requirements|
 	2.5.2 Installation Guide                 |TagHighlight-install-guide|
@@ -256,7 +257,103 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		the description for |g:TagHighlightSettings| for usage
 		instructions.
 
-2.4.2 Option Summary                     *TagHighlight-option-list*         {{{3
+2.4.2 Example Configurations             *TagHighlight-example-configs*     {{{3
+
+	Introduction                                                          {{{4
+		
+		This section contains a few examples of configurations that may be
+		useful.  It is hoped that most users will be able to use TagHighlight
+		without setting any options at all, but these give some examples of
+		some more complex scenarios.
+	
+	Trivial Configuration                                                 {{{4
+
+		Use case: User has source code placed in multiple subdirectories and
+		          either has the current directory to be the project root or
+		          rarely deletes the tags file that is generated.
+
+		Implementation:
+
+			First time round, use |:cd| to get to the project root and run:
+>
+				:UpdateTypesFile!
+<
+			After the first run, you can open any source file in the project,
+			with the current directory set anywhere you like; the existing
+			tags file will be found and the location of that will be used as
+			the project root.
+
+	Low Complexity                                                        {{{4
+
+		Use case: User has source code configured in multiple subdirectories;
+		          rarely has the current directory set to the project root and
+		          deletes the tags and types files often and therefore wishes
+		          to fix the working directory to be the project root.  User
+		          would also like to make |TagHL-Recurse| the default, so that
+		          they can run |:UpdateTypesFile| instead of |:UpdateTypesFile!|.
+		          User project uses Qt4, so the user would like the classes
+		          etc from Qt4 (e.g. QString) to be highlighted.
+
+		Implementation:
+			
+			Make sure that you have installed the standard libraries (see 
+			|TagHighlight-install-stdlib|).  The Qt4 library will be loaded
+			automatically.  Create a file called taghl_config.txt in the root
+			of the project.  In that file, add one line (no leading spaces):
+>
+				Recurse:True
+<
+			No other configuration should be necessary; just run:
+>
+				:UpdateTypesFile
+<
+	Medium Complexity                                                     {{{4
+
+		Use case: User has (C) source code in the current directory; project
+				  uses an external library (stored elsewhere on the hard disk)
+				  but user would like to highlight the keywords from the user
+				  library as well as the keywords from the main project.  User
+				  is running a version of Vim with dynamic support for BOTH
+				  python2 and python3, but would like to use python 2 by
+				  preference.  User would like to include local variables in
+				  the highlighted keyword list.  Exuberant ctags is installed
+				  in the system path with executable name 'etags'.
+
+		Implementation:
+
+			First of all, we'll set TagHighlight up to use python 2 via the
+			python interface and to recognise the non-standard ctags
+			executable name.  In vimrc, add the following lines:
+>
+				if ! exists('g:TagHighlightSettings')
+					let g:TagHighlightSettings = {}
+				endif
+				let g:TagHighlightSettings['ForcedPythonVariant'] = 'if_pyth'
+				let g:TagHighlightSettings['CtagsExecutable'] = 'etags'
+<
+			Next, generate the types highlighter for the library.  Let's
+			assume that the library is stored in /home/user/libraries/lib1.
+			Open up a new Vim and type:
+>
+				:cd /home/user/libraries/lib1
+				:UpdateTypesFile!
+<
+			That should create a file called types_c.taghl in the library
+			directory.
+
+			Now, create a project config file in the project directory.  The
+			file should be called taghl_config.txt.  In that file, add the
+			following lines (no leading whitespace):
+>
+				IncludeLocals:True
+				UserLibraries:/home/user/libraries/lib1/types_c.taghl
+<
+			Open any source file in the project and run:
+>
+				:UpdateTypesFile
+<
+
+2.4.3 Option Summary                     *TagHighlight-option-list*         {{{3
 
 	There are a lot of options for TagHighlight.  They are mentioned in this
 	section, grouped by their purpose.  You can find an alphabetical list with
@@ -315,7 +412,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		DoNotGenerateTags                Link:|TagHL-DoNotGenerateTags|
 		   Don't generate tags (use an existing tags file).
 
-	How to Run The Python App:
+	How to Run Python and Ctags:
 
 		ForcedPythonVariant              Link:|TagHL-ForcedPythonVariant|
 		   Specify specific python variant to use.
@@ -325,6 +422,9 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 		PythonVariantPriority            Link:|TagHL-PythonVariantPriority|
 		   Specify priority order of different python variants.
+
+		CtagsExecutable                  Link:|TagHL-CtagsExecutable|
+		   Specify the name of (or full path to) exuberant ctags.
 
 	Locations of Files (normal):
 
@@ -406,16 +506,13 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		CtagsExeFull                     Link:|TagHL-CtagsExeFull|
 			Internal use only.
 
-		CtagsExecutable                  Link:|TagHL-CtagsExecutable|
-		   Internal use only.
-
 		CtagsFileLocation                Link:|TagHL-CtagsFileLocation|
 		   Internal use only.
 
 		TypesFileLocation                Link:|TagHL-TypesFileLocation|
 		   Internal use only.
 
-2.4.3 Option Details                     *TagHighlight-option-details*      {{{3
+2.4.4 Option Details                     *TagHighlight-option-details*      {{{3
 
 	CtagsExeFull                         *TagHL-CtagsExeFull*
 		Used internally to tell the python part of the application where ctags
@@ -1213,6 +1310,9 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 ==============================================================================
 7. TagHighlight History                *TagHighlight-history*               {{{1
+
+2.0.11: 2nd August 2011    : Added some example configurations to the
+                             documentation.
 
 2.0.10: 2nd August 2011    : Added extensive debug stuff.
 
