@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    25/07/2011
+"   Date:    02/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -21,14 +21,14 @@ catch
 endtry
 let g:loaded_TagHighlight = 1
 
-"let old_versions = globpath(&rtp, 'plugin/ctags_highlighting.vim')
-"if len(old_versions) > 0
-"	echoerr "Legacy ctags highlighter found.  This highlighter is"
-"				\ "intended to replace ctags_highlighter.  See the"
-"				\ "user documentation in doc/TagHighlight.txt for"
-"				\ "more information."
-"	finish
-"endif
+let old_versions = globpath(&rtp, 'plugin/ctags_highlighting.vim')
+if len(old_versions) > 0
+	echoerr "Legacy ctags highlighter found.  This highlighter is"
+				\ "intended to replace ctags_highlighter.  See the"
+				\ "user documentation in doc/TagHighlight.txt for"
+				\ "more information."
+	finish
+endif
 
 if ! exists('g:TagHighlightSettings')
 	let g:TagHighlightSettings = {}
@@ -61,6 +61,8 @@ command! -bang -bar UpdateTypesFileOnly
 			\ silent tabdo windo call TagHighlight#ReadTypes#ReadTypesAutoDetect() |
 			\ silent exe 'tabn ' . s:SavedTabNr |
 			\ silent exe s:SavedWinNr . "wincmd w"
+
+command! -nargs=1 UpdateTypesFileDebug call TagHighlight#Debug#DebugUpdateTypesFile(<f-args>)
 
 function! s:LoadLanguages()
 	" This loads the language data files.
@@ -97,6 +99,29 @@ function! s:LoadKinds()
 		endfor
 	endfor
 	let g:TagHighlightPrivate['AllTypes'] = sort(keys(tag_names_dict))
+endfunction
+
+function! TagHLDebug(str, level)
+	let level_index = index(g:TagHighlight#Debug#DebugLevels, a:level)
+	if level_index == -1
+		level_index = index(g:TagHighlight#Debug#DebugLevels, 'Critical')
+	endif
+	if level_index <= TagHighlight#Debug#GetDebugLevel()
+		try
+			let debug_file = TagHighlight#Option#GetOption('DebugFile')
+		catch /Unrecognised option/
+			" Probably haven't loaded the option definitions
+			" yet, so assume no debug log file
+			let debug_file = 'None'
+		endtry
+		if debug_file == 'None'
+			echomsg a:str
+		else
+			exe 'redir >>' debug_file
+			silent echo a:str
+			redir END
+		endif
+	endif
 endfunction
 
 call s:LoadLanguages()

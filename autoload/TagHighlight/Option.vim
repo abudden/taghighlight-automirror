@@ -21,9 +21,6 @@ catch
 endtry
 let g:loaded_TagHLOption = 1
 
-" TODO: Options should be customisable per project (following the same method
-" as looking for tags/types... look for options file).
-
 let s:log_defaults = 1
 let g:TagHighlightOptionDefaults = {}
 

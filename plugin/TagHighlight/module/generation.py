@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Tag Highlighter:
 #   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-#   Date:    25/07/2011
+#   Date:    02/08/2011
 # Copyright: Copyright (C) 2009-2011 A. S. Budden
 #            Permission is hereby granted to use and distribute this code,
 #            with or without modifications, provided that this copyright
@@ -17,6 +17,7 @@ from __future__ import print_function
 import os
 import re
 from .utilities import GenerateValidKeywordRange, IsValidKeyword
+from .debug import Debug
 
 vim_synkeyword_arguments = [
         'contains',
@@ -37,14 +38,13 @@ def CreateTypesFile(options, language, tags):
     tag_types = list(tags.keys())
     tag_types.sort()
 
-    print("Writing types file\n")
+    Debug("Writing types file", "Information")
 
     language_handler = options['language_handler'].GetLanguageHandler(language)
 
     if options['check_keywords']:
         iskeyword = GenerateValidKeywordRange(language_handler['IsKeyword'])
-        if options['print_debug']:
-            print("Is Keyword is {0!r}".format(iskeyword))
+        Debug("Is Keyword is {0!r}".format(iskeyword), "Information")
 
     matchEntries = set()
     vimtypes_entries = []
@@ -113,8 +113,8 @@ def CreateTypesFile(options, language, tags):
                                 matchDone = True
                                 break
 
-                    if not matchDone and options['debug_level'] == 'Information':
-                        print("Skipping keyword '" + keyword + "'")
+                    if not matchDone:
+                        Debug("Skipping keyword '" + keyword + "'", "Information")
 
                     continue
 
@@ -152,14 +152,14 @@ def CreateTypesFile(options, language, tags):
     else:
         type_file_name = options['types_file_prefix'] + '_' + language_handler['Suffix'] + '.' + options['types_file_extension']
     filename = os.path.join(options['types_file_location'], type_file_name)
-    print("Filename is {0}\n".format(filename))
+    Debug("Filename is {0}\n".format(filename), "Information")
 
     try:
         # Have to open in binary mode as we want to write with Unix line endings
         # The resulting file will then work with any Vim (Windows, Linux, Cygwin etc)
         fh = open(filename, 'wb')
     except IOError:
-        sys.stderr.write("ERROR: Couldn't create {file}\n".format(file=outfile))
+        Debug("ERROR: Couldn't create {file}\n".format(file=outfile), "Error")
         sys.exit(1)
 
     try:
@@ -167,11 +167,11 @@ def CreateTypesFile(options, language, tags):
             try:
                 fh.write(line.encode('ascii'))
             except UnicodeDecodeError:
-                print("Error decoding line '{0!r}'".format(line))
+                Debug("Error decoding line '{0!r}'".format(line), "Error")
                 fh.write('echoerr "Types generation error"\n'.encode('ascii'))
             fh.write('\n'.encode('ascii'))
     except IOError:
-        sys.stderr.write("ERROR: Couldn't write {file} contents\n".format(file=outfile))
+        Debug("ERROR: Couldn't write {file} contents\n".format(file=outfile), "Error")
         sys.exit(1)
     finally:
         fh.close()

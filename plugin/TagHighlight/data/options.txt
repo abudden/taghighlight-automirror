@@ -175,6 +175,13 @@ debug_level:
 	Default:Error
 	Help:Debug level for printing (how much debug output to produce)
 
+debug_file:
+	CommandLineSwitches:--debug-file
+	VimOptionMap:DebugFile
+	Type:string
+	Default:None
+	Help:Debug log file into which messages should be stored
+
 source_root:
 	CommandLineSwitches:-d,--source-root
 	VimOptionMap:SourceDir
@@ -309,11 +316,5 @@ print_config:
 	Type:bool
 	Default:False
 	Help:Parse the various options and then print the configuration and exit (for debugging)
-
-print_debug:
-	CommandLineSwitches:--print-debug
-	Type:bool
-	Default:False
-	Help:Print debug to console.
 
 # vim: ff=unix:noet

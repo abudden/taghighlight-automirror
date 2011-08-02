@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    30/07/2011
+"   Date:    02/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -67,7 +67,7 @@ function! s:RunShellCommand(args)
 			let syscmd .= arg
 		endif
 	endfor
-	echomsg syscmd
+	call TagHLDebug(syscmd, "Information")
 	let result = system(syscmd)
 	echo result
 	return result
@@ -82,7 +82,7 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 	" changed.
 	call TagHighlight#RunPythonScript#FindPython()
 
-	echomsg "Using variant: " .s:python_variant
+	call TagHLDebug("Using variant: " .s:python_variant, "Information")
 
 	if index(["if_pyth","if_pyth3"], s:python_variant) != -1
 		let PY = s:python_cmd[0]
@@ -120,7 +120,7 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 		endfor
 		for check_opt in keys(a:options)
 			if index(handled_options, check_opt) == -1
-				echomsg "Unhandled run option: " . check_opt
+				call TagHLDebug("Unhandled run option: " . check_opt, "Information")
 			endif
 		endfor
 		exe PY 'RunWithOptions(options)'
@@ -141,7 +141,7 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 				elseif switch[:0] == "-"
 					let as_one = 0
 				else
-					echoerr "Invalid configuration for option " . option['VimOptionMap']
+					call TagHLDebug("Invalid configuration for option " . option['VimOptionMap'], "Error")
 				endif
 				" We can handle this one automatically
 				if option['Type'] == 'bool'
@@ -249,7 +249,7 @@ function! TagHighlight#RunPythonScript#FindPython()
 					let s:python_variant = 'if_pyth3'
 					let s:python_cmd = ['py3']
 				catch
-					" TODO: Debug message
+					call TagHLDebug("Cannot use python3 interface", "Status")
 				endtry
 			elseif variant == 'if_pyth' && has('python')
 				" Check whether the python 2 interface works
@@ -272,7 +272,7 @@ function! TagHighlight#RunPythonScript#FindPython()
 					let s:python_variant = 'if_pyth'
 					let s:python_cmd = ['py']
 				catch
-					" TODO: Debug message
+					call TagHLDebug("Cannot use python2 interface", "Status")
 				endtry
 			elseif variant == 'python'
 				" Try calling an external python
@@ -332,14 +332,11 @@ function! TagHighlight#RunPythonScript#FindPython()
 	endfor
 
 	if s:python_variant != 'None'
-		" Consider checking that it's valid
-		if TagHighlight#Debug#GetDebugLevelName() == 'Information'
-			echomsg "Python variant is " . s:python_variant
-			echomsg "Python Command is " . join(s:python_cmd, " ")
-			echomsg "Python Path is " . s:python_path
-			call TagHighlight#Debug#Print("Python version reported as: " . s:python_version,
-						\ 'Information')
-		endif
+		call TagHLDebug("Python variant is " . s:python_variant, "Information")
+		call TagHLDebug("Python Command is " . join(s:python_cmd, " "), "Information")
+		call TagHLDebug("Python Path is " . s:python_path, "Information")
+		call TagHLDebug("Python version reported as: " . s:python_version,
+					\ 'Information')
 	else
 		throw "Tag highlighter: could not find python (2.6+) or the compiled version of the highlighter."
 	endif

@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    25/07/2011
+"   Date:    02/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -23,7 +23,7 @@ let g:loaded_TagHLReadTypes = 1
 
 function! TagHighlight#ReadTypes#ReadTypesAutoDetect()
 	let extension = expand('%:e')
-	" echomsg "Reading types for extension " . extension
+	call TagHLDebug("Reading types for extension " . extension, "Information")
 	for key in keys(g:TagHighlightPrivate['ExtensionLookup'])
 		let regex = '^'.key.'$'
 		if extension =~ regex
@@ -42,10 +42,10 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 		let file = '%'
 	endif
 
-	" echomsg "Reading types of suffix " . a:suffix . " for file " . file
+	call TagHLDebug("Reading types of suffix " . a:suffix . " for file " . file, "Information")
 
 	if TagHighlight#Option#GetOption('DisableTypeParsing') == 1
-		call TagHighlight#Debug#Print("Type file parsing disabled", 'Status')
+		call TagHLDebug("Type file parsing disabled", 'Status')
 		return
 	endif
 
@@ -55,11 +55,11 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 	if len(skiplist) > 0
 		let basename = expand(file . ':p:t')
 		if index(skiplist, basename) != -1
-			call TagHighlight#Debug#Print("Skipping file due to basename match", 'Status')
+			call TagHLDebug("Skipping file due to basename match", 'Status')
 			return
 		endif
 		if index(skiplist, fullname) != -1
-			call TagHighlight#Debug#Print("Skipping file due to fullname match", 'Status')
+			call TagHLDebug("Skipping file due to fullname match", 'Status')
 			return
 		endif
 	endif
@@ -67,10 +67,11 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 	" Call Pre Read hooks (if any)
 	let preread_hooks = TagHighlight#Option#GetOption('PreReadHooks')
 	for preread_hook in preread_hooks
+		call TagHLDebug("Calling pre-read hook " . preread_hook, 'Information')
 		exe 'call' preread_hook . '(fullname, a:suffix)'
 	endfor
 
-	call TagHighlight#Debug#Print("Searching for types file", 'Status')
+	call TagHLDebug("Searching for types file", 'Status')
 
 	" Clear any existing syntax entries
 	for group in g:TagHighlightPrivate['AllTypes']
@@ -81,6 +82,7 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 	
 	let type_files = TagHighlight#ReadTypes#FindTypeFiles(a:suffix)
 	for fname in type_files
+		call TagHLDebug("Loading type highlighter file " . fname, 'Information')
 		exe 'so' fname
 		let b:TagHighlightLoadedLibraries +=
 					\ [{
@@ -93,6 +95,7 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 	" Load user libraries
 	let user_library_files = TagHighlight#Libraries#FindUserLibraries()
 	for lib in user_library_files
+		call TagHLDebug("Loading user library type highlighter file " . lib['Path'], 'Information')
 		exe 'so' lib['Path']
 		let b:TagHighlightLoadedLibraries += [lib]
 	endfor
@@ -100,6 +103,7 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 	" Now load any libraries that are relevant
 	let library_files = TagHighlight#Libraries#FindLibraryFiles(a:suffix)
 	for lib in library_files
+		call TagHLDebug("Loading standard library type highlighter file " . lib['Path'], 'Information')
 		exe 'so' lib['Path']
 		let b:TagHighlightLoadedLibraries += [lib]
 	endfor
@@ -107,6 +111,7 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 	" Handle any special cases
 	if has_key(g:TagHighlightPrivate['SpecialSyntaxHandlers'], a:suffix)
 		for handler in g:TagHighlightPrivate['SpecialSyntaxHandlers'][a:suffix]
+			call TagHLDebug("Calling special handler " . handler, 'Information')
 			exe 'call' handler . '()'
 		endfor
 	endif
@@ -114,6 +119,7 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 	" Call Post Read Hooks (if any)
 	let postread_hooks = TagHighlight#Option#GetOption('PostReadHooks')
 	for postread_hook in postread_hooks
+		call TagHLDebug("Calling post-read hook " . postread_hook, 'Information')
 		exe 'call' postread_hook . '(fullname, a:suffix)'
 	endfor
 
@@ -123,8 +129,6 @@ endfunction
 
 function! TagHighlight#ReadTypes#FindTypeFiles(suffix)
 	let results = []
-	" TODO: Currently only searches for a single types file; doesn't look
-	"       for library files
 	let search_result = TagHighlight#Find#LocateFile('TYPES', a:suffix)
 	if search_result['Found'] == 1 && search_result['Exists'] == 1
 		let results += [search_result['FullPath']]

@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    25/07/2011
+"   Date:    02/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -31,7 +31,13 @@ let TagHighlight#Debug#DebugLevels = [
 			\ ]
 
 function! TagHighlight#Debug#GetDebugLevel()
-	let debug_level = TagHighlight#Option#GetOption('DebugLevel')
+	try
+		let debug_level = TagHighlight#Option#GetOption('DebugLevel')
+	catch /Unrecognised option/
+		" Probably loading the option file, so no debug level available
+		" yet, so assume 'Information'
+		let debug_level = 'Information'
+	endtry
 	let debug_num = index(g:TagHighlight#Debug#DebugLevels, debug_level)
 	if debug_num != -1
 		return debug_num
@@ -45,12 +51,22 @@ function! TagHighlight#Debug#GetDebugLevelName()
 	return g:TagHighlight#Debug#DebugLevels[debug_level_num]
 endfunction
 
-function! TagHighlight#Debug#Print(str, level)
-	let level_index = index(g:TagHighlight#Debug#DebugLevels, a:level)
-	if level_index == -1
-		level_index = index(g:TagHighlight#Debug#DebugLevels, 'Critical')
+function! TagHighlight#Debug#DebugUpdateTypesFile(filename)
+	" Update the types file with debugging turned on
+	if a:filename ==? 'None'
+		" Force case to be correct
+		let debug_file = 'None'
+	else
+		let debug_file = a:filename
 	endif
-	if level_index <= TagHighlight#Debug#GetDebugLevel()
-		echomsg a:str
-	endif
+
+	let g:TagHighlightSettings['DebugFile'] = debug_file
+	let g:TagHighlightSettings['DebugLevel'] = 'Information'
+
+	call TagHighlight#Generation#UpdateTypesFile(1, 0)
+	let s:SavedTabNr = tabpagenr()
+	let s:SavedWinNr = winnr()
+	tabdo windo call TagHighlight#ReadTypes#ReadTypesAutoDetect()
+	exe 'tabn' s:SavedTabNr
+	exe s:SavedWinNr . "wincmd w"
 endfunction

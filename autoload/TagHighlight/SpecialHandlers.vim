@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    28/07/2011
+"   Date:    02/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -22,6 +22,7 @@ endtry
 let g:loaded_TagHLSpecialHandlers = 1
 
 function! TagHighlight#SpecialHandlers#CRainbowHandler()
+	call TagHLDebug("Language handler for rainbow.vim compatibility", "Information")
 	if exists("b:hlrainbow") && ! exists("g:nohlrainbow")
 		" Use a dictionary as a set (a unique item list)
 		let hl_dict = {}
@@ -40,6 +41,7 @@ function! TagHighlight#SpecialHandlers#CRainbowHandler()
 endfunction
 
 function! TagHighlight#SpecialHandlers#JavaTopHandler()
+	call TagHLDebug("Language handler for javaTop compatibility", "Information")
 	if has_key(g:TagHighlightPrivate['Kinds'], 'java')
 		exe 'syn cluster javaTop add=' . join(values(g:TagHighlightPrivate['Kinds']['java']), ',')
 	endif

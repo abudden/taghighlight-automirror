@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Tag Highlighter:
 #   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-#   Date:    25/07/2011
+#   Date:    02/08/2011
 # Copyright: Copyright (C) 2009-2011 A. S. Budden
 #            Permission is hereby granted to use and distribute this code,
 #            with or without modifications, provided that this copyright
@@ -19,6 +19,7 @@ import os
 from optparse import Values
 from .utilities import TagHighlightOptionDict
 from .loaddata import LoadFile, LoadDataFile, SetLoadDataDirectory
+from .debug import SetDebugLogFile, SetDebugLogLevel, Debug
 
 config = TagHighlightOptionDict()
 
@@ -65,6 +66,10 @@ def SetInitialOptions(new_options):
     global config
     for key in new_options:
         config[key] = new_options[key]
+    if 'debug_level' in config:
+        SetDebugLogLevel(config['debug_level'])
+    if 'debug_file' in config:
+        SetDebugLogFile(config['debug_file'])
 
 def LoadLanguages():
     global config
@@ -79,8 +84,7 @@ def LoadLanguages():
         config['language_list'] = full_language_list
     else:
         config['language_list'] = [i for i in full_language_list if i in config['languages']]
-    if config['print_debug']:
-        print("Languages:\n\t{0!r}\n\t{1!r}".format(full_language_list, config['language_list']))
+    Debug("Languages:\n\t{0!r}\n\t{1!r}".format(full_language_list, config['language_list']), "Information")
 
 SetDataDirectories()
 LoadVersionInfo()

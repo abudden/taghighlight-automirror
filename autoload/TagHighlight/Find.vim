@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    25/07/2011
+"   Date:    02/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -54,9 +54,12 @@ let g:loaded_TagHLFind = 1
 "    ProjectConfigFileDirectory:str (NONE)
 
 function! TagHighlight#Find#LocateFile(which, suffix)
+	call TagHLDebug("Locating file " . a:which . " with suffix " . a:suffix, 'Information')
+
 	" a:which is 'TAGS', 'TYPES', 'CONFIG'
 	let default_priority = TagHighlight#Option#GetOption('DefaultDirModePriority')
 	let default_search_wildcards = TagHighlight#Option#GetOption('DefaultDirModeSearchWildcards')
+
 
 	let file = '<afile>'
 	if len(expand(file)) == 0
@@ -105,6 +108,7 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 	for search_mode in search_priority
 		if search_mode == 'Explicit' && explicit_location != 'NONE'
 			" Use explicit location, overriding everything else
+			call TagHLDebug('Using explicit location', 'Information')
 			let result['Directory'] = explicit_location
 			let result['Filename'] = filename
 		elseif search_mode == 'UpFromCurrent'
@@ -112,6 +116,7 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 			let dir = fnamemodify('.',':p:h')
 			let result = s:ScanUp(dir, search_wildcards)
 			if has_key(result, 'Directory')
+				call TagHLDebug('Found location with UpFromCurrent', 'Information')
 				let result['Filename'] = filename
 			endif
 		elseif search_mode == 'UpFromFile'
@@ -119,21 +124,27 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 			let dir = fnamemodify(file,':p:h')
 			let result = s:ScanUp(dir, search_wildcards)
 			if has_key(result, 'Directory')
+				call TagHLDebug('Found location with UpFromFile', 'Information')
 				let result['Filename'] = filename
 			endif
 		elseif search_mode == 'CurrentDirectory'
+			call TagHLDebug('Using current directory', 'Information')
 			let result['Directory'] = fnamemodify(file,':p:h')
 			let result['Filename'] = filename
 		elseif search_mode == 'FileDirectory'
+			call TagHLDebug('Using file directory', 'Information')
 			let result['Directory'] = fnamemodify(file,':p:h')
 			let result['Filename'] = filename
 		endif
 		if has_key(result, 'Directory')
 			let result['FullPath'] = result['Directory'] . '/' . result['Filename']
 			let result['Found'] = 1
+			call TagHLDebug('Found file location', 'Information')
 			if filereadable(result['FullPath'])
+				call TagHLDebug('File exists', 'Information')
 				let result['Exists'] = 1
 			else
+				call TagHLDebug('File does not exist', 'Information')
 				let result['Exists'] = 0
 			endif
 			break
@@ -141,6 +152,7 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 	endfor
 
 	if ! has_key(result, 'Directory')
+		call TagHLDebug("Couldn't find path", 'Warning')
 		let result = {'Found': 0}
 	endif
 

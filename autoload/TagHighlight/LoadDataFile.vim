@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    25/07/2011
+"   Date:    02/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -55,7 +55,7 @@ function! TagHighlight#LoadDataFile#LoadFile(filename)
 				" Clear the top key as this isn't a multi-line entry
 				let top_key = ''
 			else
-				echoerr "  Unhandled line: '" . entry . "'"
+				call TagHLDebug("  Unhandled line: '" . entry . "'", "Error")
 			endif
 		elseif entry[0] == "\t" && top_key != ''
 			" This is a continuation of a top level key
@@ -63,7 +63,7 @@ function! TagHighlight#LoadDataFile#LoadFile(filename)
 				" The key is a dictionary, check for mismatch:
 				if has_key(result, top_key)
 					if type(result[top_key]) != type({})
-						echoerr "Type mismatch on line '".entry."': expected key:value"
+						call TagHLDebug("Type mismatch on line '".entry."': expected key:value", "Error")
 					endif
 				else
 					let result[top_key] = {}
@@ -84,7 +84,7 @@ function! TagHighlight#LoadDataFile#LoadFile(filename)
 				" This is a list of strings, check for mismatch
 				if has_key(result, top_key)
 					if type(result[top_key]) != type([])
-						echoerr "Type mismatch on line '".entry."': didn't expect key:value"
+						call TagHLDebug("Type mismatch on line '".entry."': didn't expect key:value", "Error")
 					endif
 				else
 					let result[top_key] = []

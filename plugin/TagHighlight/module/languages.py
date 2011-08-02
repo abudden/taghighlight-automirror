@@ -18,6 +18,7 @@ import glob
 
 from .config import config
 from .loaddata import LoadDataFile, LoadFile, GlobData
+from .debug import Debug
 
 class Languages():
     registry = {}

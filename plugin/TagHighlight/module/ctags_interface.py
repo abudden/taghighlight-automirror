@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Tag Highlighter:
 #   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-#   Date:    25/07/2011
+#   Date:    02/08/2011
 # Copyright: Copyright (C) 2009-2011 A. S. Budden
 #            Permission is hereby granted to use and distribute this code,
 #            with or without modifications, provided that this copyright
@@ -20,6 +20,7 @@ import re
 import glob
 from .utilities import DictDict
 from .languages import Languages
+from .debug import Debug
 
 field_processor = re.compile(
 r'''
@@ -41,7 +42,7 @@ r'''
 field_const = re.compile(r'\bconst\b')
 
 def GenerateTags(options):
-    print("Generating Tags")
+    Debug("Generating Tags", "Information")
 
     args = GetCommandArgs(options)
 
@@ -117,7 +118,7 @@ def ParseTags(options):
                         if short_kind not in languages.GetLanguageHandler(key)['SkipList']:
                             ctags_entries[key][kind].add(keyword)
                     except KeyError:
-                        print("Unrecognised kind '{kind}' for language {language}".format(kind=m.group('kind'), language=key))
+                        Debug("Unrecognised kind '{kind}' for language {language}".format(kind=m.group('kind'), language=key), "Error")
     p.close()
 
     return ctags_entries
