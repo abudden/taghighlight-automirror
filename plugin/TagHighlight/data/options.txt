@@ -20,6 +20,12 @@ def_dir_mode_priority:
 	Default:Explicit,UpFromFile,CurrentDirectory
 	Help:List of methods (in order) to use when searching for tags/types etc
 
+max_dir_search_levels:
+	VimOptionMap:MaxDirSearchLevels
+	Type:int
+	Default:0
+	Help:How far up to search in UpFromFile or UpFromCurrent mode
+
 config_file_name:
 	VimOptionMap:ProjectConfigFileName
 	Type:string

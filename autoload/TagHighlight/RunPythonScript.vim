@@ -109,6 +109,9 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 				elseif option['Type'] == 'string'
 					let handled_options += [option['VimOptionMap']]
 					exe PY pyoption '= r"""'.a:options[option['VimOptionMap']].'"""'
+				elseif option['Type'] == 'int'
+					let handled_options += [option['VimOptionMap']]
+					exe PY pyoption '= ' . a:options[option['VimOptionMap']]
 				elseif option['Type'] == 'list'
 					let handled_options += [option['VimOptionMap']]
 					exe PY pyoption '= []'
@@ -150,6 +153,12 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 						let args += [switch]
 					endif
 				elseif option['Type'] == 'string'
+					if as_one == 1
+						let args += [switch . '=' . a:options[option['VimOptionMap']]]
+					else
+						let args += [switch, a:options[option['VimOptionMap']]]
+					endif
+				elseif option['Type'] == 'int'
 					if as_one == 1
 						let args += [switch . '=' . a:options[option['VimOptionMap']]]
 					else

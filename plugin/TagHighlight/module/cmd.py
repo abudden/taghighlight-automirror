@@ -41,7 +41,7 @@ def ProcessCommandLine():
                     help=AllOptions[dest]['Help'])
         else:
             optparse_type='string'
-            if AllOptions[dest]['Type'] == 'string':
+            if AllOptions[dest]['Type'] in ['string', 'int']:
                 action='store'
             elif AllOptions[dest]['Type'] == 'list':
                 action='append'

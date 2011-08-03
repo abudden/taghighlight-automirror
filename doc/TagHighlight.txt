@@ -434,6 +434,9 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		DefaultDirModePriority           Link:|TagHL-DefaultDirModePriority|
 		   Which directories to search by default.
 
+		MaxDirSearchLevels               Link:|TagHL-MaxDirSearchLevels|
+		   How far up the directory tree to search.
+
 	Location and name of Project Configuration File:
 
 		ProjectConfigFileDirModePriority Link:|TagHL-ProjectConfigFileDirModePriority|
@@ -579,7 +582,9 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 				wildcards match, it will try the parent directory and then
 				keep trying one level higher until it either finds a match or
 				reaches the top level directory (at which point the next
-				dir mode will be tried if no match is found).
+				dir mode will be tried if no match is found).  If you wish to
+				stop it searching all the way to the top level directory, you
+				can limit the number of levels with |TagHL-MaxDirSearchLevels|.
 
 			UpFromCurrent:
 				This works in the same way as UpFromFile, except that it
@@ -697,6 +702,24 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 		Option Type: List
 		Default: [] (check all supported languages)
+
+	MaxDirSearchLevels                   *TagHL-MaxDirSearchLevels*
+		When searching for a directory in which to store or from which to read
+		the project config, tags or types highlighter files, there are two
+		modes (UpFromFile and UpFromCurrent) that can be used to start in a
+		particular directory and try every directory above that one until the
+		file is found.  If there is a need to limit the number of directories
+		that will be tried (mainly likely if there is a deeply nested
+		directory structure and Vim seems a little slow), this option can be
+		used.  If set to 0 (the default), it will keep going until it reaches
+		the root directory.  If the option is set to 1, it will only check the
+		current directory; if 2 it will check the current directory and the
+		parent directory etc.
+
+		For more information, see |TagHL-DefaultDirModePriority|.
+
+		Option Type: Integer
+		Default: 0
 
 	ParsingSkipList                      *TagHL-ParsingSkipList*
 		If you're editing a lot of files and for most you want tag highlight
@@ -1310,6 +1333,10 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 ==============================================================================
 7. TagHighlight History                *TagHighlight-history*               {{{1
+
+2.0.12: 3rd August 2011    : Added option to limit number of directories to
+							 search up through when looking for configuration
+							 or existing tags file.
 
 2.0.11: 2nd August 2011    : Added some example configurations to the
                              documentation.

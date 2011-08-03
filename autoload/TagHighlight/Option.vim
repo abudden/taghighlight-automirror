@@ -132,6 +132,8 @@ function! TagHighlight#Option#GetOption(name)
 		else
 			let result = eval(opt)
 		endif
+	elseif option['Type'] == 'int'
+		let result = str2nr(opt)
 	endif
 	return result
 endfunction

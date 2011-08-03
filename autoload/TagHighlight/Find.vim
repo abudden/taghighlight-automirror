@@ -42,6 +42,7 @@ let g:loaded_TagHLFind = 1
 "	TypesFileDirModePriority:As tag file
 "	ConfigFileDirModePriority:As tag file
 "	DefaultDirModeSearchWildcard:'' (look for tags file) or something specific (*.uvopt)?
+"	MaxDirSearchLevels: (integer)
 "
 " Explicit Locations:
 "
@@ -161,13 +162,21 @@ endfunction
 
 function! s:ScanUp(dir, wildcards)
 	let result = {}
+	let max_levels = TagHighlight#Option#GetOption('MaxDirSearchLevels')
+	let levels = 0
 	let new_dir = a:dir
 	let dir = ''
 	let found = 0
+
+	call TagHLDebug("Searching up from " . a:dir . " for " . string(a:wildcards), 'Information')
+
+	" new_dir != dir check looks for the root directory
 	while new_dir != dir
 		let dir = new_dir
+		let new_dir = fnamemodify(dir, ':h')
 		for wildcard in a:wildcards
 			if len(glob(dir . '/' . wildcard)) > 0
+				call TagHLDebug("Found match: " . dir, "Information")
 				let result['Directory'] = dir
 				let found = 1
 				break
@@ -176,7 +185,17 @@ function! s:ScanUp(dir, wildcards)
 		if found
 			break
 		endif
-		let new_dir = fnamemodify(dir, ':h')
+
+		" Check for recursion limit
+		let levels += 1
+		if (max_levels > 0) && (levels >= max_levels)
+			call TagHLDebug("Hit recursion limit", "Information")
+			break
+		endif
 	endwhile
+	if new_dir == dir
+		" Must have reached root directory
+		call TagHLDebug("Reached root directory and stopped", "Information")
+	endif
 	return result
 endfunction
