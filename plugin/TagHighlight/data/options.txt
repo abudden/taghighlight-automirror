@@ -188,6 +188,13 @@ debug_file:
 	Default:None
 	Help:Debug log file into which messages should be stored
 
+debug_print_time:
+	CommandLineSwitches:--print-time-with-debug
+	VimOptionMap:DebugPrintTime
+	Type:bool
+	Default:False
+	Help:Print the time with each debug message in the log
+
 source_root:
 	CommandLineSwitches:-d,--source-root
 	VimOptionMap:SourceDir

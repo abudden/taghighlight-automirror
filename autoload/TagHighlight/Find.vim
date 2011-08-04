@@ -174,9 +174,16 @@ function! s:ScanUp(dir, wildcards)
 	while new_dir != dir
 		let dir = new_dir
 		let new_dir = fnamemodify(dir, ':h')
+		
+		call TagHLDebug("Trying " . dir, "Information")
 		for wildcard in a:wildcards
-			if len(glob(dir . '/' . wildcard)) > 0
-				call TagHLDebug("Found match: " . dir, "Information")
+			let glob_pattern = dir
+			if glob_pattern[len(glob_pattern)-1] != '/'
+				let glob_pattern .= '/'
+			endif
+			let glob_pattern .= wildcard
+			if len(glob(glob_pattern)) > 0
+				call TagHLDebug("Found match: " . dir . " (" . glob_pattern . ")", "Information")
 				let result['Directory'] = dir
 				let found = 1
 				break

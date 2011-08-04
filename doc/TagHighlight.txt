@@ -504,6 +504,12 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		DebugLevel                       Link:|TagHL-DebugLevel|
 			How much debugging information should be printed.
 
+		DebugFile                        Link:|TagHL-DebugFile|
+			Write debug log to a file.
+
+		DebugPrintTime                   Link:|TagHL-DebugPrintTime|
+			When writing to file, include timestamps.
+
 	Internal Use Only:
 
 		CtagsExeFull                     Link:|TagHL-CtagsExeFull|
@@ -539,6 +545,13 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 		See also |TagHL-TagFileName|.
 
+	DebugFile                            *TagHL-DebugFile*
+		If set to something other than "None" (the default), write debugging
+		messages to a file.
+
+		Option Type: String
+		Default: "None"
+
 	DebugLevel                           *TagHL-DebugLevel*
 		This is a string describing how much debugging information to print.
 		By default, this is set to 'Error': only errors or critical problems
@@ -551,6 +564,14 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 		Option Type: String
 		Default: "Error"
+
+	DebugPrintTime                       *TagHL-DebugPrintTime*
+		If True or 1, when writing debug information to a file (see the option
+		|TagHL-DebugFile|, prefix each entry with a timestamp.  Only supported
+		for messages generated in Vim, not by the python script.
+
+		Option Type: Boolean
+		Default: False
 
 	DefaultDirModePriority               *TagHL-DefaultDirModePriority*
 		There are several 'DirModePriority' options in addition to this one.
@@ -1333,6 +1354,10 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 ==============================================================================
 7. TagHighlight History                *TagHighlight-history*               {{{1
+
+2.0.13: 4th August 2011    : Improvements to directory searching (mainly for
+                             Cygwin).  Addition of option to include timestamp
+                             in debug log (Vim debug output only at present).
 
 2.0.12: 3rd August 2011    : Added option to limit number of directories to
 							 search up through when looking for configuration

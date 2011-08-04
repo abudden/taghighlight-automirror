@@ -109,6 +109,7 @@ function! TagHLDebug(str, level)
 	if level_index <= TagHighlight#Debug#GetDebugLevel()
 		try
 			let debug_file = TagHighlight#Option#GetOption('DebugFile')
+			let print_time = TagHighlight#Option#GetOption('DebugPrintTime')
 		catch /Unrecognised option/
 			" Probably haven't loaded the option definitions
 			" yet, so assume no debug log file
@@ -118,7 +119,11 @@ function! TagHLDebug(str, level)
 			echomsg a:str
 		else
 			exe 'redir >>' debug_file
-			silent echo a:str
+			if print_time && exists("*strftime")
+				silent echo strftime("%H.%M.%S") . ": " . a:str
+			else
+				silent echo a:str
+			endif
 			redir END
 		endif
 	endif
