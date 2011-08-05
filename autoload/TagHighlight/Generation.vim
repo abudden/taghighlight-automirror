@@ -24,10 +24,26 @@ let g:loaded_TagHLGeneration = 1
 function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
 	" Load the version information if we haven't already
 	call TagHighlight#Version#LoadVersionInfo()
-	call TagHLDebug("Release Info:" . string(g:TagHighlightPrivate['PluginVersion']), "Information")
+
+	" Debug information for configuration
+	if TagHighlight#Debug#DebugLevelIncludes('Information')
+		call TagHLDebug("Release Info:" . string(g:TagHighlightPrivate['PluginVersion']), "Information")
+		call TagHLDebug("Global options (g:TagHighlightSettings): " . string(g:TagHighlightSettings), "Information")
+		if exists('b:TagHighlightSettings')
+			call TagHLDebug("Buffer options (b:TagHighlightSettings): " . string(b:TagHighlightSettings), "Information")
+		else
+			call TagHLDebug("No buffer options set", "Information")
+		endif
+	endif
 	
 	" Load the option file
 	let option_file_info = TagHighlight#Option#LoadOptionFileIfPresent()
+	" Debug information for configuration
+	if TagHighlight#Debug#DebugLevelIncludes('Information') && option_file_info['Exists']
+		call TagHLDebug("Project config file options: " . string(b:TagHighlightConfigFileOptions), "Information")
+	else
+		call TagHLDebug("Project config file does not exist", "Information")
+	endif
 	
 	" Call any PreUpdate hooks
 	let preupdate_hooks = TagHighlight#Option#GetOption('PreUpdateHooks')

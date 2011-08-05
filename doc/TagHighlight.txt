@@ -1355,6 +1355,8 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 7. TagHighlight History                *TagHighlight-history*               {{{1
 
+2.0.15: 5th August 2011    : Debug output improvements.
+
 2.0.14: 5th August 2011    : Bug fix for selection of source directory.  If
                              one of the explicit locations was set to 'None',
                              it was using 'None' as the source dir location.

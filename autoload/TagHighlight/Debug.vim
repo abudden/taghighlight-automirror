@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    02/08/2011
+"   Date:    05/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -51,6 +51,18 @@ function! TagHighlight#Debug#GetDebugLevelName()
 	return g:TagHighlight#Debug#DebugLevels[debug_level_num]
 endfunction
 
+function! TagHighlight#Debug#DebugLevelIncludes(level)
+	let level_index = index(g:TagHighlight#Debug#DebugLevels, a:level)
+	if level_index == -1
+		let level_index = index(g:TagHighlight#Debug#DebugLevels, 'Critical')
+	endif
+	if level_index <= TagHighlight#Debug#GetDebugLevel()
+		return 1
+	else
+		return 0
+	endif
+endfunction
+
 function! TagHighlight#Debug#DebugUpdateTypesFile(filename)
 	" Update the types file with debugging turned on
 	if a:filename ==? 'None'
@@ -60,13 +72,37 @@ function! TagHighlight#Debug#DebugUpdateTypesFile(filename)
 		let debug_file = a:filename
 	endif
 
+	let debug_options = ["DebugFile","DebugLevel"]
+
+	" Store the old debug options
+	for dbg_option in debug_options
+		let stored_option_name = 'Stored'.dbg_option
+		if has_key(g:TagHighlightSettings, dbg_option)
+			let g:TagHighlightSettings[stored_option_name] = g:TagHighlightSettings[dbg_option]
+		else
+			let g:TagHighlightSettings[stored_option_name] = 'None'
+		endif
+	endfor
+
 	let g:TagHighlightSettings['DebugFile'] = debug_file
 	let g:TagHighlightSettings['DebugLevel'] = 'Information'
 
+	call TagHLDebug("========================================================", "Information")
 	call TagHighlight#Generation#UpdateTypesFile(1, 0)
 	let s:SavedTabNr = tabpagenr()
 	let s:SavedWinNr = winnr()
 	tabdo windo call TagHighlight#ReadTypes#ReadTypesAutoDetect()
 	exe 'tabn' s:SavedTabNr
 	exe s:SavedWinNr . "wincmd w"
+
+	" Get rid of the 'stored' versions of the debug options
+	for dbg_option in debug_options
+		let stored_option_name = 'Stored'.dbg_option
+		if g:TagHighlightSettings[stored_option_name] == 'None'
+			unlet g:TagHighlightSettings[dbg_option]
+		else
+			let g:TagHighlightSettings[dbg_option] = g:TagHighlightSettings[stored_option_name]
+		endif
+		unlet g:TagHighlightSettings[stored_option_name]
+	endfor
 endfunction

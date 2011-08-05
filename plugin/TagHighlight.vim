@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    02/08/2011
+"   Date:    05/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -102,11 +102,7 @@ function! s:LoadKinds()
 endfunction
 
 function! TagHLDebug(str, level)
-	let level_index = index(g:TagHighlight#Debug#DebugLevels, a:level)
-	if level_index == -1
-		level_index = index(g:TagHighlight#Debug#DebugLevels, 'Critical')
-	endif
-	if level_index <= TagHighlight#Debug#GetDebugLevel()
+	if TagHighlight#Debug#DebugLevelIncludes(a:level)
 		try
 			let debug_file = TagHighlight#Option#GetOption('DebugFile')
 			let print_time = TagHighlight#Option#GetOption('DebugPrintTime')
