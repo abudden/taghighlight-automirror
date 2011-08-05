@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    02/08/2011
+"   Date:    05/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -78,13 +78,13 @@ function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
 		" use that directory.  If not, but a tag file was found, use that
 		" directory.  If not, use the current directory.
 		call TagHLDebug("No source dir set", "Information")
-		if option_file_info['Found'] == 1
+		if option_file_info['Found'] == 1 && option_file_info['Exists'] == 1
 			call TagHLDebug("Using project config file directory", "Information")
 			let RunOptions['SourceDir'] = option_file_info['Directory']
-		elseif types_file_info['Found'] == 1
+		elseif types_file_info['Found'] == 1 && types_file_info['Exists'] == 1
 			call TagHLDebug("Using types file directory", "Information")
 			let RunOptions['SourceDir'] = types_file_info['Directory']
-		elseif tag_file_info['Found'] == 1
+		elseif tag_file_info['Found'] == 1 && tag_file_info['Exists'] == 1
 			call TagHLDebug("Using tags file directory", "Information")
 			let RunOptions['SourceDir'] = tag_file_info['Directory']
 		else

@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    02/08/2011
+"   Date:    05/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -107,7 +107,7 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 	let result = {}
 
 	for search_mode in search_priority
-		if search_mode == 'Explicit' && explicit_location != 'NONE'
+		if search_mode == 'Explicit' && explicit_location != 'None'
 			" Use explicit location, overriding everything else
 			call TagHLDebug('Using explicit location', 'Information')
 			let result['Directory'] = explicit_location
@@ -154,7 +154,7 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 
 	if ! has_key(result, 'Directory')
 		call TagHLDebug("Couldn't find path", 'Warning')
-		let result = {'Found': 0}
+		let result = {'Found': 0, 'Exists': 0}
 	endif
 
 	return result
