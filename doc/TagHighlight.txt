@@ -1358,6 +1358,8 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 2.0.14: 5th August 2011    : Bug fix for selection of source directory.  If
                              one of the explicit locations was set to 'None',
                              it was using 'None' as the source dir location.
+                             Added version information printing to debug
+                             output.
 
 2.0.13: 4th August 2011    : Improvements to directory searching (mainly for
                              Cygwin).  Addition of option to include timestamp

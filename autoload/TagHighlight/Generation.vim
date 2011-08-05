@@ -22,8 +22,12 @@ endtry
 let g:loaded_TagHLGeneration = 1
 
 function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
+	" Load the version information if we haven't already
+	call TagHighlight#Version#LoadVersionInfo()
+	call TagHLDebug("Release Info:" . string(g:TagHighlightPrivate['PluginVersion']), "Information")
+	
+	" Load the option file
 	let option_file_info = TagHighlight#Option#LoadOptionFileIfPresent()
-	" Initial very simple implementation
 	
 	" Call any PreUpdate hooks
 	let preupdate_hooks = TagHighlight#Option#GetOption('PreUpdateHooks')

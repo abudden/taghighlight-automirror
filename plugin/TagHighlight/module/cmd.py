@@ -20,10 +20,9 @@ import optparse
 
 from .config import SetInitialOptions, LoadLanguages
 from .options import AllOptions
-from . import revision
 
 def ProcessCommandLine():
-    parser = optparse.OptionParser(version=("Tag Highlight Types File Creator (revision %%prog) {0}".format(revision)))
+    parser = optparse.OptionParser()
 
     for dest in AllOptions.keys():
         if 'CommandLineSwitches' not in AllOptions[dest]:

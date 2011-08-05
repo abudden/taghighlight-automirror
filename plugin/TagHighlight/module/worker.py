@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Tag Highlighter:
 #   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-#   Date:    27/07/2011
+#   Date:    05/08/2011
 # Copyright: Copyright (C) 2009-2011 A. S. Budden
 #            Permission is hereby granted to use and distribute this code,
 #            with or without modifications, provided that this copyright
@@ -19,11 +19,13 @@ import os
 
 def RunWithOptions(options):
     from .config import config, SetInitialOptions, LoadLanguages
+    from .debug import Debug
 
     SetInitialOptions(options)
 
-    if config['debug_level'] == 'Information':
-        print("Running types highlighter generator")
+    Debug("Running types highlighter generator", "Information")
+    Debug("Release:" + config['release'], "Information")
+    Debug("Version:" + repr(config['version']), "Information")
 
     if config['use_existing_tagfile'] and not os.path.exists(config['ctags_file']):
         config['use_existing_tagfile'] = False
