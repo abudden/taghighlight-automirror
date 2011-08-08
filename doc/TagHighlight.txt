@@ -107,17 +107,21 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	:UpdateTypesFile                 *:UpdateTypesFile*
 
 		This command creates the syntax highlighting file used to show the
-		extra colouring.  It then updates all of the open files
-		automatically.  By default, it only looks for source files in the
-		current directory.  However, see |UpdateTypesFile!| and
-		|TagHL-Recurse|.
+		extra colouring.  It then updates all of the open files automatically.
+		By default, it scans recursively into subdirectories of the top level
+		project source directory.  To find this, it looks for a file called
+		"tags" or a file called "taghl_config.txt" in the directory containing
+		the source code or any of its parents (all the way up to the root
+		directory).  If it finds one of these files, it assumes that the
+		directory containing the file also contains all of the source code.
+		If it can't find either of the files, it will use the current
+		directory.  This operation can be customised using the option
+		|TagHL-DefaultDirModePriority|.
 
-	:UpdateTypesFile!                *:UpdateTypesFile!*
-
-		This command operates in the same way as |UpdateTypesFile| except
-		that it looks for source files recursively into subdirectories.
-		It automatically excludes directories named either "docs" or
-		"Documentation".  See also |TagHL-Recurse|.
+		NOTE: Recursion is now on by default.  To turn it off, set the option
+		|TagHL-Recurse| to be 'False' or 0.  This can either be done globally
+		in |g:TagHighlightSettings| or in a file named |taghl_config.txt| in
+		the directory containing the source file.
 
 	:UpdateTypesFileOnly             *:UpdateTypesFileOnly*
 
@@ -200,13 +204,13 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 			if ! exists('g:TagHighlightSettings')
 				let g:TagHighlightSettings = {}
 			endif
-			let g:TagHighlightSettings['Recurse'] = 1
+			let g:TagHighlightSettings['TagFileName'] = 'tagfile'
 			let g:TagHighlightSettings['CtagsExecutable'] = 'etags.exe'
 <
 		If you want to override any existing options (or you want to be
 		lazy...) you can probably also do it this way:
 >
-			let g:TagHighlightSettings = {'Recurse': 1, 'CtagsExecutable': 'etags.exe'}
+			let g:TagHighlightSettings = {'TagFileName': 'tagfile', 'CtagsExecutable': 'etags.exe'}
 <
 	Project Options                  *taghl_config.txt*
 
@@ -223,7 +227,6 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		colons used to delimit keys and values.  A simple example would
 		look like this:
 >
-			Recurse:True
 			SkipPatterns:Skip.*,AnotherPattern\d+
 			IncludeLocals:1
 			UserLibraryDir:c:/user_libraries
@@ -276,7 +279,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 			First time round, use |:cd| to get to the project root and run:
 >
-				:UpdateTypesFile!
+				:UpdateTypesFile
 <
 			After the first run, you can open any source file in the project,
 			with the current directory set anywhere you like; the existing
@@ -285,23 +288,21 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 	Low Complexity                                                        {{{4
 
-		Use case: User has source code configured in multiple subdirectories;
-		          rarely has the current directory set to the project root and
-		          deletes the tags and types files often and therefore wishes
-		          to fix the working directory to be the project root.  User
-		          would also like to make |TagHL-Recurse| the default, so that
-		          they can run |:UpdateTypesFile| instead of |:UpdateTypesFile!|.
-		          User project uses Qt4, so the user would like the classes
-		          etc from Qt4 (e.g. QString) to be highlighted.
+		Use case: User has source code all in one directory but has a lot of
+		          subdirectories that would take a long time to scan.  The
+		          user therefore wishes to disable recursive scanning.  User
+				  project uses Qt4, so the user would like the classes etc
+				  from Qt4 (e.g. QString) to be highlighted.
 
 		Implementation:
 			
 			Make sure that you have installed the standard libraries (see 
 			|TagHighlight-install-stdlib|).  The Qt4 library will be loaded
-			automatically.  Create a file called taghl_config.txt in the root
-			of the project.  In that file, add one line (no leading spaces):
+			automatically.  Create a file called taghl_config.txt in the
+			source directory.  In that file, add the following line (with no
+			leading whitespace).
 >
-				Recurse:True
+				Recurse:False
 <
 			No other configuration should be necessary; just run:
 >
@@ -336,7 +337,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 			Open up a new Vim and type:
 >
 				:cd /home/user/libraries/lib1
-				:UpdateTypesFile!
+				:UpdateTypesFile
 <
 			That should create a file called types_c.taghl in the library
 			directory.
@@ -631,13 +632,20 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		use Vim's current working directory.
 
 		Option Type: List
-		Default: ["Explicit", "UpFromFile", "CurrentDirectory"]
+		Default:
+			If |TagHL-Recurse| is True (the default), the default is
+			["Explicit", "UpFromFile", "CurrentDirectory"].
+
+			If |TagHL-Recurse| is False, the default is ["FileDirectory"].
 
 	DefaultDirModeSearchWildcards        *TagHL-DefaultDirModeSearchWildcards*
 		This option contains the wildcards that should be checked for when
 		trying to determine which directory to use (in either the UpFromFile
 		or UpFromCurrent dir mode).  The default is to match when either a
 		project configuration file is found or a tags file is found.
+
+		Note that the wildcard will only match against readable files, not
+		directories.
 
 		Option Type: List
 		Default: [value of TagFileName option, value of ProjectConfigFileName option]
@@ -869,15 +877,14 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 	Recurse                              *TagHL-Recurse*
 		If this option is set to True or 1, any call to |:UpdateTypesFile|
-		will be treated as equivalent to |:UpdateTypesFile!|: tag files (and
-		therefore the types highlighter file based on that tag file) will
-		contain tags from source code in the source directory and all
-		subdirectories of that directory.  If this option is not set, or set
-		to False or 0, only source code in the source directory will be
-		scanned.
+		will scan recursively: tag files (and therefore the types highlighter
+		file based on that tag file) will contain tags from source code in the
+		source directory and all subdirectories of that directory.  If this
+		option is not set, or set to False or 0, only source code in the
+		source directory will be scanned.
 
 		Option Type: Boolean
-		Default: False (don't recurse)
+		Default: True (recurse)
 
 	SkipPatterns                         *TagHL-SkipPatterns*
 		Any (python) regular expressions listed in this option will be matched
@@ -1354,6 +1361,13 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 ==============================================================================
 7. TagHighlight History                *TagHighlight-history*               {{{1
+
+2.0.16: 8th August 2011    : Wildcard matches are for files only, not
+                             directories (work-around for issue with tags file
+                             having same name as svn tags directory).  Extra
+                             debug regarding working directory etc.
+                             Simplified commands by moving functionality into
+                             a new function.  REMOVED non-recursive command!
 
 2.0.15: 5th August 2011    : Debug output improvements.
 

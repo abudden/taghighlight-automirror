@@ -86,10 +86,21 @@ function! TagHighlight#Option#GetOption(name)
 
 	if ! exists('opt')
 		" We haven't found it, return the default
-		let opt = option['Default']
+		" Special cases first
+		if a:name == "DefaultDirModePriority"
+			if TagHighlight#Option#GetOption("Recurse")
+				let opt = ["Explicit","UpFromFile","CurrentDirectory"]
+			else
+				let opt = ["FileDirectory"]
+			endif
+		else
+			" Normal case
+			let opt = option['Default']
+		endif
+	else
 	endif
 
-	if option['Type'] == 'list'
+	if option['Type'] =~ 'list'
 		let result = []
 		if type(opt) == type('')
 			if opt == '[]' || opt == ''
@@ -109,9 +120,9 @@ function! TagHighlight#Option#GetOption(name)
 			endif
 		endfor
 	elseif option['Type'] == 'bool'
-		if opt == 'True' || opt == 1
+		if opt =~ 'True' || opt == 1
 			let result = 1
-		elseif opt == 'False' || opt == 0
+		elseif opt =~ 'False' || opt == 0
 			let result = 0
 		else
 			throw "Unrecognised bool value"
@@ -140,26 +151,18 @@ endfunction
 
 function! TagHighlight#Option#CopyOptions()
 	let result = {}
-	for key in keys(g:TagHighlightSettings)
-		if type(g:TagHighlightSettings[key]) == type([])
-			let result[key] = g:TagHighlightSettings[key][:]
-		elseif type(g:TagHighlightSettings[key]) == type({})
-			let result[key] = deepcopy(g:TagHighlightSettings[key])
-		else
-			let result[key] = g:TagHighlightSettings[key]
+	for var in ["g:TagHighlightSettings","b:TagHighlightConfigFileOptions","b:TagHighlightSettings"]
+		if exists(var)
+			for key in keys(eval(var))
+				if type(eval(var)[key]) == type([])
+					let result[key] = eval(var)[key][:]
+				elseif type(eval(var)[key]) == type({})
+					let result[key] = deepcopy(eval(var)[key])
+				else
+					let result[key] = eval(var)[key]
+				endif
+			endfor
 		endif
 	endfor
-	if exists('b:TagHighlightSettings')
-		for key in keys(b:TagHighlightSettings)
-			if type(b:TagHighlightSettings[key]) == type([])
-				let result[key] = b:TagHighlightSettings[key][:]
-			elseif type(b:TagHighlightSettings[key]) == type({})
-				let result[key] = deepcopy(b:TagHighlightSettings[key])
-			else
-				let result[key] = b:TagHighlightSettings[key]
-			endif
-		endfor
-	endif
-
 	return result
 endfunction

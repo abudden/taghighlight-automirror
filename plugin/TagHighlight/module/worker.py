@@ -18,6 +18,7 @@ import sys
 import os
 
 def RunWithOptions(options):
+    start_directory = os.getcwd()
     from .config import config, SetInitialOptions, LoadLanguages
     from .debug import Debug
 
@@ -51,3 +52,5 @@ def RunWithOptions(options):
     for language in config['language_list']:
         if language in tag_db:
             CreateTypesFile(config, language, tag_db[language])
+
+    os.chdir(start_directory)

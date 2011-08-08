@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    05/08/2011
+"   Date:    08/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -59,12 +59,13 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 
 	" a:which is 'TAGS', 'TYPES', 'CONFIG'
 	let default_priority = TagHighlight#Option#GetOption('DefaultDirModePriority')
+	call TagHLDebug("Priority: " . string(default_priority), "Information")
 	let default_search_wildcards = TagHighlight#Option#GetOption('DefaultDirModeSearchWildcards')
 
 
-	let file = '<afile>'
-	if len(expand(file)) == 0
-		let file = '%'
+	let file = expand('<afile>')
+	if len(file) == 0
+		let file = expand('%')
 	endif
 
 	if a:which == 'TAGS'
@@ -130,7 +131,7 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 			endif
 		elseif search_mode == 'CurrentDirectory'
 			call TagHLDebug('Using current directory', 'Information')
-			let result['Directory'] = fnamemodify(file,':p:h')
+			let result['Directory'] = fnamemodify('.',':p:h')
 			let result['Filename'] = filename
 		elseif search_mode == 'FileDirectory'
 			call TagHLDebug('Using file directory', 'Information')
@@ -182,11 +183,21 @@ function! s:ScanUp(dir, wildcards)
 				let glob_pattern .= '/'
 			endif
 			let glob_pattern .= wildcard
-			if len(glob(glob_pattern)) > 0
-				call TagHLDebug("Found match: " . dir . " (" . glob_pattern . ")", "Information")
-				let result['Directory'] = dir
-				let found = 1
-				break
+			let glob_result = split(glob(glob_pattern), "\n")
+			if len(glob_result) > 0
+				for r in glob_result
+					if filereadable(r)
+						let found = 1
+					endif
+				endfor
+				if found
+					call TagHLDebug("Found match: " . dir . " (" . glob_pattern . ")", "Information")
+					let result['Directory'] = dir
+					let found = 1
+					break
+				else
+					call TagHLDebug("Wildcard matches were not readable (directory?)", "Information")
+				endif
 			endif
 		endfor
 		if found

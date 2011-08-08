@@ -23,7 +23,9 @@ let g:loaded_TagHLReadTypes = 1
 
 function! TagHighlight#ReadTypes#ReadTypesAutoDetect()
 	let extension = expand('%:e')
-	call TagHLDebug("Reading types for extension " . extension, "Information")
+	if TagHighlight#Debug#DebugLevelIncludes('Information')
+		call TagHLDebug("Reading types for extension " . extension . " at " . strftime("%Y%m%d-%H%M%S"), "Information")
+	endif
 	for key in keys(g:TagHighlightPrivate['ExtensionLookup'])
 		let regex = '^'.key.'$'
 		if extension =~ regex
@@ -37,9 +39,9 @@ function! TagHighlight#ReadTypes#ReadTypes(suffix)
 
 	call TagHighlight#Option#LoadOptionFileIfPresent()
 
-	let file = '<afile>'
-	if len(expand(file)) == 0
-		let file = '%'
+	let file = expand('<afile>')
+	if len(file) == 0
+		let file = expand('%')
 	endif
 
 	call TagHLDebug("Reading types of suffix " . a:suffix . " for file " . file, "Information")

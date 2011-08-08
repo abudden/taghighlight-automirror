@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    05/08/2011
+"   Date:    08/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -21,12 +21,15 @@ catch
 endtry
 let g:loaded_TagHLGeneration = 1
 
-function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
+function! TagHighlight#Generation#UpdateTypesFile()
 	" Load the version information if we haven't already
 	call TagHighlight#Version#LoadVersionInfo()
 
 	" Debug information for configuration
 	if TagHighlight#Debug#DebugLevelIncludes('Information')
+		call TagHLDebug("Running UpdateTypesFile function at " . strftime("%Y%m%d-%H%M%S"), "Information")
+		call TagHLDebug("Current directory is " . getcwd(), "Information")
+		call TagHLDebug("Current file is " . expand('%:p'), "Information")
 		call TagHLDebug("Release Info:" . string(g:TagHighlightPrivate['PluginVersion']), "Information")
 		call TagHLDebug("Global options (g:TagHighlightSettings): " . string(g:TagHighlightSettings), "Information")
 		if exists('b:TagHighlightSettings')
@@ -35,7 +38,7 @@ function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
 			call TagHLDebug("No buffer options set", "Information")
 		endif
 	endif
-	
+
 	" Load the option file
 	let option_file_info = TagHighlight#Option#LoadOptionFileIfPresent()
 	" Debug information for configuration
@@ -52,15 +55,6 @@ function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
 		exe 'call' preupdate_hook . '()'
 	endfor
 	
-	" Start with a copy of the settings so that we can tweak things
-	let RunOptions = TagHighlight#Option#CopyOptions()
-	if a:recurse
-		let RunOptions['Recurse'] = 1
-	endif
-	if a:skiptags
-		let RunOptions['DoNotGenerateTags'] = 1
-	endif
-
 	" Most simple options are automatic.  The options below are
 	" handled manually.
 	
@@ -69,51 +63,70 @@ function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
 	if ctags_option == 'None'
 		" Option not set: search for 'ctags' in the path
 		call TagHLDebug("CtagsExecutable not set, searching for 'ctags' in path", "Information")
-		let RunOptions['CtagsExeFull'] = TagHighlight#RunPythonScript#FindExeInPath('ctags')
+		let b:TagHighlightSettings['CtagsExeFull'] = TagHighlight#RunPythonScript#FindExeInPath('ctags')
 	elseif ctags_option =~ '[\\/]'
 		" Option set and includes '/' or '\': must be explicit
 		" path to named executable: just pass to mktypes
 		call TagHLDebug("CtagsExecutable set with path delimiter, using as explicit path", "Information")
-		let RunOptions['CtagsExeFull'] = ctags_option
+		let b:TagHighlightSettings['CtagsExeFull'] = ctags_option
 	else
 		" Option set but doesn't include path separator: search
 		" in the path
 		call TagHLDebug("CtagsExecutable set without path delimiter, searching in path", "Information")
-		let RunOptions['CtagsExeFull'] = TagHighlight#RunPythonScript#FindExeInPath(ctags_option)
+		let b:TagHighlightSettings['CtagsExeFull'] = TagHighlight#RunPythonScript#FindExeInPath(ctags_option)
 	endif
 
 	let tag_file_info = TagHighlight#Find#LocateFile('TAGS', '')
 	if tag_file_info['Found'] == 1
-		let RunOptions['CtagsFileLocation'] = tag_file_info['Directory']
+		let b:TagHighlightSettings['CtagsFileLocation'] = tag_file_info['Directory']
 	endif
 
 	let types_file_info = TagHighlight#Find#LocateFile('TYPES', '*')
 	if types_file_info['Found'] == 1
-		let RunOptions['TypesFileLocation'] = types_file_info['Directory']
+		let b:TagHighlightSettings['TypesFileLocation'] = types_file_info['Directory']
 	endif
 
-	if ! has_key(RunOptions, 'SourceDir')
+	if TagHighlight#Option#GetOption('SourceDir') =~ 'None'
 		" The source directory has not been set.  If a project config file was
 		" found, use that directory.  If not, but a types file was found,
 		" use that directory.  If not, but a tag file was found, use that
 		" directory.  If not, use the current directory.
 		call TagHLDebug("No source dir set", "Information")
-		if option_file_info['Found'] == 1 && option_file_info['Exists'] == 1
+		call TagHLDebug("Current directory is now " . getcwd(), "Information")
+		if ! TagHighlight#Option#GetOption('Recurse')
+			call TagHLDebug("Non-recursive mode, using file directory", "Information")
+			let file = expand('<afile>')
+			if len(file) == 0
+				let file = expand('%')
+			endif
+			call TagHLDebug("File is " . file . "(" . fnamemodify(file, ':p:h') . ")", "Information")
+			let b:TagHighlightSettings['SourceDir'] = fnamemodify(file, ':p:h')
+		elseif option_file_info['Found'] == 1 && option_file_info['Exists'] == 1
 			call TagHLDebug("Using project config file directory", "Information")
-			let RunOptions['SourceDir'] = option_file_info['Directory']
+			let b:TagHighlightSettings['SourceDir'] = option_file_info['Directory']
 		elseif types_file_info['Found'] == 1 && types_file_info['Exists'] == 1
 			call TagHLDebug("Using types file directory", "Information")
-			let RunOptions['SourceDir'] = types_file_info['Directory']
+			let b:TagHighlightSettings['SourceDir'] = types_file_info['Directory']
 		elseif tag_file_info['Found'] == 1 && tag_file_info['Exists'] == 1
 			call TagHLDebug("Using tags file directory", "Information")
-			let RunOptions['SourceDir'] = tag_file_info['Directory']
+			let b:TagHighlightSettings['SourceDir'] = tag_file_info['Directory']
 		else
 			call TagHLDebug("Using current directory", "Information")
-			let RunOptions['SourceDir'] = '.'
+			let b:TagHighlightSettings['SourceDir'] = '.'
 		endif
+	else
+		call TagHLDebug("Source dir set explicitly to " . TagHighlight#Option#GetOption("SourceDir"), "Information")
 	endif
 	
-	call TagHLDebug("Running Generator with options: " . string(RunOptions), "Information")
+	call TagHLDebug("Running generator with options:", "Information")
+	for var in ["g:TagHighlightSettings","b:TagHighlightConfigFileOptions","b:TagHighlightSettings"]
+		if exists(var)
+			call TagHLDebug(" - " . var . ": " . string(eval(var)), "Information")
+		else
+			call TagHLDebug(" - " . var . ": UNSET", "Information")
+		endif
+	endfor
+	let RunOptions = TagHighlight#Option#CopyOptions()
 	call TagHighlight#RunPythonScript#RunGenerator(RunOptions)
 
 	let postupdate_hooks = TagHighlight#Option#GetOption('PostUpdateHooks')
@@ -121,4 +134,33 @@ function! TagHighlight#Generation#UpdateTypesFile(recurse, skiptags)
 		call TagHLDebug("Calling post-update hook " . postupdate_hook, "Information")
 		exe 'call' postupdate_hook . '()'
 	endfor
+
+	call TagHLDebug("UpdateTypesFile() complete, current directory is now " . getcwd(), "Information")
+endfunction
+
+function! TagHighlight#Generation#UpdateAndRead(skiptags)
+	let restore_options = 0
+	if exists('b:TagHighlightSettings')
+		let stored_options = deepcopy(b:TagHighlightSettings)
+		let restore_options = 1
+	else
+		let b:TagHighlightSettings = {}
+	endif
+
+	" Start with a copy of the settings so that we can tweak things
+	if a:skiptags
+		let b:TagHighlightSettings['DoNotGenerateTags'] = 1
+	endif
+	
+	call TagHighlight#Generation#UpdateTypesFile()
+	let SavedTabNr = tabpagenr()
+	let SavedWinNr = winnr()
+	tabdo windo call TagHighlight#ReadTypes#ReadTypesAutoDetect()
+	exe 'tabn' SavedTabNr
+	exe SavedWinNr . 'wincmd w'
+
+	unlet b:TagHighlightSettings
+	if restore_options
+		let b:TagHighlightSettings = deepcopy(stored_options)
+	endif
 endfunction

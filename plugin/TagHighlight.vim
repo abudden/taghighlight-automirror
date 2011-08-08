@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    05/08/2011
+"   Date:    08/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -45,24 +45,15 @@ else
 	echoerr "Multiple plugin installs found: something has gone wrong!"
 endif
 
-" Update types & tags - called with a ! recurses
-command! -bang -bar UpdateTypesFile 
-			\ silent call TagHighlight#Generation#UpdateTypesFile(<bang>0, 0) | 
-			\ let s:SavedTabNr = tabpagenr() |
-			\ let s:SavedWinNr = winnr() |
-			\ silent tabdo windo call TagHighlight#ReadTypes#ReadTypesAutoDetect() |
-			\ silent exe 'tabn ' . s:SavedTabNr |
-			\ silent exe s:SavedWinNr . "wincmd w"
+" Update types & tags - called with a ! turns off recursion
+command! -bar UpdateTypesFile 
+			\ call TagHighlight#Generation#UpdateAndRead(0)
 
-command! -bang -bar UpdateTypesFileOnly 
-			\ silent call TagHighlight#Generation#UpdateTypesFile(<bang>0, 1) | 
-			\ let s:SavedTabNr = tabpagenr() |
-			\ let s:SavedWinNr = winnr() |
-			\ silent tabdo windo call TagHighlight#ReadTypes#ReadTypesAutoDetect() |
-			\ silent exe 'tabn ' . s:SavedTabNr |
-			\ silent exe s:SavedWinNr . "wincmd w"
+command! -bar UpdateTypesFileOnly 
+			\ call TagHighlight#Generation#UpdateAndRead(1)
 
-command! -nargs=1 UpdateTypesFileDebug call TagHighlight#Debug#DebugUpdateTypesFile(<f-args>)
+command! -nargs=1 UpdateTypesFileDebug 
+			\ call TagHighlight#Debug#DebugUpdateTypesFile(<f-args>)
 
 function! s:LoadLanguages()
 	" This loads the language data files.

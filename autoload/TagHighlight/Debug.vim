@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    05/08/2011
+"   Date:    08/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -88,12 +88,7 @@ function! TagHighlight#Debug#DebugUpdateTypesFile(filename)
 	let g:TagHighlightSettings['DebugLevel'] = 'Information'
 
 	call TagHLDebug("========================================================", "Information")
-	call TagHighlight#Generation#UpdateTypesFile(1, 0)
-	let s:SavedTabNr = tabpagenr()
-	let s:SavedWinNr = winnr()
-	tabdo windo call TagHighlight#ReadTypes#ReadTypesAutoDetect()
-	exe 'tabn' s:SavedTabNr
-	exe s:SavedWinNr . "wincmd w"
+	call TagHighlight#Generation#UpdateAndRead(0)
 
 	" Get rid of the 'stored' versions of the debug options
 	for dbg_option in debug_options

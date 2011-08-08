@@ -17,8 +17,9 @@ parsing_skip_list:
 def_dir_mode_priority:
 	VimOptionMap:DefaultDirModePriority
 	Type:list
-	Default:Explicit,UpFromFile,CurrentDirectory
+	Default:[]
 	Help:List of methods (in order) to use when searching for tags/types etc
+	Note:Default is overridden in TagHighlight#Option#GetOption()
 
 max_dir_search_levels:
 	VimOptionMap:MaxDirSearchLevels
@@ -203,10 +204,10 @@ source_root:
 	Help:Location of source files to scan
 
 recurse:
-	CommandLineSwitches:-r,-R,--recurse
+	CommandLineSwitches:--no-recurse
 	VimOptionMap:Recurse
 	Type:bool
-	Default:False
+	Default:True
 	Help:Recurse into subdirectories
  
 ctags_file:
