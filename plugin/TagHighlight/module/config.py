@@ -58,7 +58,6 @@ def LoadVersionInfo():
         config['version'] = {
                 'clean': 'Unreleased',
                 'date': 'Unreleased',
-                'revno': 'Unreleased',
                 'revision_id': 'Unreleased',
                 }
 

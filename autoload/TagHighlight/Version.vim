@@ -40,7 +40,6 @@ function! TagHighlight#Version#LoadVersionInfo()
 					\ {
 					\    'release_clean': 'N/A',
 					\    'release_date': 'N/A',
-					\    'release_revno': 'N/A',
 					\    'release_revid': 'N/A'
 					\ }
 	endtry
