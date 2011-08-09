@@ -6,3 +6,4 @@ plugin/TagHighlight/logdict*
 plugin/TagHighlight/warnTagHighlight.txt
 plugin/TagHighlight/build/
 plugin/TagHighlight/Compiled/
+dist/*.zip
