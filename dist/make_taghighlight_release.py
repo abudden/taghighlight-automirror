@@ -12,15 +12,7 @@ vimfiles_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),'..'))
 import socket
 hostname = socket.gethostname()
 
-if hostname == 'UKBAT-651':
-    BZR=['c/applications/development/languages/python/python.exe','c:/applications/development/languages/python/Scripts/bzr']
-else:
-    BZR=['bzr']
-if BZR[0][1] == '/':
-    if sys.platform == 'win32':
-        BZR[0] = BZR[0][0] + ':' + BZR[0][1:]
-    elif sys.platform == 'cygwin':
-        BZR[0] = '/cygdrive/' + BZR[0]
+GIT=["git"]
 
 # Recursive glob function, from
 # http://stackoverflow.com/questions/2186525/use-a-glob-to-find-files-recursively-in-python#2186565
@@ -49,30 +41,40 @@ def UpdateReleaseVersion():
     fh.close()
     return release
 
-version_info_format = '''
-release_clean:{clean}
-release_date:{date}
-release_revno:{revno}
-release_revid:{revision_id}
-'''
+version_info_initial = ['log','-1',"--format=format:release_revid:%H%nrelease_date:%ad","--date=iso"]
+clean_info = ['status', '--porcelain']
+
 def GenerateVersionInfo():
-    args = BZR+['version-info','--custom','--template="'+version_info_format+'"']
+    version_file = os.path.join(vimfiles_dir,'plugin/TagHighlight/data/version_info.txt')
+
+    args = GIT + clean_info
     p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (stdout,stderr) = p.communicate()
-    version_file = os.path.join(vimfiles_dir,'plugin/TagHighlight/data/version_info.txt')
-    import re
-    clean_re = re.compile('.*release_clean:([01]).*',re.DOTALL)
-    clean_str = clean_re.sub(r'\1', stdout)
-    clean = True if clean_str == '1' else False
+
+    status_lines = stdout
+    if len(status_lines) > 0:
+        clean = False
+        clean_line = "release_clean:0"
+    else:
+        clean = True
+        clean_line = "release_clean:1"
+
+    args = GIT + version_info_initial
+    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    (stdout,stderr) = p.communicate()
+
     # Write as binary for consistent line endings
-    fh = open(version_file,'wb')
+    fh = open(version_file, 'wb')
+    fh.write(clean_line + "\n")
+
     for line in stdout.split('\n'):
         if line.startswith('release_'):
             fh.write(line + '\n')
     fh.close()
+
     return version_file, clean
 
-def MakeZipFile():
+def MakeZipFile(r):
     # List of paths to include (either explicit files or paths to search)
     paths = {
             '.py': ['plugin/TagHighlight',__file__],
@@ -82,7 +84,7 @@ def MakeZipFile():
             }
 
     # Create the zipfile
-    zipf = zipfile.ZipFile(os.path.join(vimfiles_dir,'dist','taghighlight.zip'), 'w')
+    zipf = zipfile.ZipFile(os.path.join(vimfiles_dir,'dist','taghighlight_r{0}.zip'.format(r)), 'w')
 
     # Collect the specified paths into a zip file
     for ext, pathlist in paths.items():
@@ -121,7 +123,7 @@ def MakeCompiled(pyexe, pyinstaller_path, zipfilename, platform_dir):
     zipf.close()
     os.chdir(initial_dir)
 
-def MakeWin32Compiled():
+def MakeWin32Compiled(r):
     if 'WINPYTHON' in os.environ:
         # Doesn't work with spaces in the path
         # (doing the split to allow for running python
@@ -130,9 +132,9 @@ def MakeWin32Compiled():
     else:
         pyexe = ['python.exe']
     pyinstaller_path = os.environ['WINPYINSTALLERDIR']
-    MakeCompiled(pyexe, pyinstaller_path, 'taghighlight_win32.zip', 'Win32')
+    MakeCompiled(pyexe, pyinstaller_path, 'taghighlight_r{0}_win32.zip'.format(r), 'Win32')
 
-def MakeLinuxCompiled():
+def MakeLinuxCompiled(r):
     if 'PYTHON' in os.environ:
         # Doesn't work with spaces in the path
         # (doing the split to allow for running python
@@ -141,38 +143,42 @@ def MakeLinuxCompiled():
     else:
         pyexe = ['python']
     pyinstaller_path = os.environ['PYINSTALLERDIR']
-    MakeCompiled(pyexe, pyinstaller_path, 'taghighlight_linux.zip', 'Linux')
+    MakeCompiled(pyexe, pyinstaller_path, 'taghighlight_r{0}_linux.zip'.format(r), 'Linux')
 
 def CheckInChanges(r):
-    args = BZR+['ci','-m','Release build {0}'.format(r)]
+    # Shouldn't be anything to commit
+    #args = GIT+['commit','-am','Release build {0}'.format(r)]
+    #p = subprocess.Popen(args)
+    #(stdout,stderr) = p.communicate()
+    args = GIT+['tag','taghighlight-release-{0}'.format(r)]
     p = subprocess.Popen(args)
     (stdout,stderr) = p.communicate()
-    args = BZR+['tag','taghighlight-release-{0}'.format(r)]
+
+    args = GIT+['push','origin','master']
     p = subprocess.Popen(args)
-    (stdout,stderr) = p.communicate()
-    # Check whether this is a checkout and if not,
-    # push to the upstream branch
-    args = BZR+['info']
-    p = subprocess.Popen(args,stdout=subprocess.PIPE)
-    (stdout,stderr) = p.communicate()
-    if 'checkout of branch' not in stdout:
-        args = BZR+['push',':parent']
-        p = subprocess.Popen(args)
-        (stdout,stderr)=p.communicate()
+    (stdout,stderr)=p.communicate()
+
+def PublishReleaseVersion():
+    # TODO
+    # This function will be used to push generated files to a remote location
+    # to make them available on the web
+    pass
 
 def main():
     version_file, clean = GenerateVersionInfo()
 
     if clean:
         new_release = UpdateReleaseVersion()
-        MakeZipFile()
-        MakeWin32Compiled()
-        MakeLinuxCompiled()
+        MakeZipFile(new_release)
+        os.remove(version_file)
+        MakeWin32Compiled(new_release)
+        MakeLinuxCompiled(new_release)
         CheckInChanges(new_release)
+        PublishReleaseVersion()
     else:
-        print("Distribution not clean: check into Bazaar before making release.")
+        print("Distribution not clean: check into Git before making release.")
+        os.remove(version_file)
 
-    os.remove(version_file)
 
 if __name__ == "__main__":
     main()
