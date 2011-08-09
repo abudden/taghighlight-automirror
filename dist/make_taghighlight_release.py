@@ -146,9 +146,6 @@ def MakeLinuxCompiled(r):
     MakeCompiled(pyexe, pyinstaller_path, 'taghighlight_r{0}_linux.zip'.format(r), 'Linux')
 
 def CheckInChanges(r):
-    args = GIT+['status']
-    p = subprocess.Popen(args)
-    (stdout,stderr) = p.communicate()
     args = GIT+['add','plugin/TagHighlight/data/release.txt']
     p = subprocess.Popen(args)
     (stdout,stderr) = p.communicate()
@@ -158,10 +155,6 @@ def CheckInChanges(r):
     args = GIT+['tag','taghighlight-release-{0}'.format(r)]
     p = subprocess.Popen(args)
     (stdout,stderr) = p.communicate()
-
-    args = GIT+['push','origin','master']
-    p = subprocess.Popen(args)
-    (stdout,stderr)=p.communicate()
 
 def PublishReleaseVersion():
     # TODO
