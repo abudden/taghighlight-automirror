@@ -45,12 +45,12 @@ else
 	echoerr "Multiple plugin installs found: something has gone wrong!"
 endif
 
-" Update types & tags - called with a ! turns off recursion
+" Update types & tags
 command! -bar UpdateTypesFile 
-			\ call TagHighlight#Generation#UpdateAndRead(0)
+			\ silent call TagHighlight#Generation#UpdateAndRead(0)
 
 command! -bar UpdateTypesFileOnly 
-			\ call TagHighlight#Generation#UpdateAndRead(1)
+			\ silent call TagHighlight#Generation#UpdateAndRead(1)
 
 command! -nargs=1 UpdateTypesFileDebug 
 			\ call TagHighlight#Debug#DebugUpdateTypesFile(<f-args>)
