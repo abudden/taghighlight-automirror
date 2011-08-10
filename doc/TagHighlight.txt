@@ -1362,6 +1362,8 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 7. TagHighlight History                *TagHighlight-history*               {{{1
 
+2.0.21: 10th August 2011   : Additional debug.
+
 2.0.20: 9th August 2011    : Further improvements to build script.
 
 2.0.19: 9th August 2011    : Minor tweaks to build script.

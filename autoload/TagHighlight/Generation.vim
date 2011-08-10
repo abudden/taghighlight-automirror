@@ -139,6 +139,7 @@ function! TagHighlight#Generation#UpdateTypesFile()
 endfunction
 
 function! TagHighlight#Generation#UpdateAndRead(skiptags)
+	call TagHLDebug("UpdateAndRead() called with parameter " . a:skiptags, "Information")
 	let restore_options = 0
 	if exists('b:TagHighlightSettings')
 		let stored_options = deepcopy(b:TagHighlightSettings)
@@ -149,6 +150,7 @@ function! TagHighlight#Generation#UpdateAndRead(skiptags)
 
 	" Start with a copy of the settings so that we can tweak things
 	if a:skiptags
+		call TagHLDebug("Skipping tag generation", "Information")
 		let b:TagHighlightSettings['DoNotGenerateTags'] = 1
 	endif
 	
@@ -163,4 +165,5 @@ function! TagHighlight#Generation#UpdateAndRead(skiptags)
 	if restore_options
 		let b:TagHighlightSettings = deepcopy(stored_options)
 	endif
+	call TagHLDebug("UpdateAndRead() complete", "Information")
 endfunction

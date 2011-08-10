@@ -27,8 +27,10 @@ def RunWithOptions(options):
     Debug("Running types highlighter generator", "Information")
     Debug("Release:" + config['release'], "Information")
     Debug("Version:" + repr(config['version']), "Information")
+    Debug("Options:" + repr(options), "Information")
 
     if config['use_existing_tagfile'] and not os.path.exists(config['ctags_file']):
+        Debug("Cannot use existing tagfile as it doesn't exist (checking for " + config['ctags_file'] + ")", "Information")
         config['use_existing_tagfile'] = False
 
     LoadLanguages()
@@ -46,6 +48,7 @@ def RunWithOptions(options):
     from .generation import CreateTypesFile
 
     if not config['use_existing_tagfile']:
+        Debug("Generating tag file", "Information")
         GenerateTags(config)
     tag_db = ParseTags(config)
 
