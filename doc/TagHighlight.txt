@@ -95,7 +95,16 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 	Screenshots of the highlighter in operation are available at the website:
 >
-		http://sites.google.com/site/abudden/contents/Vim-Scripts/ctags-highlighting
+		http://www.cgtk.co.uk/taghighlight
+<
+                                         *TagHighlight-source-code*
+
+	The plugin is distribute as source code (binaries of the python components
+	are also available for computers that do not have python installed) The
+	source code is managed using the Git version control system and is
+	available on github at:
+>
+		https://github.com/abudden/taghighlight
 <
 
 ------------------------------------------------------------------------------
@@ -146,7 +155,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	standard by many colour schemes.  You can either download the "bandit"
 	colour scheme from:
 >
-	http://sites.google.com/site/abudden/contents/Vim-Scripts/bandit-colour-scheme
+	http://www.cgtk.co.uk/bandit-colour-scheme
 <
 	(screenshots of C source code on the |TagHighlight-website|) or you
 	can configure the extra highlighting groups yourself.  The following
@@ -175,8 +184,8 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 >
 		hi link Type Keyword
 <
-	However, this probably defies the point of having the tag highlighter in
-	the first place!
+	However, this loses a lot of the advantages of having the tag highlighter
+	in the first place - being able to distinguish between different types!
 
 ------------------------------------------------------------------------------
 
@@ -1340,11 +1349,19 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	along with a copy of the debug log to me at abudden _AT_ gmail _DOT_ com.
 	I'll do my best to help you get it working as quickly as I can.
 
+	If you're having problems that are specific to the |:UpdateTypesFileOnly|
+	command, please use the following commands, which work in much the same
+	way as the commands above:
+>
+		:let g:TagHighlightSettings['DebugLevel'] = 'Information'
+		:let g:TagHighlightSettings['DebugFile'] = '/path/to/typesonly.log'
+		:UpdateTypesFileOnly
+<
+
 ==============================================================================
 6. Feature Wishlist                      *TagHighlight-wishlist*            {{{1
 
-	- Highlighting of local variables (could be useful for checking your
-	  variable is defined in the correct function)?  Not currently possible as
+	- Highlighting of local variables with scope.  Not currently possible as
 	  "ctags --c-kinds=+l" doesn't provide the scope of the local variable, so
 	  a lot of complicated parsing of the source would be required.
 
@@ -1356,11 +1373,11 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 	- Make it work better with paths containing spaces.
 
-	- Add more debugging capability and write the troubleshooting section of
-	  the manual.
-
 ==============================================================================
 7. TagHighlight History                *TagHighlight-history*               {{{1
+
+2.0.22: UNRELEASED         : Website link update.  Comments on troubleshooting
+                             issues with UpdateTypesFileOnly.
 
 2.0.21: 10th August 2011   : Additional debug.
 
