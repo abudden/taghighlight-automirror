@@ -1378,7 +1378,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 2.0.22: 11th August 2011   : Website link update.  Comments on troubleshooting
                              issues with UpdateTypesFileOnly.  Fix for check
-                             for existing of tag file (not looking in the
+                             for existence of tag file (not looking in the
                              correct directory).
 
 2.0.21: 10th August 2011   : Additional debug.
