@@ -29,8 +29,9 @@ def RunWithOptions(options):
     Debug("Version:" + repr(config['version']), "Information")
     Debug("Options:" + repr(options), "Information")
 
-    if config['use_existing_tagfile'] and not os.path.exists(config['ctags_file']):
-        Debug("Cannot use existing tagfile as it doesn't exist (checking for " + config['ctags_file'] + ")", "Information")
+    tag_file_absolute = os.path.join(config['ctags_file_dir'], config['ctags_file'])
+    if config['use_existing_tagfile'] and not os.path.exists(tag_file_absolute):
+        Debug("Cannot use existing tagfile as it doesn't exist (checking for " + tag_file_absolute + ")", "Information")
         config['use_existing_tagfile'] = False
 
     LoadLanguages()
