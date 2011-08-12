@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-"   Date:    02/08/2011
+"   Date:    12/08/2011
 " Copyright: Copyright (C) 2009-2011 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
@@ -101,7 +101,8 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 				let pyoption = 'options["'.option['Destination'].'"]'
 				if option['Type'] == 'bool'
 					let handled_options += [option['VimOptionMap']]
-					if a:options[option['VimOptionMap']]
+					let value = a:options[option['VimOptionMap']]
+					if (value == 1) || (value == 'True')
 						exe PY pyoption '= True'
 					else
 						exe PY pyoption '= False'
@@ -148,8 +149,13 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 				endif
 				" We can handle this one automatically
 				if option['Type'] == 'bool'
-					if ((a:options[option['VimOptionMap']] && option['Default'] == 'False')
-								\ || ( ! a:options[option['VimOptionMap']] && option['Default'] == 'True'))
+					if (a:options[option['VimOptionMap']] == 1) || (a:options[option['VimOptionMap']] == 'True')
+						let bvalue = 1
+					else
+						let bvalue = 0
+					endif
+					if (((bvalue == 1) && option['Default'] == 'False')
+								\ || ((bvalue == 0) && option['Default'] == 'True'))
 						let args += [switch]
 					endif
 				elseif option['Type'] == 'string'
