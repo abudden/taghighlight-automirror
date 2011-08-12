@@ -74,7 +74,7 @@ def GenerateVersionInfo():
 
     return version_file, clean
 
-def MakeZipFile(r):
+def MakeMainRelease(r):
     # List of paths to include (either explicit files or paths to search)
     paths = {
             '.py': ['plugin/TagHighlight',__file__],
@@ -82,9 +82,12 @@ def MakeZipFile(r):
             '.txt': ['plugin/TagHighlight/data','plugin/TagHighlight/instructions.txt', 'doc/TagHighlight.txt'],
             '.spec': ['plugin/TagHighlight/TagHighlight.spec'],
             }
+    filename = 'taghighlight_r{0}.zip'.format(r)
+    MakeZipFile(filename, paths)
 
+def MakeZipFile(filename, paths):
     # Create the zipfile
-    zipf = zipfile.ZipFile(os.path.join(vimfiles_dir,'dist','taghighlight_r{0}.zip'.format(r)), 'w')
+    zipf = zipfile.ZipFile(os.path.join(vimfiles_dir, 'dist', filename), 'w')
 
     # Collect the specified paths into a zip file
     for ext, pathlist in paths.items():
@@ -109,6 +112,14 @@ def MakeZipFile(r):
                 print("Path does not exist: " + full_path)
     # Close the zipfile
     zipf.close()
+
+def MakeLibraryPackage(r):
+    paths = {
+            '.txt': ['plugin/TagHighlight/standard_libraries'],
+            '.taghl': ['plugin/TagHighlight/standard_libraries'],
+            }
+    filename = 'taghighlight_standard_libraries_r{0}.zip'.format(r)
+    MakeZipFile(filename, paths)
 
 def MakeCompiled(pyexe, pyinstaller_path, zipfilename, platform_dir):
     initial_dir = os.getcwd()
@@ -170,10 +181,11 @@ def main():
 
     if clean:
         new_release = UpdateReleaseVersion()
-        MakeZipFile(new_release)
+        MakeMainRelease(new_release)
         os.remove(version_file)
         MakeWin32Compiled(new_release)
         MakeLinuxCompiled(new_release)
+        MakeLibraryPackage(new_release)
         CheckInChanges(new_release)
         PublishReleaseVersion()
     else:
