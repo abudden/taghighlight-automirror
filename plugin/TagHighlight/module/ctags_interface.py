@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Tag Highlighter:
 #   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-#   Date:    02/08/2011
+#   Date:    12/08/2011
 # Copyright: Copyright (C) 2009-2011 A. S. Budden
 #            Permission is hereby granted to use and distribute this code,
 #            with or without modifications, provided that this copyright
@@ -138,17 +138,22 @@ def GetCommandArgs(options):
         args += ["--exclude=docs", "--exclude=Documentation"]
 
     if options['include_locals']:
+        Debug("Including local variables in tag generation", "Information")
         kinds = options['language_handler'].GetKindList()
         def FindLocalVariableKinds(language_kinds):
             """Finds the key associated with a value in a dictionary.
 
             Assumes presence has already been checked."""
+            Debug("Finding local variable types from " + repr(language_kinds), "Information")
             return "".join(key[-1] for key,val in language_kinds.items() if val == 'CTagsLocalVariable')
 
         for language in ctags_languages:
             if language in kinds and 'CTagsLocalVariable' in kinds[language].values():
+                Debug("Finding local variables for " + language, "Information")
                 args += ['--{language}-kinds=+{kind}'.format(language=language,
                     kind=FindLocalVariableKinds(kinds[language]))]
+            else:
+                Debug("Skipping language: " + language, "Information")
 
     # Must be last as it includes the file list:
     if options['recurse']:
@@ -156,6 +161,8 @@ def GetCommandArgs(options):
         args += ['.']
     else:
         args += glob.glob(os.path.join(options['source_root'],'*'))
+
+    Debug("Command arguments: " + repr(args), "Information")
 
     return args
 
