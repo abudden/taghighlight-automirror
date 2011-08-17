@@ -41,9 +41,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 	5.    Troubleshooting                    |TagHighlight-troubleshooting|
 
-	6.    Feature Wishlist                   |TagHighlight-wishlist|
-
-	7.    TagHighlight History               |TagHighlight-history|
+	6.    TagHighlight History               |TagHighlight-history|
 
 ==============================================================================
 2. TagHighlight Manual           *TagHighlight-manual*                      {{{1
@@ -155,11 +153,12 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	standard by many colour schemes.  You can either download the "bandit"
 	colour scheme from:
 >
-	http://www.cgtk.co.uk/bandit-colour-scheme
+		http://www.cgtk.co.uk/bandit
 <
 	(screenshots of C source code on the |TagHighlight-website|) or you
 	can configure the extra highlighting groups yourself.  The following
-	highlight groups should be defined:
+	highlight groups should be defined (others may be needed for different
+	languages):
 
 		ClassName       : Class
 		DefinedName     : Define
@@ -1082,6 +1081,10 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		the new directory.  If you are not using the pathogen plugin, simply
 		unzip the zip file directly into your ~/.vim or vimfiles directory.
 
+		For details of the pathogen plugin, see:
+>
+			https://github.com/tpope/vim-pathogen
+<
 	Updating the help tags:              *TagHighlight-update-helptags*     {{{4
 
 		If you use pathogen, run:
@@ -1359,22 +1362,12 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 <
 
 ==============================================================================
-6. Feature Wishlist                      *TagHighlight-wishlist*            {{{1
+6. TagHighlight History                *TagHighlight-history*               {{{1
 
-	- Highlighting of local variables with scope.  Not currently possible as
-	  "ctags --c-kinds=+l" doesn't provide the scope of the local variable, so
-	  a lot of complicated parsing of the source would be required.
-
-	- Option to update the types files whenever :make is run.
-
-	- Option to update the types files whenever specific files are written
-	  (would need to make :UpdateTypesFile! much faster for this to be
-	  practical).
-
-	- Make it work better with paths containing spaces.
-
-==============================================================================
-7. TagHighlight History                *TagHighlight-history*               {{{1
+2.1.0:  XXX August 2011    : First public release of TagHighlight.  Many
+                             thanks to Aleksey Baibarin, Marcus Martin,
+                             Mishail and Yongwei Wu for the help with testing
+                             the various pre-release versions of this plugin.
 
 2.0.24: 12th August 2011   : Release script improvements to include packaging
                              of standard libraries.
