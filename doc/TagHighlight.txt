@@ -1366,8 +1366,9 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 2.1.0:  XXX August 2011    : First public release of TagHighlight.  Many
                              thanks to Aleksey Baibarin, Marcus Martin,
-                             Mishail and Yongwei Wu for the help with testing
-                             the various pre-release versions of this plugin.
+							 Mishail, Prasun Ratn and Yongwei Wu for the help
+							 with testing the various pre-release versions of
+							 this plugin.
 
 2.0.24: 12th August 2011   : Release script improvements to include packaging
                              of standard libraries.
