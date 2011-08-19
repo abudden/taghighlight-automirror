@@ -1364,7 +1364,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 6. TagHighlight History                *TagHighlight-history*               {{{1
 
-2.1.0:  XXX August 2011    : First public release of TagHighlight.  Many
+2.1.0:  22nd August 2011   : First public release of TagHighlight.  Many
                              thanks to Aleksey Baibarin, Marcus Martin,
 							 Mishail, Prasun Ratn and Yongwei Wu for the help
 							 with testing the various pre-release versions of
