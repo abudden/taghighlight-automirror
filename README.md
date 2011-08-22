@@ -13,10 +13,10 @@ Adding more languages is extremely simple.
 
 To show the benefit of this plugin, there are some screenshots and a more detailed description at the following website:
 
-    http://www.cgtk.co.uk/taghighlight
+  http://www.cgtk.co.uk/taghighlight
 
 Installation instructions are available here:
 
-    http://www.cgtk.co.uk/taghighlight/install
+  http://www.cgtk.co.uk/taghighlight/install
 
 Detailed documentation can be found in [doc/TagHighlight.txt](https://github.com/abudden/TagHighlight/blob/master/doc/TagHighlight.txt).
