@@ -160,7 +160,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	highlight groups should be defined (others may be needed for different
 	languages):
 
-		ClassName       : Class
+		Class           : Class
 		DefinedName     : Define
 		Enumerator      : Enumerator
 		Function        : Function or method
@@ -172,6 +172,16 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		GlobalConstant  : Global Constant
 		GlobalVariable  : Global Variable
 		LocalVariable   : Local Variable
+	
+	To see the full list of supported groups for a given language, open up
+	plugin/TagHighlight/data/kinds.txt and find your language.  The bit after
+	CTags is the name of the highlight group.  For example, for C++, there is
+	the entry:
+>
+		d:CTagsDefinedName
+<
+	so for this language, the highlight group 'DefinedName' can be used to
+	highlight defined names.
 
 	An example of how to highlight one of these would be to include the
 	following line in your colour scheme (see |:highlight|):
@@ -181,10 +191,11 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	You can, of course, also link the groups to another highlighting group
 	using something like:
 >
-		hi link Type Keyword
+		hi link Type Comment
 <
-	However, this loses a lot of the advantages of having the tag highlighter
-	in the first place - being able to distinguish between different types!
+	All groups are linked to the 'Keyword' type by default.  However, this
+	loses a lot of the advantages of having the tag highlighter in the first
+	place - being able to distinguish between different types!
 
 ------------------------------------------------------------------------------
 
@@ -1405,13 +1416,15 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 6. TagHighlight History                *TagHighlight-history*               {{{1
 
-2.x.x:  xxxx xxxxxx 2011   : Addition of LanguageDetectionMethods option to
+2.1.1:  23rd August 2011   : Addition of LanguageDetectionMethods option to
                              allow loading of types when FileType or Syntax
                              are set (thanks to Hong Xu for the suggestion).
                              This also involved addition of syntax and
 							 filetype definitions to all languages.  Prevent
 							 Vim from repeatedly loading autocmds in plugin
-							 development mode.
+							 development mode.  Don't overwrite Cursor colour
+							 definitions with SQL cursor colouring (thanks
+							 again to Hong Xu for reporting this bug).
 
 2.1.0:  22nd August 2011   : First public release of TagHighlight.  Many
                              thanks to Aleksey Baibarin, Marcus Martin,
