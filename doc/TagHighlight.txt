@@ -172,7 +172,9 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		GlobalConstant  : Global Constant
 		GlobalVariable  : Global Variable
 		LocalVariable   : Local Variable
-	
+
+	                                      *TagHighlight-language-colours*
+
 	To see the full list of supported groups for a given language, open up
 	plugin/TagHighlight/data/kinds.txt and find your language.  The bit after
 	CTags is the name of the highlight group.  For example, for C++, there is
@@ -183,8 +185,14 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	so for this language, the highlight group 'DefinedName' can be used to
 	highlight defined names.
 
-	An example of how to highlight one of these would be to include the
-	following line in your colour scheme (see |:highlight|):
+	The easiest way to add these new groups to an existing colour scheme is to
+	download my |EasyColour| plugin from:
+>
+		http://www.cgtk.co.uk/easycolour
+<
+	If you want to edit an existing colour scheme manually, an example of how
+	to highlight one of these would be to include the following line in your
+	colour scheme (see |:highlight|):
 >
 		hi Enumerator guifg="c000c0"
 <
