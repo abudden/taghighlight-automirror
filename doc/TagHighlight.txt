@@ -48,10 +48,11 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 2.1 Introduction                         *TagHighlight-intro*               {{{2
 
-	This set of scripts is designed to increase the number of highlighting
-	groups used by Vim.  This makes it quicker and easier to spot errors in
-	your code.  By using ctags and parsing the output, the typedefs, #defines,
-	enumerated names etc are all clearly highlighted in different colours.
+	TagHighlight is a plugin that highlights names of classes, variables,
+	types etc in source code in Vim.  This makes it quicker and easier to spot
+	errors in your code.  By using ctags and parsing the output, the typedefs,
+	#defines, enumerated names etc are all clearly highlighted in different
+	colours.
 
 	The idea was based on the comments in |tag-highlight|, but I wanted to
 	take it a little further.
