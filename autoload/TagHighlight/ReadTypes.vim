@@ -51,7 +51,7 @@ function! TagHighlight#ReadTypes#ReadTypesByExtension()
 	endif
 	let extension = fnamemodify(file, ':e')
 
-	return s:ReadTypesImplementation('ExtensionLookup', extension, 's:ExtensionCheck')
+	return s:ReadTypesImplementation('Extension', 'ExtensionLookup', extension, 's:ExtensionCheck')
 endfunction
 
 function! TagHighlight#ReadTypes#ReadTypesBySyntax()
@@ -66,7 +66,7 @@ function! TagHighlight#ReadTypes#ReadTypesBySyntax()
 		let syn = &syntax
 	endif
 
-	return s:ReadTypesImplementation('SyntaxLookup', syn, 's:InListCheck')
+	return s:ReadTypesImplementation('Syntax', 'SyntaxLookup', syn, 's:InListCheck')
 endfunction
 
 function! TagHighlight#ReadTypes#ReadTypesByFileType()
@@ -81,7 +81,7 @@ function! TagHighlight#ReadTypes#ReadTypesByFileType()
 		let ft = &filetype
 	endif
 
-	return s:ReadTypesImplementation('FileTypeLookup', ft, 's:InListCheck')
+	return s:ReadTypesImplementation('FileType', 'FileTypeLookup', ft, 's:InListCheck')
 endfunction
 function! s:ExtensionCheck(this, expected)
 	let regex = '^'.a:expected.'$'
@@ -107,15 +107,22 @@ function! s:MethodListed(method)
 	return 0
 endfunction
 
-function! s:ReadTypesImplementation(lookup, reference, check_function)
+function! s:ReadTypesImplementation(type, lookup, reference, check_function)
 	let result = 0
 	if TagHighlight#Debug#DebugLevelIncludes('Information')
 		call TagHLDebug("Reading types with " . a:lookup . " at " . strftime("%Y%m%d-%H%M%S"), "Information")
 	endif
-	for key in keys(g:TagHighlightPrivate[a:lookup])
-		if eval(a:check_function . '(a:reference, key)') == 1
-			call s:ReadTypes(g:TagHighlightPrivate[a:lookup][key])
-			let result = 1
+	let user_overrides = TagHighlight#Option#GetOption(a:type . 'LanguageOverrides')
+	for dictionary in [user_overrides, g:TagHighlightPrivate[a:lookup]]
+		for key in keys(dictionary)
+			if eval(a:check_function . '(a:reference, key)') == 1
+				call s:ReadTypes(dictionary[key])
+				let result = 1
+				break
+			endif
+		endfor
+		if result
+			break
 		endif
 	endfor
 	return result
@@ -125,6 +132,10 @@ function! s:ReadTypes(suffix)
 	let savedView = winsaveview()
 
 	call TagHighlight#Option#LoadOptionFileIfPresent()
+
+	if len(a:suffix) == 0
+		return
+	endif
 
 	let file = expand('<afile>')
 	if len(file) == 0

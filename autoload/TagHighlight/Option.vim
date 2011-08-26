@@ -140,8 +140,10 @@ function! TagHighlight#Option#GetOption(name)
 			" Probably a multi-entry dict that has automatically been
 			" split: rejoin
 			let result = eval(join(opt, ', '))
-		else
+		elseif type(opt) == type("")
 			let result = eval(opt)
+		else
+			let result = opt
 		endif
 	elseif option['Type'] == 'int'
 		let result = str2nr(opt)
