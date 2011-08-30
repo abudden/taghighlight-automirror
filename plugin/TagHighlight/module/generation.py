@@ -63,7 +63,7 @@ def CreateTypesFile(options, language, tags):
     # is last.
     priority.reverse()
 
-    fullTypeList = sorted(tags.keys())
+    fullTypeList = list(reversed(sorted(tags.keys())))
     # Reorder type list according to priority sort order
     allTypes = []
     for thisType in priority:
@@ -71,7 +71,9 @@ def CreateTypesFile(options, language, tags):
             allTypes.append(thisType)
             fullTypeList.remove(thisType)
     # Add the ones not specified in priority
-    allTypes += fullTypeList
+    allTypes = fullTypeList + allTypes
+
+    Debug("Type priority list: " + repr(allTypes), "Information")
 
     patternREs = []
     for pattern in options['skip_patterns']:
