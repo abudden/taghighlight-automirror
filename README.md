@@ -1,8 +1,9 @@
 TagHighlight is a plugin that highlights names of classes, variables, types etc in source code in Vim.  This makes it quicker and easier to spot errors in your code.  By using exuberant ctags and parsing the output, the typedefs, #defines, enumerated names etc are all clearly highlighted in different colours.  As standard, it supports the following languages (but it's very easy to add more):
 
-* C/C++ (most of the testing has been with these);
+* C/C++ (most of the testing has been with these)
 * C#
 * Java
+* Matlab (functions only; may require custom ctags version)
 * Perl
 * PHP
 * Python
