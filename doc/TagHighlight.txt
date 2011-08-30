@@ -1490,7 +1490,8 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 2.1.2:  xxxx xxxxxx 2011   : Allow overriding the file-language relationship
                              without having to edit the language definitions.
                              Added support for Matlab (if your version of
-                             ctags supports it).
+                             ctags supports it).  Added support for .hh
+                             extension for C/C++ headers.
 
 2.1.1:  23rd August 2011   : Addition of LanguageDetectionMethods option to
                              allow loading of types when FileType or Syntax
