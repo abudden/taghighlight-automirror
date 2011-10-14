@@ -74,6 +74,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		* PHP
 		* Python
 		* Ruby (largely untested)
+		* Fortran
 		* VHDL (if your version of ctags supports it)
 
 	It should also work correctly with Charles Campbell's rainbow.vim bracket
@@ -1487,7 +1488,10 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 6. TagHighlight History                *TagHighlight-history*               {{{1
 
-2.1.3: ??th ????????? 2011 : Minor typo correction in documentation.
+2.1.3: 14th October 2011   : Minor typo correction in documentation.  Fix to
+                             make TagHighlight with pre 7.3-288 versions of
+                             Vim (bug in has() function).  Added support for
+                             Fortran (thanks to Oleg Lebedev).
 
 2.1.2:  30th August 2011   : Allow overriding the file-language relationship
                              without having to edit the language definitions.
