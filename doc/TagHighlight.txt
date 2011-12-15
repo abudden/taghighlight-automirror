@@ -75,7 +75,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		* Python
 		* Ruby (largely untested)
 		* Fortran
-		* Go
+		* Go (if your version of ctags supports it)
 		* VHDL (if your version of ctags supports it)
 
 	It should also work correctly with Charles Campbell's rainbow.vim bracket
