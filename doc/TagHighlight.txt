@@ -27,9 +27,15 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	2.4.2 Example Configurations             |TagHighlight-example-configs||
 	2.4.3 Option Summary                     |TagHighlight-option-list|
 	2.4.4 Option Details                     |TagHighlight-option-details|
-	2.5   Installation                       |TagHighlight-install|
-	2.5.1 Requirements                       |TagHighlight-requirements|
-	2.5.2 Installation Guide                 |TagHighlight-install-guide|
+	2.5   Integration with Other Software    |TagHighlight-integration|
+	2.5.1 Tagbar Integration                 |TagHighlight-tagbar|
+	2.5.2 Git Integration                    |TagHighlight-git|
+	2.5.3 Bazaar Integration                 |TagHighlight-bazaar|
+	2.5.4 Mercurial Integration              |TagHighlight-mercurial|
+	2.5.5 Subversion Integration             |TagHighlight-subversion|
+	2.6   Installation                       |TagHighlight-install|
+	2.6.1 Requirements                       |TagHighlight-requirements|
+	2.6.2 Installation Guide                 |TagHighlight-install-guide|
 
 	3.    Standard Libraries                 |TagHighlight-standard-libraries|
 	3.1   Introduction                       |TagHighlight-stdlib-intro|
@@ -1155,9 +1161,80 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 ------------------------------------------------------------------------------
 
-2.5 Installation                         *TagHighlight-install*             {{{2
+2.4 Integration with Other Software      *TagHighlight-integration*         {{{2
 
-2.5.1 Requirements                       *TagHighlight-requirements*        {{{3
+2.5.1 Tagbar Integration                 *TagHighlight-tagbar*              {{{3
+
+	|TagHighlight| can be used to highlight the names of classes etc in the
+	tagbar window (thanks to Alexey Radkov for reporting this).  Tagbar uses
+	its own filetype, so you can configure this with something like:
+>
+		let g:TagHighlightSettings['LanguageDetectionMethods'] =
+			\ ['Extension', 'FileType']
+		let g:TagHighlightSettings['FileTypeLanguageOverrides'] =
+			\ {'tagbar': 'c'}
+<
+	You'll obviously need to change the language preference according to the
+	language in which you program.  In order to use it with different
+	languages in different project, use a |taghl_config.txt| project options
+	file, something like this (customise the language for each file as
+	required):
+>
+		LanguageDetectionMethods:Extension,FileType
+		FileTypeLanguageOverrides:
+			tagbar:c
+		# vim:ff=unix,noet
+<
+	This assumes that you are writing C code; customise as appropriate.
+
+2.5.2 Git Integration                    *TagHighlight-git*                 {{{3
+
+	A similar method to that used with tagbar can be used to highlight git
+	commit messages.  Use something like this in your |taghl_config.txt|
+	project configuration file:
+>
+		LanguageDetectionMethods:
+			Extension,FileType
+		FileTypeLanguageOverrides:
+			gitcommit:python
+		# vim:ff=unix,noet
+<
+	This assumes that you are writing python code; customise as required.
+
+2.5.3 Bazaar Integration                 *TagHighlight-bazaar*              {{{3
+
+	Unfortunately, there is no easy way to highlight tags in Bazaar projects
+	as the commit message is stored in a temporary directory rather than
+	within the project.  If anyone has a suggestion of how to work round this,
+	please let me know.
+
+2.5.4 Mercurial Integration              *TagHighlight-mercurial*           {{{3
+
+	Unfortunately, there is no easy way to highlight tags in Mercurial projects
+	as the commit message is stored in a temporary directory rather than
+	within the project.  If anyone has a suggestion of how to work round this,
+	please let me know.
+
+2.5.5 Subversion Integration             *TagHighlight-subversion*          {{{3
+
+	A similar method to that used with tagbar can be used to highlight
+	subversion commit messages (thanks to Alexey Radkov for reporting this).
+	Use something like this in your |taghl_config.txt| project configuration
+	file:
+>
+		LanguageDetectionMethods:
+			Extension,FileType
+		FileTypeLanguageOverrides:
+			svn:java
+		# vim:ff=unix,noet
+<
+	This assumes that you are writing Java code; customise as required.
+
+------------------------------------------------------------------------------
+
+2.6 Installation                         *TagHighlight-install*             {{{2
+
+2.6.1 Requirements                       *TagHighlight-requirements*        {{{3
 
 	|TagHighlight| consists of some Vim scripts and some Python scripts.  The
 	Vim scripts require a relatively recent Vim (at least version 7).  To use
@@ -1172,7 +1249,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 	(including python 3), you can use that.  Finally, there is a (separately
 	distributed) compiled version if you don't have python on your system.
 
-2.5.2 Installation Guide                 *TagHighlight-install-guide*       {{{3
+2.6.2 Installation Guide                 *TagHighlight-install-guide*       {{{3
 
 	Uninstalling ctags_highlighter:      *TagHighlight-remove-old*          {{{4
 
