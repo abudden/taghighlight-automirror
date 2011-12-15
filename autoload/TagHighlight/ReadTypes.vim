@@ -23,6 +23,7 @@ let g:loaded_TagHLReadTypes = 1
 let s:all_ft_methods = ['Extension', 'Syntax', 'FileType']
 
 function! TagHighlight#ReadTypes#ReadTypesByOption()
+	call TagHighlight#Option#LoadOptionFileIfPresent()
 	let ft_methods = TagHighlight#Option#GetOption('LanguageDetectionMethods')
 	for method in ft_methods
 		if index(s:all_ft_methods, method) == -1

@@ -129,18 +129,18 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 				let result['Filename'] = filename
 			endif
 		elseif search_mode == 'CurrentDirectory'
-			call TagHLDebug('Using current directory', 'Information')
+			call TagHLDebug('Using current directory: ' . fnamemodify('.', ':p:h'), 'Information')
 			let result['Directory'] = fnamemodify('.',':p:h')
 			let result['Filename'] = filename
 		elseif search_mode == 'FileDirectory'
-			call TagHLDebug('Using file directory', 'Information')
+			call TagHLDebug('Using file directory: ' . fnamemodify(file, ':p:h'), 'Information')
 			let result['Directory'] = fnamemodify(file,':p:h')
 			let result['Filename'] = filename
 		endif
 		if has_key(result, 'Directory')
 			let result['FullPath'] = result['Directory'] . '/' . result['Filename']
 			let result['Found'] = 1
-			call TagHLDebug('Found file location', 'Information')
+			call TagHLDebug('Found file location: ' . result['FullPath'], 'Information')
 			if filereadable(result['FullPath'])
 				call TagHLDebug('File exists', 'Information')
 				let result['Exists'] = 1

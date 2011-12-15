@@ -36,7 +36,7 @@ function! TagHighlight#LoadDataFile#LoadFile(filename)
 			" Keyword character, so not sub entry or comment
 			if entry[len(entry)-1:] == ":"
 				" Beginning of a field, but we don't know whether
-				" it's a list of a dict yet
+				" it's a list or a dict yet
 				let top_key = entry[:len(entry)-2]
 			elseif stridx(entry, ':') != -1
 				" This is key:value, so it's a simple dictionary entry

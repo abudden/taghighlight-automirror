@@ -28,6 +28,7 @@ function! TagHighlight#Option#LoadOptionFileIfPresent()
 
 	" Check whether we've found the option file
 	if ! option_file['Exists']
+		call TagHLDebug("No project config file", "Information")
 		return
 	endif
 
