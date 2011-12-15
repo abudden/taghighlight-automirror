@@ -1488,7 +1488,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 6. TagHighlight History                *TagHighlight-history*               {{{1
 
-x.x.x: xxxx December 2011  : Improved internal modeline to make addition of
+2.1.4: 15th December 2011  : Improved internal modeline to make addition of
                              languages more straightforward.  Added support
                              for Go Programming Language (thanks to Ali Hamdi).
 
