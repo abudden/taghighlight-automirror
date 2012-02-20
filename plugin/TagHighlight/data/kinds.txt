@@ -163,6 +163,18 @@ ruby:
 	f:CTagsMethod
 	m:CTagsModule
 	F:CTagsSingleton
+scala:
+	c:CTagsClass
+	o:CTagsObject
+	t:CTagsTrait
+	r:CTagsCClass
+	a:CTagsAClass
+	m:CTagsMethod
+	V:CTagsVal
+	v:CTagsVar
+	T:CTagsType
+	i:CTagsInclude
+	p:CTagsPackage
 scheme:
 	f:CTagsFunction
 	s:CTagsSet

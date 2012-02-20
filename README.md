@@ -8,6 +8,7 @@ TagHighlight is a plugin that highlights names of classes, variables, types etc 
 * PHP
 * Python
 * Ruby
+* Scala
 * Fortran
 * Go (if your version of ctags supports it)
 * VHDL (if your version of ctags supports it)

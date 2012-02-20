@@ -80,6 +80,7 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 		* PHP
 		* Python
 		* Ruby (largely untested)
+		* Scala
 		* Fortran
 		* Go (if your version of ctags supports it)
 		* VHDL (if your version of ctags supports it)
@@ -1565,6 +1566,8 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 
 ==============================================================================
 6. TagHighlight History                *TagHighlight-history*               {{{1
+
+2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 
 2.1.4: 15th December 2011  : Improved internal modeline to make addition of
                              languages more straightforward.  Added support
