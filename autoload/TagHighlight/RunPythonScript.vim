@@ -194,7 +194,7 @@ function! TagHighlight#RunPythonScript#FindExeInPath(file)
 		endif
 	endif
 	let short_file = fnamemodify(full_file, ':p:t')
-	let file_exe_list = split(globpath(s:GetPath(), short_file), '\n')
+	let file_exe_list = split(globpath(s:GetPath(), short_file, 1), '\n')
 	
 	if len(file_exe_list) > 0 && executable(file_exe_list[0])
 		let file_exe = file_exe_list[0]
@@ -323,7 +323,7 @@ function! TagHighlight#RunPythonScript#FindPython()
 					" See if there's a compiled executable version of the
 					" highlighter
 					if has("win32")
-						let compiled_highlighter = split(globpath(&rtp, "plugin/TagHighlight/Compiled/Win32/TagHighlight.exe"), "\n")
+						let compiled_highlighter = split(globpath(&rtp, "plugin/TagHighlight/Compiled/Win32/TagHighlight.exe", 1), "\n")
 						if len(compiled_highlighter) > 0  && executable(compiled_highlighter[0])
 							let s:python_variant = 'compiled'
 							let s:python_version = 'Compiled Highlighter'
