@@ -1567,6 +1567,9 @@ Copyright:  (c) 2009-2011 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 6. TagHighlight History                *TagHighlight-history*               {{{1
 
+x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
+                             option (thanks to Vincent).
+
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 
 2.1.4: 15th December 2011  : Improved internal modeline to make addition of
