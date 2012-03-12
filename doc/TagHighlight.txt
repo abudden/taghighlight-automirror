@@ -70,6 +70,7 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 	is added (with optional ! for recursive operation) to keep the generated
 	files up to date.
 
+                                         *TagHighlight-languages*
 	At present, the highlighter supports the following languages:
 
 		* C/C++
@@ -1518,7 +1519,15 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 <
 	7. Test your new language!
 
-	8. Send me a copy for inclusion in the main distribution.
+	8. Send me a copy for inclusion in the main distribution.  If you're
+	   sending it to me as a github pull request, please also update the list
+	   of languages (|TagHighlight-languages|) and add a note in the latest
+	   entry in the change log (|TagHighlight-history|).  If there isn't an
+	   entry there for an unreleased version, please add one (something like
+>
+			x.x.x: xxth Xxxxxxxx 2012  : Added support for LANGUAGE.
+<
+	   (leave the x characters in: I'll change these when I release the code).
 
 4.1.1 Example                            *TagHighlight-add-example*         {{{3
 
