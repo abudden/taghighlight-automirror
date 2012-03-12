@@ -1520,14 +1520,21 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 	7. Test your new language!
 
 	8. Send me a copy for inclusion in the main distribution.  If you're
-	   sending it to me as a github pull request, please also update the list
-	   of languages (|TagHighlight-languages|) and add a note in the latest
-	   entry in the change log (|TagHighlight-history|).  If there isn't an
-	   entry there for an unreleased version, please add one (something like
+	   sending it to me as a github pull request, it would help enormously if
+	   you could also also:
+	   
+	   * Update the list of languages (|TagHighlight-languages|) in this
+	     file.
+	   * Update the list of languages in README.md (shown on the github
+	     front page).
+	   * Add a note in the latest entry in the change log in this file
+	     (|TagHighlight-history|).  If there isn't an entry there for an
+		 unreleased version, please add one (something like
 >
 			x.x.x: xxth Xxxxxxxx 2012  : Added support for LANGUAGE.
 <
-	   (leave the x characters in: I'll change these when I release the code).
+		 (leave the x characters in: I'll change these when I release the
+		 code).
 
 4.1.1 Example                            *TagHighlight-add-example*         {{{3
 
