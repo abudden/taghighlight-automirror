@@ -3,6 +3,7 @@ TagHighlight is a plugin that highlights names of classes, variables, types etc 
 * C/C++ (most of the testing has been with these)
 * C#
 * Java
+* Javascript
 * Matlab (functions only; may require custom ctags version)
 * Perl
 * PHP
