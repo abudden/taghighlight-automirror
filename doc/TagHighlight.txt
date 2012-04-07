@@ -112,10 +112,14 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 
 	The plugin is distribute as source code (binaries of the python components
 	are also available for computers that do not have python installed) The
-	source code is managed using the Git version control system and is
-	available on github at:
+	source code is managed using the Mercurial version control system and is
+	available on bitbucket at:
 >
-		https://github.com/abudden/taghighlight
+		https://bitbucket.org/abudden/TagHighlight
+<
+	For those that prefer Git to Mercurial, it is also mirrored on github at:
+>
+		https://github.com/abudden/TagHighlight
 <
 
 ------------------------------------------------------------------------------
@@ -1520,13 +1524,13 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 	7. Test your new language!
 
 	8. Send me a copy for inclusion in the main distribution.  If you're
-	   sending it to me as a github pull request, it would help enormously if
-	   you could also also:
+	   sending it to me as a bitbucket or github pull request, it would help
+	   enormously if you could also also:
 	   
 	   * Update the list of languages (|TagHighlight-languages|) in this
 	     file.
-	   * Update the list of languages in README.md (shown on the github
-	     front page).
+	   * Update the list of languages in README.md (shown on the bitbucket
+	     and github front pages).
 	   * Add a note in the latest entry in the change log in this file
 	     (|TagHighlight-history|).  If there isn't an entry there for an
 		 unreleased version, please add one (something like
@@ -1587,6 +1591,8 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
                              option (thanks to Vincent).  Added support for
                              Javascript (thanks to Piotr Yordanov).
+                             Transferred source repository from git to
+                             mercurial (will maintain git mirror on github).
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 

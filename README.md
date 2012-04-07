@@ -24,4 +24,4 @@ Installation instructions are available here:
 
   http://www.cgtk.co.uk/taghighlight/install
 
-Detailed documentation can be found in [doc/TagHighlight.txt](https://github.com/abudden/TagHighlight/blob/master/doc/TagHighlight.txt).
+Detailed documentation can be found in [doc/TagHighlight.txt](https://bitbucket.org/abudden/TagHighlight/src/default/doc/TagHighlight.txt).

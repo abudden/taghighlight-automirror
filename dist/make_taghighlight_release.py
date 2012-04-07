@@ -12,7 +12,7 @@ vimfiles_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),'..'))
 import socket
 hostname = socket.gethostname()
 
-GIT=["git"]
+HG=["hg"]
 
 # Recursive glob function, from
 # http://stackoverflow.com/questions/2186525/use-a-glob-to-find-files-recursively-in-python#2186565
@@ -41,13 +41,13 @@ def UpdateReleaseVersion():
     fh.close()
     return release
 
-version_info_initial = ['log','-1',"--format=format:release_revid:%H%nrelease_date:%ad","--date=iso"]
-clean_info = ['status', '--porcelain']
+version_info_initial = ['log','-1','--template=release_revid:{node}\nrelease_date:{date|isodate}']
+clean_info = ['status']
 
 def GenerateVersionInfo():
     version_file = os.path.join(vimfiles_dir,'plugin/TagHighlight/data/version_info.txt')
 
-    args = GIT + clean_info
+    args = HG + clean_info
     p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (stdout,stderr) = p.communicate()
 
@@ -59,7 +59,7 @@ def GenerateVersionInfo():
         clean = True
         clean_line = "release_clean:1"
 
-    args = GIT + version_info_initial
+    args = HG + version_info_initial
     p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (stdout,stderr) = p.communicate()
 
@@ -157,16 +157,13 @@ def MakeLinuxCompiled(r):
     MakeCompiled(pyexe, pyinstaller_path, 'taghighlight_r{0}_linux.zip'.format(r), 'Linux')
 
 def CheckInChanges(r):
-    args = GIT+['add','plugin/TagHighlight/data/release.txt']
+    args = HG+['commit','-m','Release build {0}'.format(r)]
     p = subprocess.Popen(args)
     (stdout,stderr) = p.communicate()
-    args = GIT+['commit','-m','Release build {0}'.format(r)]
+    args = HG+['tag','taghighlight-release-{0}'.format(r)]
     p = subprocess.Popen(args)
     (stdout,stderr) = p.communicate()
-    args = GIT+['tag','taghighlight-release-{0}'.format(r)]
-    p = subprocess.Popen(args)
-    (stdout,stderr) = p.communicate()
-    args = GIT+['push','origin','master','--tags']
+    args = HG+['push']
     p = subprocess.Popen(args)
     (stdout,stderr) = p.communicate()
 
@@ -189,7 +186,7 @@ def main():
         CheckInChanges(new_release)
         PublishReleaseVersion()
     else:
-        print("Distribution not clean: check into Git before making release.")
+        print("Distribution not clean: check into Mercurial before making release.")
         os.remove(version_file)
 
 
