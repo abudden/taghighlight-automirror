@@ -24,4 +24,6 @@ Installation instructions are available here:
 
   http://www.cgtk.co.uk/taghighlight/install
 
-Detailed documentation can be found in [doc/TagHighlight.txt](https://bitbucket.org/abudden/TagHighlight/src/default/doc/TagHighlight.txt).
+The source is managed in Mercurial and is available on [bitbucket](https://bitbucket.org/abudden/taghighlight).  It is also mirrored on [github](https://github.com/abudden/TagHighlight).
+
+Detailed documentation can be found in [doc/TagHighlight.txt](https://bitbucket.org/abudden/taghighlight/src/default/doc/TagHighlight.txt).

@@ -115,7 +115,7 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 	source code is managed using the Mercurial version control system and is
 	available on bitbucket at:
 >
-		https://bitbucket.org/abudden/TagHighlight
+		https://bitbucket.org/abudden/taghighlight
 <
 	For those that prefer Git to Mercurial, it is also mirrored on github at:
 >
