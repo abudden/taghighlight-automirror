@@ -1599,6 +1599,8 @@ x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
                              Javascript (thanks to Piotr Yordanov).
                              Transferred source repository from git to
                              mercurial (will maintain git mirror on github).
+                             Added a reference (in the documentation) to the
+                             new wiki.
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 
