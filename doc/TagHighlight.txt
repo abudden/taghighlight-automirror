@@ -311,7 +311,13 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 		This section contains a few examples of configurations that may be
 		useful.  It is hoped that most users will be able to use TagHighlight
 		without setting any options at all, but these give some examples of
-		some more complex scenarios.
+		some more complex scenarios.  These examples are also all on the wiki:
+>
+			https://bitbucket.org/abudden/taghighlight/wiki/Home
+<
+		If you have any additional examples (e.g. how to use with different
+		variants of ctags, specific libraries or other custom configurations),
+		please add them to the wiki.
 	
 	Trivial Configuration                                                 {{{4
 
