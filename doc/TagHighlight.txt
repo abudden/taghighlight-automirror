@@ -316,7 +316,13 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 		This section contains a few examples of configurations that may be
 		useful.  It is hoped that most users will be able to use TagHighlight
 		without setting any options at all, but these give some examples of
-		some more complex scenarios.
+		some more complex scenarios.  These examples are also all on the wiki:
+>
+			https://bitbucket.org/abudden/taghighlight/wiki/Home
+<
+		If you have any additional examples (e.g. how to use with different
+		variants of ctags, specific libraries or other custom configurations),
+		please add them to the wiki.
 
 	Trivial Configuration                                                 {{{4
 
@@ -1699,12 +1705,14 @@ x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
                              with versions of ctags (like jsctags) that don't
                              accept the same arguments as exuberant ctags
                              (thanks to Piotr Yordanov for the suggestion and
-                             help getting jsctags working).  Also added
-                             support for CtagsVariant arguments to simplify
-                             this process for known variants.  Support for
-                             jsctags is still fairly flaky as jsctags seems to
-                             fail very easily (and I've only used it for
-                             generating tags for its own source code!).
+							  help getting jsctags working).  Also added
+							 support for CtagsVariant arguments to simplify
+							 this process for known variants.  Support for
+							 jsctags is still fairly flaky as jsctags seems to
+							 fail very easily (and I've only used it for
+							 generating tags for its own source code!).  Added
+							 a reference (in the documentation) to the new
+							 wiki.
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 
