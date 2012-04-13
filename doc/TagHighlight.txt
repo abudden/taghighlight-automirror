@@ -307,12 +307,12 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 2.4.2 Example Configurations             *TagHighlight-example-configs*     {{{3
 
 	Introduction                                                          {{{4
-		
+
 		This section contains a few examples of configurations that may be
 		useful.  It is hoped that most users will be able to use TagHighlight
 		without setting any options at all, but these give some examples of
 		some more complex scenarios.
-	
+
 	Trivial Configuration                                                 {{{4
 
 		Use case: User has source code placed in multiple subdirectories and
@@ -339,7 +339,7 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 				  from Qt4 (e.g. QString) to be highlighted.
 
 		Implementation:
-			
+
 			Make sure that you have installed the standard libraries (see 
 			|TagHighlight-install-stdlib|).  The Qt4 library will be loaded
 			automatically.  Create a file called taghl_config.txt in the
@@ -428,7 +428,7 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 
 		ExtensionLanguageOverrides       Link:|TagHL-ExtensionLanguageOverrides|
 			Force a particular file extension to match a chosen language.
-			
+
 		FileTypeLanguageOverrides        Link:|TagHL-FileTypeLanguageOverrides|
 			Force a particular file type to match a chosen language.
 
@@ -1274,7 +1274,7 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 		* types_wxpy.vim (if you installed the GUI types addon)
 		* types_android.vim (if you installed the GUI types addon)
 		* types_jdk.vim (if you installed the GUI types addon)
-	
+
 	Installing the main plugin:          *TagHighlight-install-main*        {{{4
 
 		The TagHighlight plugin is distributed as a zip file.  If you are
@@ -1302,7 +1302,7 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 			:helptags path/to/vimfiles/doc
 <
 		as appropriate.
-	
+
 	Installing the compiled version:     *TagHighlight-install-compiled*    {{{4
 
 		If you want to use the compiled version of the plugin (if you do not
@@ -1359,7 +1359,7 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 	* "Qt4": Qt4 (C++)
 	* "wxpython": wxPython (Python; limited support)
 	* "wxWidgets": wxWidgets (C++)
-	
+
 	If a source file is opened that looks like it might be part of one of
 	these libraries, the standard library highlighter is automatically loaded.
 	Forcing loading of a particular library can be achieved using the option
@@ -1412,7 +1412,7 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 			           returns 'Load', load the library; if it returns 'Skip',
 			           do not load the library.  Any other return value is an
 			           error.
-	
+
 	Other options that may be required depending on the CheckMode:
 
 		MatchREs - list of Vim regular expressions to compare against the
@@ -1436,7 +1436,7 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 
 	1. Run ctags --list-languages and check that the required language is
 	   present.
-	   
+
 	2. If you're using a custom version of ctags highlighter with extra
 	   languages, you may need to add the details to the kind list in
 	   plugin/TagHighlight/data/kinds.txt (for most standard languages, this
@@ -1526,14 +1526,14 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 	8. Send me a copy for inclusion in the main distribution.  If you're
 	   sending it to me as a bitbucket or github pull request, it would help
 	   enormously if you could also also:
-	   
+
 	   * Update the list of languages (|TagHighlight-languages|) in this
 	     file.
 	   * Update the list of languages in README.md (shown on the bitbucket
 	     and github front pages).
 	   * Add a note in the latest entry in the change log in this file
 	     (|TagHighlight-history|).  If there isn't an entry there for an
-		 unreleased version, please add one (something like
+		 unreleased version, please add one: something like
 >
 			x.x.x: xxth Xxxxxxxx 2012  : Added support for LANGUAGE.
 <
