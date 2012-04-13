@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Tag Highlighter:
 #   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-# Copyright: Copyright (C) 2009-2011 A. S. Budden
+# Copyright: Copyright (C) 2009-2012 A. S. Budden
 #            Permission is hereby granted to use and distribute this code,
 #            with or without modifications, provided that this copyright
 #            notice is copied with it. Like anything else that's free,
@@ -135,6 +135,14 @@ def IsValidKeyword(keyword, iskeyword):
             return False
     return True
 
+def rglob(path, pattern):
+    # Tweaked version of the stackoverflow answer:
+    # http://stackoverflow.com/questions/2186525/use-a-glob-to-find-files-recursively-in-python#2186565
+    import os, fnmatch
+    matches = []
+    for root, dirnames, filenames in os.walk(path):
+        matches += [os.path.join(root, i) for i in fnmatch.filter(filenames, pattern)]
+    return matches
 
 if __name__ == "__main__":
     import pprint

@@ -490,6 +490,12 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 		CtagsExecutable                  Link:|TagHL-CtagsExecutable|
 		   Specify the name of (or full path to) exuberant ctags.
 
+		CtagsVariant                     Link:|TagHL-CtagsVariant|
+		   Use a variant of ctags other than exuberant.
+
+		CtagsArguments                   Link:|TagHL-CtagsArguments|
+		   Specify an explicit list of arguments to pass to ctags.
+
 	Locations of Files (normal):
 
 		DefaultDirModeSearchWildcards    Link:|TagHL-DirModeSearchWildcards|
@@ -587,6 +593,19 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 
 2.4.4 Option Details                     *TagHighlight-option-details*      {{{3
 
+	CtagsArguments                       *TagHL-CtagsArguments*
+		This option allows advanced users to specify an explicit list of
+		arguments to pass to ctags.  In most cases, you won't want to use
+		this, but if |TagHL-CtagsExecutable| is pointing to a non-recognised
+		version of ctags, you may need to specify custom arguments in order to
+		get it to work with |TagHighlight|.  Before using this, consider the
+		option |TagHL-CtagsVariant|.  If you do use CtagsArguments, please get
+		in touch and let me know why: I might be able to create a new
+		CtagsVariant to do whatever you need.
+
+		Option Type: List
+		Default: [] (empty list)
+
 	CtagsExeFull                         *TagHL-CtagsExeFull*
 		Used internally to tell the python part of the application where ctags
 		is.  Do not use this option as it will be automatically overwritten.
@@ -608,6 +627,17 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 		|TagHL-TagFileDirectory|.
 
 		See also |TagHL-TagFileName|.
+
+	CtagsVariant                         *TagHL-CtagsVariant*
+		Some variants of ctags expect different arguments to exuberant ctags.
+		This option allows you to tell |TagHighlight| to provide the arguments
+		in a different form.  Currently supported values for this option are
+		"exuberant" for the standard implementation and "jsctags" for jsctags.
+		Note that if you're using this option, you probably also want to set
+		|TagHL-CtagsExecutable| to something other than "ctags".
+
+		Option Type: String
+		Default: "exuberant"
 
 	DebugFile                            *TagHL-DebugFile*
 		If set to something other than "None" (the default), write debugging
@@ -1664,6 +1694,17 @@ x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
                              Javascript (thanks to Piotr Yordanov).
                              Transferred source repository from git to
                              mercurial (will maintain git mirror on github).
+                             Added support for custom ctags argument lists
+                             (option CtagsArguments) in order to allow use
+                             with versions of ctags (like jsctags) that don't
+                             accept the same arguments as exuberant ctags
+                             (thanks to Piotr Yordanov for the suggestion and
+                             help getting jsctags working).  Also added
+                             support for CtagsVariant arguments to simplify
+                             this process for known variants.  Support for
+                             jsctags is still fairly flaky as jsctags seems to
+                             fail very easily (and I've only used it for
+                             generating tags for its own source code!).
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 

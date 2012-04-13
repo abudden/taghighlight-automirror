@@ -282,6 +282,20 @@ ctags_exe_full:
 	Type:string
 	Default:ctags
 	Help:CTAGS Executable Directory
+
+ctags_arguments:
+	CommandLineSwitches:--add-ctags-argument
+	VimOptionMap:CtagsArguments
+	Type:list
+	Default:[
+	Help:Explicit list of arguments to parse to ctags (for use with non-recognised ctags implementations).
+
+ctags_variant:
+	CommandLineSwitches:--ctags-variant
+	VimOptionMap:CtagsVariant
+	Type:string
+	Default:exuberant
+	Help:Tells TagHighlight which variant of ctags is being used: some have different requirements for their arguments.
  
 include_docs:
 	CommandLineSwitches:--include-docs

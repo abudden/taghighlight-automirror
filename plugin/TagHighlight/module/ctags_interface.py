@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Tag Highlighter:
 #   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-# Copyright: Copyright (C) 2009-2011 A. S. Budden
+# Copyright: Copyright (C) 2009-2012 A. S. Budden
 #            Permission is hereby granted to use and distribute this code,
 #            with or without modifications, provided that this copyright
 #            notice is copied with it. Like anything else that's free,
@@ -17,7 +17,7 @@ import subprocess
 import os
 import re
 import glob
-from .utilities import DictDict
+from .utilities import DictDict, rglob
 from .languages import Languages
 from .debug import Debug
 
@@ -38,14 +38,24 @@ r'''
     (\t|$)            # It must be followed either by a tab or by the end of the line
     .*                # If it is followed by a tab, soak up the rest of the line; replace with the syntax keyword line
 ''', re.VERBOSE)
+
 field_const = re.compile(r'\bconst\b')
 
 def GenerateTags(options):
     Debug("Generating Tags", "Information")
 
-    args = GetCommandArgs(options)
-
+    # Change the working directory to the source root
+    # now so that argument globs work correctly.
     os.chdir(options['source_root'])
+
+    if 'ctags_arguments' in options:
+        args = options['ctags_arguments']
+    else:
+        if 'ctags_variant' in options:
+            variant = options['ctags_variant']
+        else:
+            variant = 'exuberant'
+        args = ctags_variant_args[variant](options)
 
     ctags_cmd = [options['ctags_exe_full']] + args
 
@@ -122,7 +132,7 @@ def ParseTags(options):
 
     return ctags_entries
 
-def GetCommandArgs(options):
+def ExuberantGetCommandArgs(options):
     args = []
 
     ctags_languages = [l['CTagsName'] for l in options['language_handler'].GetAllLanguageHandlers()]
@@ -164,6 +174,27 @@ def GetCommandArgs(options):
     Debug("Command arguments: " + repr(args), "Information")
 
     return args
+
+def JSCtagsGetCommandArgs(options):
+    args = []
+    if options['ctags_file']:
+        args += ['-f', os.path.join(options['ctags_file_dir'], options['ctags_file'])]
+    # jsctags isn't very ctags-compatible: if you give it a directory
+    # and expect it to recurse, it fails on the first non-javascript
+    # file.  Therefore, we have to assume all javascript files have .js
+    # extensions and we have to find them ourselves.  This may well fail
+    # on Windows if there are a lot of them due to the limited command
+    # length on Windows.
+    if options['recurse']:
+        args += rglob('.', '*.js')
+    else:
+        args += glob.glob('*.js')
+    return args
+
+ctags_variant_args = {
+        'exuberant': ExuberantGetCommandArgs,
+        'jsctags': JSCtagsGetCommandArgs,
+        }
 
 key_regexp = re.compile('^(?P<keyword>.*?)\t(?P<remainder>.*\t(?P<kind>[a-zA-Z])(?:\t|$).*)')
 
