@@ -12,7 +12,7 @@
 
 " ---------------------------------------------------------------------
 try
-	if &cp || (exists('g:loaded_TagHLRunPythonScript') && (g:plugin_development_mode != 1))
+	if &cp || v:version < 700 || (exists('g:loaded_TagHLRunPythonScript') && (g:plugin_development_mode != 1))
 		throw "Already loaded"
 	endif
 catch
