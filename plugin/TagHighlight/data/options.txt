@@ -81,6 +81,12 @@ tag_file_directory:
 	Default:None
 	Help:Explicitly specified location for tag file (corresponding to Explicit search mode)
 
+disable_tag_manager:
+	VimOptionMap:DisableTagManager
+	Type:bool
+	Default:False
+	Help:Disable automatic management of tags option
+
 types_file_directory:
 	VimOptionMap:TypesFileDirectory
 	Type:string

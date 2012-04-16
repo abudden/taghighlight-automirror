@@ -479,6 +479,9 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 		DisableTypeParsing               Link:|TagHL-DisableTypeParsing|
 		   Don't read types highlighter (disable highlight functionality).
 
+		DisableTagManager                Link: |TagHL-DisableTagManager|
+		   Don't automatically adjust the 'tags' option.
+
 		DoNotGenerateTags                Link:|TagHL-DoNotGenerateTags|
 		   Don't generate tags (use an existing tags file).
 
@@ -755,6 +758,24 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 		this option to True or 1 will disable the checks and the standard
 		libraries will never be loaded.  For more information on standard
 		libraries, see |TagHighlight-standard-libraries|.
+
+		Option Type: Boolean
+		Default: False
+
+	DisableTagManager                     *TagHL-DisableTagManager*
+		The TagManager automatically sets up the 'tags' option to include the
+		generated tags file along with any tags files for user libraries (see
+		|TagHL-UserLibraries|).  This option can be used to disable the
+		TagManager.
+	
+		If the TagManager is enabled, the generated tags file will be added to
+		the 'tags' option; this makes it much easier to work with complex
+		directory structures while maintaining a common tags file.
+		If user libraries are configured and there is a tags file in the same
+		directory as the library .taghl file (with a filename that matches the
+		|TagHL-TagFileName| option), the TagManager will add the library tags
+		file to the 'tags' option to enable easy navigation to library source
+		code.
 
 		Option Type: Boolean
 		Default: False
@@ -1712,7 +1733,9 @@ x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
 							 fail very easily (and I've only used it for
 							 generating tags for its own source code!).  Added
 							 a reference (in the documentation) to the new
-							 wiki.
+							 wiki.  Added initial version of a manager for the
+							 'tags' option to automatically handle tag files
+							 for user libraries.
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 

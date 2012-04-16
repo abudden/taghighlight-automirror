@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-" Copyright: Copyright (C) 2009-2011 A. S. Budden
+" Copyright: Copyright (C) 2009-2012 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
 "            notice is copied with it. Like anything else that's free,
@@ -131,6 +131,8 @@ endfunction
 function! s:ReadTypes(suffix)
 	let savedView = winsaveview()
 
+	call TagHighlight#TagManager#InitialiseBufferTags()
+
 	call TagHighlight#Option#LoadOptionFileIfPresent()
 
 	if len(a:suffix) == 0
@@ -207,6 +209,9 @@ function! s:ReadTypes(suffix)
 		exe 'so' lib['Path']
 		let b:TagHighlightLoadedLibraries += [lib]
 	endfor
+
+	" Set up tags for all loaded libraries
+	call TagHighlight#TagManager#ConfigureTags()
 
 	" Handle any special cases
 	if has_key(g:TagHighlightPrivate['SpecialSyntaxHandlers'], a:suffix)
