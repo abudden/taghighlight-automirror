@@ -40,6 +40,7 @@ function! TagHighlight#ReadTypes#ReadTypesByOption()
 endfunction
 
 function! TagHighlight#ReadTypes#ReadTypesByExtension()
+	call TagHLDebug("Reading Types by Extension", "Information")
 	if ! s:MethodListed('Extension')
 		call TagHLDebug("Read Types by Extension not specified", "Information")
 		return 0
@@ -55,6 +56,7 @@ function! TagHighlight#ReadTypes#ReadTypesByExtension()
 endfunction
 
 function! TagHighlight#ReadTypes#ReadTypesBySyntax()
+	call TagHLDebug("Reading Types by Syntax", "Information")
 	if ! s:MethodListed('Syntax')
 		call TagHLDebug("Read Types by Syntax not specified", "Information")
 		return 0
@@ -70,6 +72,7 @@ function! TagHighlight#ReadTypes#ReadTypesBySyntax()
 endfunction
 
 function! TagHighlight#ReadTypes#ReadTypesByFileType()
+	call TagHLDebug("Reading Types by FileType", "Information")
 	if ! s:MethodListed('FileType')
 		call TagHLDebug("Read Types by FileType not specified", "Information")
 		return 0
@@ -151,11 +154,13 @@ function! s:ReadTypes(suffix)
 		return
 	endif
 
-	let fullname = expand(file . ':p')
+	let fullname = fnamemodify(file, ':p')
 
 	let skiplist = TagHighlight#Option#GetOption('ParsingSkipList')
+	call TagHLDebug("Skip List is " . string(skiplist) . " (length " . len(skiplist) . ")", 'Information')
 	if len(skiplist) > 0
-		let basename = expand(file . ':p:t')
+		let basename = fnamemodify(file, ':p:t')
+		call TagHLDebug("Checking skip list against b(".basename.");f(".fullname.")", "Information")
 		if index(skiplist, basename) != -1
 			call TagHLDebug("Skipping file due to basename match", 'Status')
 			return
