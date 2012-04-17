@@ -1726,7 +1726,7 @@ x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
                              with versions of ctags (like jsctags) that don't
                              accept the same arguments as exuberant ctags
                              (thanks to Piotr Yordanov for the suggestion and
-							  help getting jsctags working).  Also added
+							 help getting jsctags working).  Also added
 							 support for CtagsVariant arguments to simplify
 							 this process for known variants.  Support for
 							 jsctags is still fairly flaky as jsctags seems to
@@ -1735,7 +1735,8 @@ x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
 							 a reference (in the documentation) to the new
 							 wiki.  Added initial version of a manager for the
 							 'tags' option to automatically handle tag files
-							 for user libraries.
+							 for user libraries.  Fixed a bug in the
+							 ParsingSkipList option implementation.
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 
