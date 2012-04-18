@@ -361,6 +361,13 @@ use_existing_tagfile:
 	VimOptionMap:DoNotGenerateTags
 	Type:bool
 	Default:False
+	Help:Do not generate tags: use an existing file
+ 
+use_existing_tagfile_if_present:
+	CommandLineSwitches:--use-existing-tagfile-if-present
+	VimOptionMap:DoNotGenerateTagsIfPresent
+	Type:bool
+	Default:False
 	Help:Do not generate tags if a tag file already exists
  
 print_py_version:

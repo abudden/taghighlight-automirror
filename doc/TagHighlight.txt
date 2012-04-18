@@ -487,6 +487,9 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 		DoNotGenerateTags                Link:|TagHL-DoNotGenerateTags|
 		   Don't generate tags (use an existing tags file).
 
+		DoNotGenerateTagsIfPresent       Link:|TagHL-DoNotGenerateTagsIfPresent|
+		   Don't generate tags if a tags file is detected.
+
 	How to Run Python and Ctags:
 
 		ForcedPythonVariant              Link:|TagHL-ForcedPythonVariant|
@@ -792,10 +795,22 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 	DoNotGenerateTags                    *TagHL-DoNotGenerateTags*
 		If this option is set, calling |:UpdateTypesFile| will be functionally
 		equivalent to calling |:UpdateTypesFileOnly|: it will be assumed that
-		a tag file already exists and ctags will not be run.
+		a tag file already exists and ctags will not be run.  This should be
+		used if you NEVER want |TagHighlight| to generate a tags file.
+		Otherwise, you probably want |TagHL-DoNotGenerateTagsIfPresent|.
 
 		Option Type: Boolean
 		Default: False (generate tags)
+
+	DoNotGenerateTagsIfPresent           *TagHL-DoNotGenerateTagsIfPresent*
+		This option is similar to |TagHL-DoNotGenerateTags|.  However, it only
+		applies if a tags file already exists.  If the tags file exists, it
+		will not be regenerated but will be used as is.  If the tags file does
+		not exist, it will be created.  If |TagHL-DoNotGenerateTags| is set,
+		this option is ignored.
+
+		Option Type: Boolean
+		Default: False (always generate tags)
 
 	ExtensionLanguageOverrides           *TagHL-ExtensionLanguageOverrides*
 		If there are any entries in this dictionary, they will be used to
@@ -1767,7 +1782,9 @@ x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
 							 'tags' option to automatically handle tag files
 							 for user libraries (thanks to Alexey Radkov and
 							 Ali Hamdi).  Fixed a bug in the ParsingSkipList
-							 option implementation.
+							 option implementation.  Added option to only
+							 generate the tags file if one is not present
+							 (thanks to Ali Hamdi for the suggestion).
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 
