@@ -52,7 +52,9 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 
 	6.    Troubleshooting                    |TagHighlight-troubleshooting|
 
-	7.    TagHighlight History               |TagHighlight-history|
+	7.    Credits                            |TagHighlight-credits|
+
+	8.    TagHighlight History               |TagHighlight-history|
 
 ==============================================================================
 2. TagHighlight Manual           *TagHighlight-manual*                      {{{1
@@ -1712,9 +1714,37 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 		:let g:TagHighlightSettings['DebugFile'] = '/path/to/typesonly.log'
 		:UpdateTypesFileOnly
 <
+==============================================================================
+7. Credits                             *TagHighlight-credits*               {{{1
+
+	Software:
+
+		Al Budden - Lead Developer
+
+	Additional Languages:
+
+		Aleksey Baibarin - C# Support (and suggestions for other improvements)
+		Ali Hamdi - Go Support (and suggestions for other improvements)
+		Lee Gauthier - Scala Support
+		Oleg Lebedev - Fortran Support
+		Piotr Yordanov - Javascript support (and other suggestions)
+
+	Suggestions for Improvement and Testing:
+
+		Alexey Radkov - Suggestions for Improvement
+		Hong Xu - Suggestions for Improvement
+		Marcus Martin - Testing & Suggestions
+		Mishail - Testing & Suggestions
+		Prasun Ratn - Testing & Suggestions
+		Yongwei Wu - Testing & Suggestions
+
+	Additional credits from the predecessor (ctags_highlighting):
+
+		Mikhail Stepura - better handling of paths with spaces
+		Sung Pae - customisation of tags file name
 
 ==============================================================================
-7. TagHighlight History                *TagHighlight-history*               {{{1
+8. TagHighlight History                *TagHighlight-history*               {{{1
 
 x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
                              option (thanks to Vincent).  Added support for
@@ -1735,8 +1765,9 @@ x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
 							 a reference (in the documentation) to the new
 							 wiki.  Added initial version of a manager for the
 							 'tags' option to automatically handle tag files
-							 for user libraries.  Fixed a bug in the
-							 ParsingSkipList option implementation.
+							 for user libraries (thanks to Alexey Radkov and
+							 Ali Hamdi).  Fixed a bug in the ParsingSkipList
+							 option implementation.
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 
