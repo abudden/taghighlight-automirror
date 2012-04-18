@@ -47,13 +47,6 @@ function! s:UpdateTypesFile()
 		call TagHLDebug("Project config file does not exist", "Information")
 	endif
 	
-	" Call any PreUpdate hooks
-	let preupdate_hooks = TagHighlight#Option#GetOption('PreUpdateHooks')
-	for preupdate_hook in preupdate_hooks
-		call TagHLDebug("Calling pre-update hook " . preupdate_hook, "Information")
-		exe 'call' preupdate_hook . '()'
-	endfor
-	
 	" Most simple options are automatic.  The options below are
 	" handled manually.
 	
@@ -117,15 +110,31 @@ function! s:UpdateTypesFile()
 		call TagHLDebug("Source dir set explicitly to " . TagHighlight#Option#GetOption("SourceDir"), "Information")
 	endif
 
+	" If a types file does not exist and this option is set, just quit now
+	if TagHighlight#Option#GetOption('OnlyGenerateTypesIfPresent') == 1
+		if types_file_info['Exists'] == 0
+			call TagHLDebug("Types file does not exist, not generating new files", "Information")
+			return
+		endif
+	endif
+
 	if tag_file_info['Exists'] == 1
 		if TagHighlight#Option#GetOption('DoNotGenerateTagsIfPresent') == 1
 			" This will be unset in UpdateAndRead
+			call TagHLDebug("Tag file doesn't exist and DoNotGenerateTagsIfPresent set, not generating new tag file", "Information")
 			let b:TagHighlightSettings['DoNotGenerateTags'] = 1
 		endif
 	elseif TagHighlight#Option#GetOption('DoNotGenerateTags') == 1
 		echoerr "Cannot create types file without generating tags: tags file does not exist"
 		return
 	endif
+
+	" Call any PreUpdate hooks
+	let preupdate_hooks = TagHighlight#Option#GetOption('PreUpdateHooks')
+	for preupdate_hook in preupdate_hooks
+		call TagHLDebug("Calling pre-update hook " . preupdate_hook, "Information")
+		exe 'call' preupdate_hook . '()'
+	endfor
 	
 	call TagHLDebug("Running generator with options:", "Information")
 	for var in ["g:TagHighlightSettings","b:TagHighlightConfigFileOptions","b:TagHighlightSettings"]

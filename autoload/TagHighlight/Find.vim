@@ -145,8 +145,24 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 				call TagHLDebug('File exists', 'Information')
 				let result['Exists'] = 1
 			else
-				call TagHLDebug('File does not exist', 'Information')
-				let result['Exists'] = 0
+				" Handle wildcards
+				let expansion = split(glob(result['FullPath'], 1), '\n')
+				let wildcard_match = 0
+				if len(expansion) > 0
+					for entry in expansion
+						if filereadable(entry)
+							let result['FullPath'] = entry
+							let result['Exists'] = 1
+							let wildcard_match = 1
+							break
+						endif
+					endfor
+				endif
+
+				if wildcard_match == 0
+					call TagHLDebug('File does not exist', 'Information')
+					let result['Exists'] = 0
+				endif
 			endif
 			break
 		endif

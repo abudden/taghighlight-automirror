@@ -201,6 +201,18 @@ user_library_dir:
 	Default:.
 	Help:Location of user libraries that are specified with relative paths.
 
+use_existing_tagfile_if_present:
+	VimOptionMap:DoNotGenerateTagsIfPresent
+	Type:bool
+	Default:False
+	Help:Do not generate tags if a tag file already exists.
+
+only_generate_types_if_present:
+	VimOptionMap:OnlyGenerateTypesIfPresent
+	Type:bool
+	Default:False
+	Help:Only generate tags/types if a types file already exists.
+
 ##########################
 # Python script options: #
 ##########################
@@ -362,13 +374,6 @@ use_existing_tagfile:
 	Type:bool
 	Default:False
 	Help:Do not generate tags: use an existing file
- 
-use_existing_tagfile_if_present:
-	CommandLineSwitches:--use-existing-tagfile-if-present
-	VimOptionMap:DoNotGenerateTagsIfPresent
-	Type:bool
-	Default:False
-	Help:Do not generate tags if a tag file already exists
  
 print_py_version:
 	CommandLineSwitches:--pyversion

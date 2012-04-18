@@ -490,6 +490,9 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 		DoNotGenerateTagsIfPresent       Link:|TagHL-DoNotGenerateTagsIfPresent|
 		   Don't generate tags if a tags file is detected.
 
+		OnlyGenerateTypesIfPresent      Link:|TagHL-OnlyGenerateTypesIfPresent|
+		   Only generate types or tags if a types file already exists.
+
 	How to Run Python and Ctags:
 
 		ForcedPythonVariant              Link:|TagHL-ForcedPythonVariant|
@@ -951,6 +954,24 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 
 		Option Type: Integer
 		Default: 0
+
+	OnlyGenerateTypesIfPresent           *TagHL-OnlyGenerateTypesIfPresent*
+		If this option is set, then a new types highlighter file will only be
+		generated if one already exists.  If working on relatively small
+		projects, this can be useful as you can set up an autocmd to
+		regenerate tags and types files when you save:
+>
+			let g:TagHighlightSettings['OnlyGenerateTypesIfPresent'] = 1
+			autocmd BufWritePost * UpdateTypesFile
+<
+		Every time you save a file, |TagHighlight| will check whether a types
+		file exists and if it does, it will regenerate it.  If it doesn't
+		exist, it will do nothing.  For larger projects, this is currently
+		probably not practical due to the time it takes ctags to process the
+		code.
+
+		Option Type: Boolean
+		Default: False (always generate types file)
 
 	ParsingSkipList                      *TagHL-ParsingSkipList*
 		If you're editing a lot of files and for most you want tag highlight
@@ -1783,7 +1804,8 @@ x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
 							 for user libraries (thanks to Alexey Radkov and
 							 Ali Hamdi).  Fixed a bug in the ParsingSkipList
 							 option implementation.  Added option to only
-							 generate the tags file if one is not present
+							 generate the tags file if one is not present or
+							 to only generate types file if one IS present
 							 (thanks to Ali Hamdi for the suggestion).
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
