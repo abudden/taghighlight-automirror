@@ -24,7 +24,7 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 	2.3   Colouring                          |TagHighlight-colours|
 	2.4   Configuration                      |TagHighlight-config|
 	2.4.1 How to Set Options                 |TagHighlight-how-options|
-	2.4.2 Example Configurations             |TagHighlight-example-configs||
+	2.4.2 Example Configurations             |TagHighlight-example-configs|
 	2.4.3 Option Summary                     |TagHighlight-option-list|
 	2.4.4 Option Details                     |TagHighlight-option-details|
 	2.5   Integration with Other Software    |TagHighlight-integration|
