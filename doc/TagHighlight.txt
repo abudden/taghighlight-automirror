@@ -426,13 +426,13 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 			List of languages to scan when generating highlighter.
 
 		ParsingSkipList                  Link:|TagHL-ParsingSkipList|
-		   List of files for which types highlighter should not be loaded.
+			List of files for which types highlighter should not be loaded.
 
 		Recurse                          Link:|TagHL-Recurse|
-		   When generating tags, recurse into subdirectories.
+			When generating tags, recurse into subdirectories.
 
 		SourceDir                        Link:|TagHL-SourceDir|
-		   Explicit location of the source code that you want to scan.
+			Explicit location of the source code that you want to scan.
 
 	When to read the generated types file
 
@@ -451,126 +451,126 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 	What to include in the generated types file
 
 		IncludeLocals                    Link:|TagHL-IncludeLocals|
-		   Include local variables (not context aware) in types highlighter.
+			Include local variables (not context aware) in types highlighter.
 
 		IncludeSynMatches                Link:|TagHL-IncludeSynMatches|
-		   Include syntax matches in highlighter (see warning in details).
+			Include syntax matches in highlighter (see warning in details).
 
 		SkipPatterns                     Link:|TagHL-SkipPatterns|
-		   List of python REs for keywords that should be skipped.
+			List of python REs for keywords that should be skipped.
 
 		SkipVimKeywords                  Link:|TagHL-SkipVimKeywords|
-		   Don't include vim keywords in highlighter.
+			Don't include vim keywords in highlighter.
 
 	Customisation:
 
 		PreReadHooks                     Link:|TagHL-PreReadHooks|
-		   List of functions to call before reading types.
+			List of functions to call before reading types.
 
 		PostReadHooks                    Link:|TagHL-PostReadHooks|
-		   List of functions to call after reading types.
+			List of functions to call after reading types.
 
 		PreUpdateHooks                   Link:|TagHL-PreUpdateHooks|
-		   List of functions to call before updating types.
+			List of functions to call before updating types.
 
 		PostUpdateHooks                  Link:|TagHL-PostUpdateHooks|
-		   List of functions to call after updating types.
+			List of functions to call after updating types.
 
 	Disabling built-in functionality:
 
 		DisableTypeParsing               Link:|TagHL-DisableTypeParsing|
-		   Don't read types highlighter (disable highlight functionality).
+			Don't read types highlighter (disable highlight functionality).
 
 		DisableTagManager                Link: |TagHL-DisableTagManager|
-		   Don't automatically adjust the 'tags' option.
+			Don't automatically adjust the 'tags' option.
 
 		DoNotGenerateTags                Link:|TagHL-DoNotGenerateTags|
-		   Don't generate tags (use an existing tags file).
+			Don't generate tags (use an existing tags file).
 
 		DoNotGenerateTagsIfPresent       Link:|TagHL-DoNotGenerateTagsIfPresent|
-		   Don't generate tags if a tags file is detected.
+			Don't generate tags if a tags file is detected.
 
 		OnlyGenerateTypesIfPresent      Link:|TagHL-OnlyGenerateTypesIfPresent|
-		   Only generate types or tags if a types file already exists.
+			Only generate types or tags if a types file already exists.
 
 	How to Run Python and Ctags:
 
 		ForcedPythonVariant              Link:|TagHL-ForcedPythonVariant|
-		   Specify specific python variant to use.
+			Specify specific python variant to use.
 
 		PathToPython                     Link:|TagHL-PathToPython|
-		   Specify path to python executable.
+			Specify path to python executable.
 
 		PythonVariantPriority            Link:|TagHL-PythonVariantPriority|
-		   Specify priority order of different python variants.
+			Specify priority order of different python variants.
 
 		CtagsExecutable                  Link:|TagHL-CtagsExecutable|
-		   Specify the name of (or full path to) exuberant ctags.
+			Specify the name of (or full path to) exuberant ctags.
 
 		CtagsVariant                     Link:|TagHL-CtagsVariant|
-		   Use a variant of ctags other than exuberant.
+			Use a variant of ctags other than exuberant.
 
 		CtagsArguments                   Link:|TagHL-CtagsArguments|
-		   Specify an explicit list of arguments to pass to ctags.
+			Specify an explicit list of arguments to pass to ctags.
 
 	Locations of Files (normal):
 
 		DefaultDirModeSearchWildcards    Link:|TagHL-DirModeSearchWildcards|
-		   What to search for when deciding which directory to use.
+			What to search for when deciding which directory to use.
 
 		DefaultDirModePriority           Link:|TagHL-DefaultDirModePriority|
-		   Which directories to search by default.
+			Which directories to search by default.
 
 		MaxDirSearchLevels               Link:|TagHL-MaxDirSearchLevels|
-		   How far up the directory tree to search.
+			How far up the directory tree to search.
 
 	Location and name of Project Configuration File:
 
 		ProjectConfigFileDirModePriority Link:|TagHL-ProjectConfigFileDirModePriority|
-		   Which directories to search for project config file.
+			Which directories to search for project config file.
 
 		ProjectConfigFileDirectory       Link:|TagHL-ProjectConfigFileDirectory|
-		   Explicit location for project config file.
+			Explicit location for project config file.
 
 		ProjectConfigFileName            Link:|TagHL-ProjectConfigFileName|
-		   File name for project config file.
+			File name for project config file.
 
 		ProjectConfigFileSearchWildcards Link:|TagHL-DirModeSearchWildcards|
-		   What to search for when deciding which directory to use.
+			What to search for when deciding which directory to use.
 
 	Location and name of tag file:
 
 		TagFileDirModePriority           Link:|TagHL-TagFileDirModePriority|
-		   Which directories to search for tag file.
+			Which directories to search for tag file.
 
 		TagFileDirectory                 Link:|TagHL-TagFileDirectory|
-		   Explicit location for tag file.
+			Explicit location for tag file.
 
 		TagFileName                      Link:|TagHL-TagFileName|
-		   File name for tag file.
+			File name for tag file.
 
 		TagFileSearchWildcards           Link:|TagHL-DirModeSearchWildcards|
-		   What to search for when deciding which directory to use.
+			What to search for when deciding which directory to use.
 
 	Location and name of types file:
 
 		TypesFileDirModePriority         Link:|TagHL-TypesFileDirModePriority|
-		   Which directories to search for types highlighter file.
+			Which directories to search for types highlighter file.
 
 		TypesFileDirectory               Link:|TagHL-TypesFileDirectory|
-		   Explicit location for types highlighter file.
+			Explicit location for types highlighter file.
 
 		TypesFileExtension               Link:|TagHL-TypesFileExtension|
-		   File extension for types highlighter file.
+			File extension for types highlighter file.
 
 		TypesFileNameForce               Link:|TagHL-TypesFileNameForce|
-		   Force an explicit file name for the types highlighter file.
+			Force an explicit file name for the types highlighter file.
 
 		TypesFilePrefix                  Link:|TagHL-TypesFilePrefix|
-		   Prefix for the types highlighter file.
+			Prefix for the types highlighter file.
 
 		TypesFileSearchWildcards         Link:|TagHL-DirModeSearchWildcards|
-		   What to search for when deciding which directory to use.
+			What to search for when deciding which directory to use.
 
 	Libraries:
 
@@ -578,13 +578,13 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 			Don't try loading standard libraries.
 
 		ForcedStandardLibraries          Link:|TagHL-ForcedStandardLibraries|
-		   Always load specified standard libraries.
+			Always load specified standard libraries.
 
 		UserLibraries                    Link:|TagHL-UserLibraries|
-		   List of user libraries that should be loaded.
+			List of user libraries that should be loaded.
 
 		UserLibraryDir                   Link:|TagHL-UserLibraryDir|
-		   Location of user libraries specified with relative path.
+			Location of user libraries specified with relative path.
 
 	Debugging:
 
@@ -603,10 +603,10 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 			Internal use only.
 
 		CtagsFileLocation                Link:|TagHL-CtagsFileLocation|
-		   Internal use only.
+			Internal use only.
 
 		TypesFileLocation                Link:|TagHL-TypesFileLocation|
-		   Internal use only.
+			Internal use only.
 
 2.4.4 Option Details                     *TagHighlight-option-details*      {{{3
 
@@ -900,9 +900,9 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 		highlight definition file.  There are three methods that are
 		available:
 
-			Extension: Look at the extension of the current file and check
-					   for matches with the VimExtensionMatcher in the
-					   language definition files.
+			Extension:  Look at the extension of the current file and check
+						for matches with the VimExtensionMatcher in the
+						language definition files.
 
 			FileType: Look at the file type that has been selected by Vim and
 			          check for matches with the VimFileTypes list in the
@@ -1534,111 +1534,111 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 
 4.1 Adding More Languages                *TagHighlight-adding*              {{{2
 
-	1. Run ctags --list-languages and check that the required language is
-	   present.
+	1.  Run ctags --list-languages and check that the required language is
+		present.
 
-	2. If you're using a custom version of ctags highlighter with extra
-	   languages, you may need to add the details to the kind list in
-	   plugin/TagHighlight/data/kinds.txt (for most standard languages, this
-	   won't be necessary).  To do this, run:
+	2.  If you're using a custom version of ctags highlighter with extra
+		languages, you may need to add the details to the kind list in
+	   	plugin/TagHighlight/data/kinds.txt (for most standard languages, this
+	   	won't be necessary).  To do this, run:
 >
 			ctags --list-kinds=all
 <
-	   and examine the entries for your language.
+		and examine the entries for your language.
 
-	3. Create a new file in plugin/TagHighlight/data/languages/ with a .txt
-	   extension (the file name can be anything you want).  Set the fileformat
-	   to be 'unix' for consistency and don't expand tabs in case you need to
-	   add any multi-line lists:
+	3.  Create a new file in plugin/TagHighlight/data/languages/ with a .txt
+		extension (the file name can be anything you want).  Set the fileformat
+	   	to be 'unix' for consistency and don't expand tabs in case you need to
+	   	add any multi-line lists:
 >
 			set ff=unix noet
 <
-	4. In that file, add the following fields in Key:Value format (one per
-	   line):
+	4.  In that file, add the following fields in Key:Value format (one per
+		line):
 
 		FriendlyName - Whatever you prefer to call the language.
 
 		CTagsName - Whatever ctags refers to the language as.
 
-		PythonExtensionMatcher - A python regular expression that matches
-					             the extensions of files that are written
-					             in this language.
+		PythonExtensionMatcher -	A python regular expression that matches
+									the extensions of files that are written
+									in this language.
 
-		VimExtensionMatcher - The Vim regular expression version of
-				              PythonExtensionMatcher.
+		VimExtensionMatcher -	The Vim regular expression version of
+								PythonExtensionMatcher.
 
-		VimFileTypes - A list of Vim file types (the output of the Vim command
-		               ":set ft?") that are relevant for this language.
+		VimFileTypes -  A list of Vim file types (the output of the Vim command
+						":set ft?") that are relevant for this language.
 
-		VimSyntaxes - A list of Vim syntax names (the output of the Vim
-		              command ":set syntax?") that are relevant for this
-		              language.
+		VimSyntaxes -   A list of Vim syntax names (the output of the Vim
+						command ":set syntax?") that are relevant for this
+						language.
 
-		Suffix - Whatever you would like the generated files to be named,
-			     e.g. for C code, the suffix is c and the generated files
-			     are by default called types_c.taghl.
+		Suffix -	Whatever you would like the generated files to be named,
+					e.g. for C code, the suffix is c and the generated files
+					are by default called types_c.taghl.
 
-	5. Optionally, add other fields as required:
+	5.  Optionally, add other fields as required:
 
-		SkipList - Any specific ctags "kinds" (single characters referring
-			       to types of tags) that you want to omit from the types
-			       file.  For example, for C code, function prototypes are
-			       omitted (function definitions are included) by setting
-			       SkipList to p.  To include multiple items, separate
-			       each item with a comma.  To see a list of kinds for a
-			       language, use:
+		SkipList -  Any specific ctags "kinds" (single characters referring
+					to types of tags) that you want to omit from the types
+					file.  For example, for C code, function prototypes are
+			       	omitted (function definitions are included) by setting
+			       	SkipList to p.  To include multiple items, separate
+			       	each item with a comma.  To see a list of kinds for a
+			       	language, use:
 >
 						ctags --list-kinds
 <
 		SpecialSyntaxHandlers - This is for unusual cases where particular
-					            syntax commands are required for a given
-					            language.  Add any functions you want to
-					            call here.  As an example, for Java code,
-					            all syntax items must be added to the
-					            javaTop cluster; this is done in a special
-					            syntax handler.  For most languages this
-					            is unnecessary.
+								syntax commands are required for a given
+								language.  Add any functions you want to
+								call here.  As an example, for Java code,
+								all syntax items must be added to the
+								javaTop cluster; this is done in a special
+								syntax handler.  For most languages this
+								is unnecessary.
 
-		Priority - Where a tag name is used for multiple different types (e.g.
-		           as a defined name and as a typedef), it can only be
-		           highlighted as one or the other (Vim is not aware of the
-		           context of the keyword).  The priority defines whether it
-		           should (in this case) be highlighted as a defined name or
-		           as a typedef.  The default priority order is shown in
-		           plugin/TagHighlight/data/language_defaults.txt.  Entries
-		           not included in the priority list are treated in
-		           alphabetical order after the ones that are in the priority
-				   list.  If the default priority is not appropriate for the
-				   new language, it can be overridden in the language
-				   definition.
+		Priority -  Where a tag name is used for multiple different types (e.g.
+					as a defined name and as a typedef), it can only be
+					highlighted as one or the other (Vim is not aware of the
+		           	context of the keyword).  The priority defines whether it
+		           	should (in this case) be highlighted as a defined name or
+		           	as a typedef.  The default priority order is shown in
+		           	plugin/TagHighlight/data/language_defaults.txt.  Entries
+		           	not included in the priority list are treated in
+		           	alphabetical order after the ones that are in the priority
+				   	list.  If the default priority is not appropriate for the
+				   	new language, it can be overridden in the language
+				   	definition.
 
 		IsKeyword - Most source files have Vim's |'iskeyword'| option set to
-		            @,48-57,_,192-255.  If that is incorrect for the language
+					@,48-57,_,192-255.  If that is incorrect for the language
 					that you are defining, it can be changed in the new
 					language definition.  Generally not really required.
 
-	6. Add a modeline for consistency:
+	6.  Add a modeline for consistency:
 >
 		# vim: ff=unix:noet
 <
-	7. Test your new language!
+	7.  Test your new language!
 
-	8. Send me a copy for inclusion in the main distribution.  If you're
-	   sending it to me as a bitbucket or github pull request, it would help
-	   enormously if you could also also:
+	8.  Send me a copy for inclusion in the main distribution.  If you're
+		sending it to me as a bitbucket or github pull request, it would help
+		enormously if you could also also:
 
-	   * Update the list of languages (|TagHighlight-languages|) in this
-	     file.
-	   * Update the list of languages in README.md (shown on the bitbucket
-	     and github front pages).
-	   * Add a note in the latest entry in the change log in this file
-	     (|TagHighlight-history|).  If there isn't an entry there for an
-		 unreleased version, please add one: something like
+		* Update the list of languages (|TagHighlight-languages|) in this
+		  file.
+		* Update the list of languages in README.md (shown on the bitbucket
+	   	  and github front pages).
+	   	* Add a note in the latest entry in the change log in this file
+	      (|TagHighlight-history|).  If there isn't an entry there for an
+		  unreleased version, please add one: something like
 >
 			x.x.x: xxth Xxxxxxxx 2012  : Added support for LANGUAGE.
 <
-		 (leave the x characters in: I'll change these when I release the
-		 code).
+		  (leave the x characters in: I'll change these when I release the
+		  code).
 
 4.1.1 Example                            *TagHighlight-add-example*         {{{3
 
