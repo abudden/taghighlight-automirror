@@ -50,6 +50,8 @@ def GenerateVersionInfo():
     args = HG + clean_info
     p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (stdout,stderr) = p.communicate()
+    if p.returncode > 0:
+        sys.exit(p.returncode)
 
     status_lines = stdout
     if len(status_lines) > 0:
@@ -127,6 +129,8 @@ def MakeCompiled(pyexe, pyinstaller_path, zipfilename, platform_dir):
     args = pyexe + [os.path.join(pyinstaller_path, 'Build.py'), '-y', 'TagHighlight.spec']
     p = subprocess.Popen(args)#, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (stdout,stderr) = p.communicate()
+    if p.returncode > 0:
+        sys.exit(p.returncode)
     zipf = zipfile.ZipFile(os.path.join(vimfiles_dir,'dist',zipfilename), 'w')
     for f in Rglob(os.path.join(vimfiles_dir,'plugin/TagHighlight/Compiled/'+platform_dir),'*'):
         dirname = os.path.dirname(os.path.relpath(f,vimfiles_dir))
@@ -160,12 +164,18 @@ def CheckInChanges(r):
     args = HG+['commit','-m','Release build {0}'.format(r)]
     p = subprocess.Popen(args)
     (stdout,stderr) = p.communicate()
+    if p.returncode > 0:
+        sys.exit(p.returncode)
     args = HG+['tag','taghighlight-release-{0}'.format(r)]
     p = subprocess.Popen(args)
     (stdout,stderr) = p.communicate()
+    if p.returncode > 0:
+        sys.exit(p.returncode)
     args = HG+['push']
     p = subprocess.Popen(args)
     (stdout,stderr) = p.communicate()
+    if p.returncode > 0:
+        sys.exit(p.returncode)
 
 def PublishReleaseVersion():
     # TODO
