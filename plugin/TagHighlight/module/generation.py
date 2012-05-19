@@ -83,6 +83,11 @@ def CreateTypesFile(options, language, tags):
         keycommand = keystarter
         for keyword in tags[thisType]:
             skip_this = False
+            if options['skip_reserved_keywords']:
+                if keyword in language_handler['ReservedKeywords']:
+                    Debug('Skipping reserved word ' + keyword, 'Information')
+                    # Ignore this keyword
+                    continue
             for pattern in patternREs:
                 if pattern.search(keyword) != None:
                     skip_this = True

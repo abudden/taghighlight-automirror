@@ -35,6 +35,14 @@ class Languages():
         for language_file in GlobData('languages/*.txt'):
             language_dict = LoadDataFile(language_file, language_list_entries)
             language_dict['Filename'] = language_file
+            if 'ReservedKeywords' in language_dict:
+                # This is some weird python magic that takes a list of
+                # strings containing space-separated items and produces
+                # a single list of those items.
+                language_dict['ReservedKeywords'] = \
+                        [item for sublist in language_dict['ReservedKeywords'] for item in sublist.split(' ')]
+            else:
+                language_dict['ReservedKeywords'] = []
             language_dict = self.VerifyLanguage(language_dict)
             self.registry[language_dict['FriendlyName']] = language_dict
 

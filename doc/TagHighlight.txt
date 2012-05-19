@@ -1137,6 +1137,32 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 		Option Type: List
 		Default: [] (no patterns)
 
+	SkipReservedKeywords                 *TagHL-SkipReservedKeywords*
+		This option stops TagHighlight from overriding keywords that are
+		reserved words in the programming language in which they are found.
+		There may be situations in which (for example) ctags includes "bool"
+		in its list of tags for some C++ source code and TagHighlight will
+		then overwrite the default highlighting of "bool" with whatever ctags
+		says that tag type is.  By default, any keywords that match those in
+		the language definition file will be ignored by TagHighlight.  If you
+		want TagHighlight to take over the highlighting of keywords (assuming
+		there is a custom definition somewhere that ctags can find it), set
+		this option to False or 0 and the reserved keywords will be included.
+		
+		If you find that reserved keywords aren't skipped with your chosen
+		programming language, it may be that TagHighlight doesn't know about
+		the reserved keywords for your language.  Please feel free to add them
+		to the language definition file and send me a patch (see the bit about
+		ReservedKeywords in |TagHighlight-adding|) or send me a list of the
+		keywords and I'll do this myself.
+
+		Note that the same effect can be achieved somewhat more laboriously
+		using |TagHL-SkipPatterns| (useful if you only want to skip a subset
+		of the reserved keywords).
+
+		Option Type: Boolean
+		Default: True (don't include reserved keywords)
+
 	SkipVimKeywords                      *TagHL-SkipVimKeywords*
 		As well as being unable to use "syn keyword" for tag names that
 		contain non-keyword characters, Vim also cannot use "syn keyword" to
@@ -1598,6 +1624,33 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 
 	5.  Optionally, add other fields as required:
 
+		ReservedKeywords - This is a list of predefined keywords for a given
+		                   language - those keywords that are typically
+		                   designated 'reserved words' in the language
+		                   documentation.  This is used when a user specifies
+		                   the |TagHL-SkipReservedKeywords| option.  This
+		                   option can either be specified as a list of
+		                   comma-separated keywords on a single line, as a
+		                   list of keywords one per line or (more
+		                   conveniently) as a list of keywords with several
+		                   per-line separated by spaces:
+>
+                            # Example 1:
+							ReservedKeywords:bool,asm,break,case
+							# Example 2:
+							ReservedKeywords:
+								bool
+								asm
+								break
+								case
+							# Example 3:
+							ReservedKeywords:
+								bool asm break
+								case
+<
+						   See the examples in the existing language
+						   definitions for details.
+
 		SkipList -  Any specific ctags "kinds" (single characters referring
 					to types of tags) that you want to omit from the types
 					file.  For example, for C code, function prototypes are
@@ -1785,6 +1838,7 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 
 	Suggestions for Improvement and Testing:
 
+		Alan Warren - Suggestions for Improvement
 		Alexey Radkov - Suggestions for Improvement
 		Hong Xu - Suggestions for Improvement
 		Marcus Martin - Testing & Suggestions
@@ -1824,7 +1878,15 @@ x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
 							 option implementation.  Added option to only
 							 generate the tags file if one is not present or
 							 to only generate types file if one IS present
-							 (thanks to Ali Hamdi for the suggestion).
+							 (thanks to Ali Hamdi for the suggestion).  Added
+							 CtagsExtraArguments and clarified what is meant
+							 by CtagsArguments (thanks to Alan Warren for the
+							 suggestion).  Added support for skipping reserved
+							 keywords for given languages when generating
+							 types files.  Initially the reserved keywords
+							 have been recorded for C++, Python, Java and C#.
+							 Thanks to Alexey Radkov and Alan Warren for the
+							 suggestions.
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 

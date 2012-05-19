@@ -293,6 +293,13 @@ skip_patterns:
 	Type:list
 	Default:[]
 	Help:List of (Python) regular expressions to match against keywords which should be excluded from the types file.
+
+skip_reserved_keywords:
+	CommandLineSwitches:--skip-reserved-keywords
+	VimOptionMap:SkipReservedKeywords
+	Type:bool
+	Default:True
+	Help:Don't highlight keywords that are reserved in a given language.
  
 ctags_exe_full:
 	CommandLineSwitches:--ctags-exe-full-path
