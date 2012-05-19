@@ -59,6 +59,8 @@ def GenerateTags(options):
 
     ctags_cmd = [options['ctags_exe_full']] + args
 
+    Debug("ctags command is " + repr(ctags_cmd), "Information")
+
     #subprocess.call(" ".join(ctags_cmd), shell = (os.name != 'nt'))
     # shell=True stops the command window popping up
     # We don't use stdin, but have to define it in order
