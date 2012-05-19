@@ -513,6 +513,9 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 		CtagsArguments                   Link:|TagHL-CtagsArguments|
 			Specify an explicit list of arguments to pass to ctags.
 
+		CtagsExtraArguments              Link:|TagHL-CtagsExtraArguments|
+			Specify a list of extra arguments to pass to ctags.
+
 	Locations of Files (normal):
 
 		DefaultDirModeSearchWildcards    Link:|TagHL-DirModeSearchWildcards|
@@ -620,6 +623,11 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 		in touch and let me know why: I might be able to create a new
 		CtagsVariant to do whatever you need.
 
+		Note: this should not be used to add additional arguments to ctags.
+		This explcitly sets ALL of the parameters that are passed to ctags,
+		replacing all the ones that TagHighlight would usually use.  If you
+		just want to add an option to ctags, see |TagHL-CtagsExtraArguments|.
+
 		Option Type: List
 		Default: [] (empty list)
 
@@ -636,6 +644,16 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 
 		Option Type: String
 		Default: "ctags"
+
+	CtagsExtraArguments                  *TagHL-CtagsExtraArguments*
+		This can be used to add a list of extra arguments for ctags to the
+		ones normally used by TagHighlight.  This should be used if you want
+		to customise the operation of ctags in some way not supported by
+		TagHighlight.  If you use this option, please let me know: I might be
+		able to add a TagHighlight option specific for your use case.
+
+		Option Type: List
+		Default: [] (empty list)
 
 	CtagsFileLocation                    *TagHL-CtagsFileLocation*
 		Used internally to handle the location of the tag file.  Do not use

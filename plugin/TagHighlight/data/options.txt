@@ -305,8 +305,15 @@ ctags_arguments:
 	CommandLineSwitches:--add-ctags-argument
 	VimOptionMap:CtagsArguments
 	Type:list
-	Default:[
-	Help:Explicit list of arguments to parse to ctags (for use with non-recognised ctags implementations).
+	Default:[]
+	Help:Explicit list of arguments to pass to ctags (for use with non-recognised ctags implementations).
+
+ctags_extra_arguments:
+	CommandLineSwitches:--add-extra-ctags-argument
+	VimOptionMap:CtagsExtraArguments
+	Type:list
+	Default:[]
+	Help:List of extra arguments to pass to ctags.
 
 ctags_variant:
 	CommandLineSwitches:--ctags-variant

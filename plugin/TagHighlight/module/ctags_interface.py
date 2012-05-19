@@ -166,9 +166,16 @@ def ExuberantGetCommandArgs(options):
             else:
                 Debug("Skipping language: " + language, "Information")
 
-    # Must be last as it includes the file list:
     if options['recurse']:
         args += ['--recurse']
+
+    # If user specified extra arguments are required, add them
+    # immediately before the file list
+    if 'ctags_extra_arguments' in options:
+        args += options['ctags_extra_arguments']
+
+    # Must be last as it includes the file list:
+    if options['recurse']:
         args += ['.']
     else:
         args += glob.glob(os.path.join(options['source_root'],'*'))
@@ -181,6 +188,12 @@ def JSCtagsGetCommandArgs(options):
     args = []
     if options['ctags_file']:
         args += ['-f', os.path.join(options['ctags_file_dir'], options['ctags_file'])]
+
+    # If user specified extra arguments are required, add them
+    # immediately before the file list
+    if 'ctags_extra_arguments' in options:
+        args += options['ctags_extra_arguments']
+
     # jsctags isn't very ctags-compatible: if you give it a directory
     # and expect it to recurse, it fails on the first non-javascript
     # file.  Therefore, we have to assume all javascript files have .js
