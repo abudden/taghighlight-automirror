@@ -124,11 +124,6 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 >
 		https://bitbucket.org/abudden/taghighlight
 <
-	For those that prefer Git to Mercurial, it is also mirrored on github at:
->
-		https://github.com/abudden/TagHighlight
-<
-
 ------------------------------------------------------------------------------
 
 2.2 Commands                             *TagHighlight-commands*            {{{2
@@ -1695,13 +1690,13 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 	7.  Test your new language!
 
 	8.  Send me a copy for inclusion in the main distribution.  If you're
-		sending it to me as a bitbucket or github pull request, it would help
-		enormously if you could also also:
+		sending it to me as a bitbucket pull request, it would help enormously
+		if you could also also:
 
 		* Update the list of languages (|TagHighlight-languages|) in this
 		  file.
 		* Update the list of languages in README.md (shown on the bitbucket
-	   	  and github front pages).
+	   	  front page).
 	   	* Add a note in the latest entry in the change log in this file
 	      (|TagHighlight-history|).  If there isn't an entry there for an
 		  unreleased version, please add one: something like
@@ -1753,18 +1748,15 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 	If you've made an improvement to TagHighlight and would like your changes
 	to be included in the main distribution, there are a number of ways of
 	doing this.  The code is maintained in a Mercurial repository and
-	published on bitbucket.  There is also a github mirror if you really
-	prefer.  In rough order of preference, the ways you can send me a patch
-	are:
+	published on bitbucket.  In rough order of preference, the ways you can
+	send me a patch are:
 
-		1. Bitbucket pull request (https://bitbucket.org/abudden/easycolour)
+		1. Bitbucket pull request (https://bitbucket.org/abudden/taghighlight)
 
 		2. Mercurial bundle (see "hg help bundle") attached to an email.
 
 		3. Mercurial patchbomb email (for details of the patchbomb extension,
 		please see http://mercurial.selenic.com/wiki/PatchbombExtension).
-
-		4. Github pull request (https://github.com/abudden/EasyColour).
 
 	If sending a patch, please follow these guidelines:
 
@@ -1858,35 +1850,34 @@ x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
                              option (thanks to Vincent).  Added support for
                              Javascript (thanks to Piotr Yordanov).
                              Transferred source repository from git to
-                             mercurial (will maintain git mirror on github).
-                             Added support for custom ctags argument lists
-                             (option CtagsArguments) in order to allow use
-                             with versions of ctags (like jsctags) that don't
-                             accept the same arguments as exuberant ctags
-                             (thanks to Piotr Yordanov for the suggestion and
-							 help getting jsctags working).  Also added
-							 support for CtagsVariant arguments to simplify
-							 this process for known variants.  Support for
-							 jsctags is still fairly flaky as jsctags seems to
-							 fail very easily (and I've only used it for
-							 generating tags for its own source code!).  Added
-							 a reference (in the documentation) to the new
-							 wiki.  Added initial version of a manager for the
-							 'tags' option to automatically handle tag files
-							 for user libraries (thanks to Alexey Radkov and
-							 Ali Hamdi).  Fixed a bug in the ParsingSkipList
-							 option implementation.  Added option to only
-							 generate the tags file if one is not present or
-							 to only generate types file if one IS present
-							 (thanks to Ali Hamdi for the suggestion).  Added
-							 CtagsExtraArguments and clarified what is meant
-							 by CtagsArguments (thanks to Alan Warren for the
-							 suggestion).  Added support for skipping reserved
-							 keywords for given languages when generating
-							 types files.  Initially the reserved keywords
-							 have been recorded for C++, Python, Java and C#.
-							 Thanks to Alexey Radkov and Alan Warren for the
-							 suggestions.
+							 mercurial.  Added support for custom ctags
+							 argument lists (option CtagsArguments) in order
+							 to allow use with versions of ctags (like
+							 jsctags) that don't accept the same arguments as
+							 exuberant ctags (thanks to Piotr Yordanov for the
+							 suggestion and help getting jsctags working).
+							 Also added support for CtagsVariant arguments to
+							 simplify this process for known variants.
+							 Support for jsctags is still fairly flaky as
+							 jsctags seems to fail very easily (and I've only
+							 used it for generating tags for its own source
+							 code!).  Added a reference (in the documentation)
+							 to the new wiki.  Added initial version of a
+							 manager for the 'tags' option to automatically
+							 handle tag files for user libraries (thanks to
+							 Alexey Radkov and Ali Hamdi).  Fixed a bug in the
+							 ParsingSkipList option implementation.  Added
+							 option to only generate the tags file if one is
+							 not present or to only generate types file if one
+							 IS present (thanks to Ali Hamdi for the
+							 suggestion).  Added CtagsExtraArguments and
+							 clarified what is meant by CtagsArguments (thanks
+							 to Alan Warren for the suggestion).  Added
+							 support for skipping reserved keywords for given
+							 languages when generating types files.  Initially
+							 the reserved keywords have been recorded for C++,
+							 Python, Java and C#.  Thanks to Alexey Radkov and
+							 Alan Warren for the suggestions.
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 
