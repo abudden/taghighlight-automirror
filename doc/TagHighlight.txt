@@ -1846,7 +1846,7 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 8. TagHighlight History                *TagHighlight-history*               {{{1
 
-x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
+x.x.x: xxth Xxxxxxxx 2013  : Fixed globpath to prevent use of wildignore
                              option (thanks to Vincent).  Added support for
                              Javascript (thanks to Piotr Yordanov).
                              Transferred source repository from git to
@@ -1877,7 +1877,9 @@ x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
 							 languages when generating types files.  Initially
 							 the reserved keywords have been recorded for C++,
 							 Python, Java and C#.  Thanks to Alexey Radkov and
-							 Alan Warren for the suggestions.
+							 Alan Warren for the suggestions.  Corrected bug
+							 with SkipList operation (thanks to Bruno Jiménez
+							 for reporting this).
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 
