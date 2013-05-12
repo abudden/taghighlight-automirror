@@ -1862,7 +1862,7 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 8. TagHighlight History                *TagHighlight-history*               {{{1
 
-x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
+x.x.x: xxth Xxxxxxxx 2013  : Fixed globpath to prevent use of wildignore
                              option (thanks to Vincent).  Added support for
                              Javascript (thanks to Piotr Yordanov).
                              Transferred source repository from git to
@@ -1897,7 +1897,8 @@ x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
 							 work-around for an issue with the colour scheme
 							 information not being shown on some gvim
 							 implementations on startup (reported by Walker
-							 Inman).
+							 Inman).  Corrected bug with SkipList operation
+							 (thanks to Bruno Jiménez for reporting this).
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 

@@ -11,8 +11,13 @@
 "            of this software.
 
 " ---------------------------------------------------------------------
+
+if v:version < 700
+	finish
+endif
+
 try
-	if &cp || v:version < 700 || (exists('g:loaded_TagHighlight') && (g:plugin_development_mode != 1))
+	if &cp || (exists('g:loaded_TagHighlight') && (g:plugin_development_mode != 1))
 		throw "Already loaded"
 	endif
 catch
