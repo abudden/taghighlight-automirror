@@ -233,6 +233,11 @@ function! s:ReadTypes(suffix)
 		exe 'call' postread_hook . '(fullname, a:suffix)'
 	endfor
 
+	let reload_colours = TagHighlight#Option#GetOption('ReloadColourScheme')
+	if reload_colours
+		exe "colorscheme" g:colors_name
+	endif
+
 	" Restore the view
 	call winrestview(savedView)
 	call TagHLDebug("ReadTypes complete", "Information")

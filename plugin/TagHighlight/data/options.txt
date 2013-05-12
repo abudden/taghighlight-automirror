@@ -213,6 +213,12 @@ only_generate_types_if_present:
 	Default:False
 	Help:Only generate tags/types if a types file already exists.
 
+reload_colour_scheme:
+	VimOptionMap:ReloadColourScheme
+	Type:bool
+	Default:False
+	Help:Reload the colour scheme after reading types file (in case colours don't work properly)
+
 ##########################
 # Python script options: #
 ##########################

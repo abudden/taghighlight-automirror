@@ -443,6 +443,9 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 		SyntaxLanguageOverrides          Link:|TagHL-SyntaxLanguageOverrides|
 			Force a particular Vim syntax to match a chosen language.
 
+		ReloadColourScheme               Link:|TagHL-ReloadColourScheme|
+			Automatically reload the colour scheme after reading types.
+
 	What to include in the generated types file
 
 		IncludeLocals                    Link:|TagHL-IncludeLocals|
@@ -1121,6 +1124,19 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 
 		Option Type: Boolean
 		Default: True (recurse)
+
+	ReloadColourScheme                   *TagHL-ReloadColourScheme*
+		If this option is set to True or 1, the colour scheme will be reloaded
+		automatically after the types file has been read.  This is done by
+		executing:
+>
+			:exe "colorscheme" g:colors_name
+<
+		so only works if your colour scheme defines g:colors_name (most do).
+		It is provided as a work-around for a bug that is seen on some
+		versions of gvim whereby the colours aren't shown properly on startup.
+		I haven't got to the bottom of this bug, so am providing this
+		work-around as a fix in the meantime.
 
 	SkipPatterns                         *TagHL-SkipPatterns*
 		Any (python) regular expressions listed in this option will be matched
@@ -1877,7 +1893,11 @@ x.x.x: xxth Xxxxxxxx 2012  : Fixed globpath to prevent use of wildignore
 							 languages when generating types files.  Initially
 							 the reserved keywords have been recorded for C++,
 							 Python, Java and C#.  Thanks to Alexey Radkov and
-							 Alan Warren for the suggestions.
+							 Alan Warren for the suggestions.  Added a
+							 work-around for an issue with the colour scheme
+							 information not being shown on some gvim
+							 implementations on startup (reported by Walker
+							 Inman).
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 
