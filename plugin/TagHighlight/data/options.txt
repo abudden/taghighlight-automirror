@@ -237,6 +237,13 @@ debug_file:
 	Default:None
 	Help:Debug log file into which messages should be stored
 
+language_tag_types:
+	CommandLineSwitches:--language-tag-types
+	VimOptionMap:LanguageTagTypes
+	Type:dict
+	Default:{}
+	Help:Explicit filter on tag types for a given language
+
 debug_print_time:
 	CommandLineSwitches:--print-time-with-debug
 	VimOptionMap:DebugPrintTime

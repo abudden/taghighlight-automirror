@@ -126,7 +126,10 @@ def ParseTags(options):
                                 (kind == 'CTagsGlobalVariable'):
                             if field_const.search(m.group('search')) is not None:
                                 kind = 'CTagsConstant'
-                        if m.group('kind') not in languages.GetLanguageHandler(key)['SkipList']:
+                        if key in options['language_tag_types']:
+                            if m.group('kind') in options['language_tag_types'][key]:
+                                ctags_entries[key][kind].add(keyword)
+                        elif m.group('kind') not in languages.GetLanguageHandler(key)['SkipList']:
                             ctags_entries[key][kind].add(keyword)
                     except KeyError:
                         Debug("Unrecognised kind '{kind}' for language {language}".format(kind=m.group('kind'), language=key), "Error")

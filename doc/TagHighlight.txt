@@ -3,7 +3,7 @@
 Author:     A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 			Remove NOSPAM.
 
-Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
+Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
             Permission is hereby granted to use and distribute this code,
             with or without modifications, provided that this copyright
             notice is copied with it. Like anything else that's free,
@@ -1862,43 +1862,46 @@ Copyright:  (c) 2009-2012 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 8. TagHighlight History                *TagHighlight-history*               {{{1
 
-x.x.x: xxth Xxxxxxxx 2013  : Fixed globpath to prevent use of wildignore
-                             option (thanks to Vincent).  Added support for
-                             Javascript (thanks to Piotr Yordanov).
-                             Transferred source repository from git to
-							 mercurial.  Added support for custom ctags
-							 argument lists (option CtagsArguments) in order
-							 to allow use with versions of ctags (like
-							 jsctags) that don't accept the same arguments as
-							 exuberant ctags (thanks to Piotr Yordanov for the
-							 suggestion and help getting jsctags working).
-							 Also added support for CtagsVariant arguments to
-							 simplify this process for known variants.
-							 Support for jsctags is still fairly flaky as
-							 jsctags seems to fail very easily (and I've only
-							 used it for generating tags for its own source
-							 code!).  Added a reference (in the documentation)
-							 to the new wiki.  Added initial version of a
-							 manager for the 'tags' option to automatically
-							 handle tag files for user libraries (thanks to
-							 Alexey Radkov and Ali Hamdi).  Fixed a bug in the
-							 ParsingSkipList option implementation.  Added
-							 option to only generate the tags file if one is
-							 not present or to only generate types file if one
-							 IS present (thanks to Ali Hamdi for the
-							 suggestion).  Added CtagsExtraArguments and
-							 clarified what is meant by CtagsArguments (thanks
-							 to Alan Warren for the suggestion).  Added
-							 support for skipping reserved keywords for given
-							 languages when generating types files.  Initially
-							 the reserved keywords have been recorded for C++,
-							 Python, Java and C#.  Thanks to Alexey Radkov and
-							 Alan Warren for the suggestions.  Added a
-							 work-around for an issue with the colour scheme
-							 information not being shown on some gvim
-							 implementations on startup (reported by Walker
-							 Inman).  Corrected bug with SkipList operation
-							 (thanks to Bruno Jiménez for reporting this).
+x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
+
+	New features:
+	
+	* Added support for Javascript (thanks to Piotr Yordanov).
+	* Added support for custom ctags argument lists (option CtagsArguments) in
+	  order to allow use with versions of ctags (like jsctags) that don't
+	  accept the same arguments as exuberant ctags (thanks to Piotr Yordanov
+	  for the suggestion and help getting jsctags working).  Support for
+	  jsctags is still fairly flaky as jsctags seems to fail very easily (and
+	  I've only used it for generating tags for its own source code!).
+	* Also added support for CtagsVariant arguments to simplify this process
+	  for known variants.
+	* Added initial version of a manager for the 'tags' option to
+	  automatically handle tag files for user libraries (thanks to Alexey
+	  Radkov and Ali Hamdi).
+	* Added option to only generate the tags file if one is not present or to
+	  only generate types file if one IS present (thanks to Ali Hamdi for the
+	  suggestion).
+	* Added CtagsExtraArguments and clarified what is meant by CtagsArguments
+	  (thanks to Alan Warren for the suggestion).
+	* Added support for skipping reserved keywords for given languages when
+	  generating types files.  Initially the reserved keywords have been
+	  recorded for C++, Python, Java and C#.  Thanks to Alexey Radkov and Alan
+	  Warren for the suggestions.
+	
+	Bug fixes:
+	
+	* Fixed globpath to prevent use of wildignore option (thanks to Vincent).
+	* Fixed a bug in the ParsingSkipList option implementation.
+	* Added a work-around for an issue with the colour scheme information not
+	  being shown on some gvim implementations on startup (reported by Walker
+	  Inman).
+	* Corrected bug with SkipList operation (thanks to Bruno Jiménez for
+	  reporting this).
+	
+	Other changes:
+                            
+	* Transferred source repository from git to mercurial.
+	* Added a reference (in the documentation) to the new wiki.
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 
