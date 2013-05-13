@@ -83,4 +83,4 @@ MatchREs:
 	^\s*#\s*include\s\+<wchar\.h>
 	^\s*#\s*include\s\+<wctype\.h>
 	^\s*#\s*include\s\+<wordexp\.h>
-MatchLines:30
+MatchLines:50
