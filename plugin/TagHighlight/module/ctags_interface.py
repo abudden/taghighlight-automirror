@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Tag Highlighter:
 #   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-# Copyright: Copyright (C) 2009-2012 A. S. Budden
+# Copyright: Copyright (C) 2009-2013 A. S. Budden
 #            Permission is hereby granted to use and distribute this code,
 #            with or without modifications, provided that this copyright
 #            notice is copied with it. Like anything else that's free,
@@ -17,7 +17,7 @@ import subprocess
 import os
 import re
 import glob
-from .utilities import DictDict, rglob
+from .utilities import TagDB, FileTagDB, rglob
 from .languages import Languages
 from .debug import Debug
 
@@ -26,7 +26,7 @@ r'''
     ^                 # Start of the line
     (?P<keyword>.*?)  # Capture the first field: everything up to the first tab
     \t                # Field separator: a tab character
-    .*?               # Second field (uncaptured): everything up to the next tab
+    (?P<filename>.*?) # Second field (filename): everything up to the next tab
     \t                # Field separator: a tab character
     (?P<search>.*?)   # Any character at all, but as few as necessary (i.e. catch everything up to the ;")
     ;"                # The end of the search specifier (see http://ctags.sourceforge.net/FORMAT)
@@ -35,8 +35,18 @@ r'''
                       # Also catch the tab character from the previous line as there MUST be a tab before the field
     (kind:)?          # This is the "kind" field; "kind:" is optional
     (?P<kind>\w)      # The kind is a single character: catch it
-    (\t|$)            # It must be followed either by a tab or by the end of the line
-    .*                # If it is followed by a tab, soak up the rest of the line; replace with the syntax keyword line
+    (?=\t|$)          # It must be followed either by a tab or by the end of the line (but don't include that in the match)
+    (?P<other>        # Catch anything in between the kind and the scope indicator
+        \t            # Each block is a tab, followed by
+        (?!file:)     # NOT file: (as this is the scope indicator)
+        [^\t]+        # One or more non-tab characters
+    )*                # This block can repeat
+    (?P<scope>        # Look for a file-scope indicator
+        \t            # Preceded by a tab character
+        file:         # This is the file-scope indicator
+        (?=\t|$)      # Must be followed by a tab character or the end of line (but don't include it in the match)
+    )?                # The file-scope identifier is optional
+    .*                # Soak up the rest of the line
 ''', re.VERBOSE)
 
 field_const = re.compile(r'\bconst\b')
@@ -94,7 +104,9 @@ def ParseTags(options):
     kind_list = languages.GetKindList()
 
     # Language: {Type: set([keyword, keyword, keyword])}
-    ctags_entries = DictDict()
+    ctags_entries = TagDB()
+    # Language: {File: {Type: set([keyword, keyword, keyword])}}
+    file_entries = FileTagDB()
 
     lineMatchers = {}
     for key in languages.GetAllLanguages():
@@ -118,6 +130,7 @@ def ParseTags(options):
                 m = field_processor.match(line.strip())
                 if m is not None:
                     try:
+                        new_entry = None
                         short_kind = 'ctags_' + m.group('kind')
                         kind = kind_list[key][short_kind]
                         keyword = m.group('keyword')
@@ -128,14 +141,27 @@ def ParseTags(options):
                                 kind = 'CTagsConstant'
                         if key in options['language_tag_types']:
                             if m.group('kind') in options['language_tag_types'][key]:
-                                ctags_entries[key][kind].add(keyword)
+                                new_entry = keyword
                         elif m.group('kind') not in languages.GetLanguageHandler(key)['SkipList']:
-                            ctags_entries[key][kind].add(keyword)
+                            new_entry = keyword
+
+                        if new_entry is None:
+                            continue
+
+                        if m.group('scope') is None:
+                            if new_entry.startswith('AMS'):
+                                Debug("No scope: " + new_entry, "Information")
+                            ctags_entries[key][kind].add(new_entry)
+                        else:
+                            if m.group('filename') not in file_entries:
+                                file_entries[m.group('filename')] = TagDB()
+                            file_entries[key][m.group('filename')][kind].add(new_entry)
+
                     except KeyError:
                         Debug("Unrecognised kind '{kind}' for language {language}".format(kind=m.group('kind'), language=key), "Error")
     p.close()
 
-    return ctags_entries
+    return ctags_entries, file_entries
 
 def ExuberantGetCommandArgs(options):
     args = []

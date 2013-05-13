@@ -251,6 +251,13 @@ debug_print_time:
 	Default:False
 	Help:Print the time with each debug message in the log
 
+ignore_file_scope:
+	CommandLineSwitches:--ignore-file-scope
+	VimOptionMap:IgnoreFileScope
+	Type:bool
+	Default:False
+	Help:Ignore file-scope specified in tags file
+
 source_root:
 	CommandLineSwitches:-d,--source-root
 	VimOptionMap:SourceDir

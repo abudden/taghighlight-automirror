@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Tag Highlighter:
 #   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-# Copyright: Copyright (C) 2009-2012 A. S. Budden
+# Copyright: Copyright (C) 2009-2013 A. S. Budden
 #            Permission is hereby granted to use and distribute this code,
 #            with or without modifications, provided that this copyright
 #            notice is copied with it. Like anything else that's free,
@@ -56,16 +56,29 @@ class SetDict(dict):
         else:
             super(SetDict, self).__setitem__(key, set([value]))
 
-class DictDict(dict):
+class TagDB(dict):
     """Customised version of a dictionary that auto-creates non-existent keys as SetDicts."""
     def __getitem__(self, key):
         if key not in self:
             self[key] = SetDict()
-        return super(DictDict, self).__getitem__(key)
+        return super(TagDB, self).__getitem__(key)
 
     def __setitem__(self, key, value):
         if isinstance(value, SetDict):
-            super(DictDict, self).__setitem__(key, value)
+            super(TagDB, self).__setitem__(key, value)
+        else:
+            raise NotImplementedError
+
+class FileTagDB(dict):
+    """Customised version of a dictionary that auto-creates non-existent keys as TagDBs."""
+    def __getitem__(self, key):
+        if key not in self:
+            self[key] = TagDB()
+        return super(FileTagDB, self).__getitem__(key)
+
+    def __setitem__(self, key, value):
+        if isinstance(value, TagDB):
+            super(FileTagDB, self).__setitem__(key, value)
         else:
             raise NotImplementedError
 

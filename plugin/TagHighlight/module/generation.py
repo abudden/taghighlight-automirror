@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Tag Highlighter:
 #   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-# Copyright: Copyright (C) 2009-2011 A. S. Budden
+# Copyright: Copyright (C) 2009-2013 A. S. Budden
 #            Permission is hereby granted to use and distribute this code,
 #            with or without modifications, provided that this copyright
 #            notice is copied with it. Like anything else that's free,
@@ -33,120 +33,132 @@ vim_synkeyword_arguments = [
         'skipempty'
         ]
 
-def CreateTypesFile(options, language, tags):
-    tag_types = list(tags.keys())
-    tag_types.sort()
-
+def CreateTypesFile(options, language, unscoped_tags, file_tags):
     Debug("Writing types file", "Information")
 
-    language_handler = options['language_handler'].GetLanguageHandler(language)
+    entry_sets = {}
 
-    if options['check_keywords']:
-        iskeyword = GenerateValidKeywordRange(language_handler['IsKeyword'])
-        Debug("Is Keyword is {0!r}".format(iskeyword), "Information")
+    for source_file in [None] + file_tags.keys():
+        if source_file is None:
+            tags = unscoped_tags
+        else:
+            tags = file_tags[source_file]
 
-    matchEntries = set()
-    vimtypes_entries = []
+        tag_types = list(tags.keys())
+        tag_types.sort()
 
+        language_handler = options['language_handler'].GetLanguageHandler(language)
 
-    typesUsedByLanguage = list(options['language_handler'].GetKindList(language).values())
-    # TODO: This may be included elsewhere, but we'll leave it in for now
-    #clear_string = 'silent! syn clear ' + " ".join(typesUsedByLanguage)
+        if options['check_keywords']:
+            iskeyword = GenerateValidKeywordRange(language_handler['IsKeyword'])
+            Debug("Is Keyword is {0!r}".format(iskeyword), "Information")
 
-    vimtypes_entries = []
-    #vimtypes_entries.append(clear_string)
+        matchEntries = set()
+        vimtypes_entries = []
 
-    # Get the priority list from the language handler
-    priority = language_handler['Priority'][:]
-    # Reverse the priority such that highest priority
-    # is last.
-    priority.reverse()
+        typesUsedByLanguage = list(options['language_handler'].GetKindList(language).values())
+        # TODO: This may be included elsewhere, but we'll leave it in for now
+        #clear_string = 'silent! syn clear ' + " ".join(typesUsedByLanguage)
 
-    fullTypeList = list(reversed(sorted(tags.keys())))
-    # Reorder type list according to priority sort order
-    allTypes = []
-    for thisType in priority:
-        if thisType in fullTypeList:
-            allTypes.append(thisType)
-            fullTypeList.remove(thisType)
-    # Add the ones not specified in priority
-    allTypes = fullTypeList + allTypes
+        vimtypes_entries = []
+        #vimtypes_entries.append(clear_string)
 
-    Debug("Type priority list: " + repr(allTypes), "Information")
+        # Get the priority list from the language handler
+        priority = language_handler['Priority'][:]
+        # Reverse the priority such that highest priority
+        # is last.
+        priority.reverse()
 
-    patternREs = []
-    for pattern in options['skip_patterns']:
-        patternREs.append(re.compile(pattern))
+        fullTypeList = list(reversed(sorted(tags.keys())))
+        # Reorder type list according to priority sort order
+        allTypes = []
+        for thisType in priority:
+            if thisType in fullTypeList:
+                allTypes.append(thisType)
+                fullTypeList.remove(thisType)
+        # Add the ones not specified in priority
+        allTypes = fullTypeList + allTypes
 
-    for thisType in allTypes:
-        keystarter = 'syn keyword ' + thisType
-        keycommand = keystarter
-        for keyword in tags[thisType]:
-            skip_this = False
-            if options['skip_reserved_keywords']:
-                if keyword in language_handler['ReservedKeywords']:
-                    Debug('Skipping reserved word ' + keyword, 'Information')
-                    # Ignore this keyword
-                    continue
-            for pattern in patternREs:
-                if pattern.search(keyword) != None:
-                    skip_this = True
-                    break
-            if skip_this:
-                continue
+        Debug("Type priority list: " + repr(allTypes), "Information")
 
-            if options['check_keywords']:
-                # In here we should check that the keyword only matches
-                # vim's \k parameter (which will be different for different
-                # languages).  This is quite slow so is turned off by
-                # default; however, it is useful for some things where the
-                # default generated file contains a lot of rubbish.  It may
-                # be worth optimising IsValidKeyword at some point.
-                if not IsValidKeyword(keyword, iskeyword):
-                    matchDone = False
-                    if options['include_matches']:
+        patternREs = []
+        for pattern in options['skip_patterns']:
+            patternREs.append(re.compile(pattern))
 
-                        patternCharacters = "/@#':"
-                        charactersToEscape = '\\' + '~[]*.$^'
-
-                        for patChar in patternCharacters:
-                            if keyword.find(patChar) == -1:
-                                escapedKeyword = keyword
-                                for ch in charactersToEscape:
-                                    escapedKeyword = escapedKeyword.replace(ch, '\\' + ch)
-                                if options['include_matches']:
-                                    matchEntries.add('syn match ' + thisType + ' ' + patChar + escapedKeyword + patChar)
-                                matchDone = True
-                                break
-
-                    if not matchDone:
-                        Debug("Skipping keyword '" + keyword + "'", "Information")
-
+        for thisType in allTypes:
+            keystarter = 'syn keyword ' + thisType
+            keycommand = keystarter
+            for keyword in tags[thisType]:
+                skip_this = False
+                if options['skip_reserved_keywords']:
+                    if keyword in language_handler['ReservedKeywords']:
+                        Debug('Skipping reserved word ' + keyword, 'Information')
+                        # Ignore this keyword
+                        continue
+                for pattern in patternREs:
+                    if pattern.search(keyword) != None:
+                        skip_this = True
+                        break
+                if skip_this:
                     continue
 
+                if options['check_keywords']:
+                    # In here we should check that the keyword only matches
+                    # vim's \k parameter (which will be different for different
+                    # languages).  This is quite slow so is turned off by
+                    # default; however, it is useful for some things where the
+                    # default generated file contains a lot of rubbish.  It may
+                    # be worth optimising IsValidKeyword at some point.
+                    if not IsValidKeyword(keyword, iskeyword):
+                        matchDone = False
+                        if options['include_matches']:
 
-            if keyword.lower() in vim_synkeyword_arguments:
-                if not options['skip_vimkeywords']:
-                    matchEntries.add('syn match ' + thisType + ' /' + keyword + '/')
-                continue
+                            patternCharacters = "/@#':"
+                            charactersToEscape = '\\' + '~[]*.$^'
 
-            temp = keycommand + " " + keyword
-            if len(temp) >= 512:
+                            for patChar in patternCharacters:
+                                if keyword.find(patChar) == -1:
+                                    escapedKeyword = keyword
+                                    for ch in charactersToEscape:
+                                        escapedKeyword = escapedKeyword.replace(ch, '\\' + ch)
+                                    if options['include_matches']:
+                                        matchEntries.add('syn match ' + thisType + ' ' + patChar + escapedKeyword + patChar)
+                                    matchDone = True
+                                    break
+
+                        if not matchDone:
+                            Debug("Skipping keyword '" + keyword + "'", "Information")
+
+                        continue
+
+
+                if keyword.lower() in vim_synkeyword_arguments:
+                    if not options['skip_vimkeywords']:
+                        matchEntries.add('syn match ' + thisType + ' /' + keyword + '/')
+                    continue
+
+                temp = keycommand + " " + keyword
+                if len(temp) >= 512:
+                    vimtypes_entries.append(keycommand)
+                    keycommand = keystarter
+                keycommand = keycommand + " " + keyword
+            if keycommand != keystarter:
                 vimtypes_entries.append(keycommand)
-                keycommand = keystarter
-            keycommand = keycommand + " " + keyword
-        if keycommand != keystarter:
-            vimtypes_entries.append(keycommand)
 
-    # Sort the matches
-    matchEntries = sorted(list(matchEntries))
+        # Sort the matches
+        matchEntries = sorted(list(matchEntries))
 
-    if (len(matchEntries) + len(vimtypes_entries)) == 0:
-        # All keywords have been filtered out, give up
-        return
+        if (len(matchEntries) + len(vimtypes_entries)) == 0:
+            # All keywords have been filtered out, give up
+            return
 
-    vimtypes_entries.append('')
-    vimtypes_entries += matchEntries
+        vimtypes_entries.append('')
+        vimtypes_entries += matchEntries
+
+        if source_file is None:
+            unscoped_entries = vimtypes_entries[:]
+        else:
+            entry_sets[source_file] = vimtypes_entries[:]
 
     if options['include_locals']:
         LocalTagType = ',CTagsLocalVariable'
@@ -169,13 +181,27 @@ def CreateTypesFile(options, language, tags):
         sys.exit(1)
 
     try:
-        for line in vimtypes_entries:
-            try:
-                fh.write(line.encode('ascii'))
-            except UnicodeDecodeError:
-                Debug("Error decoding line '{0!r}'".format(line), "Error")
-                fh.write('echoerr "Types generation error"\n'.encode('ascii'))
-            fh.write('\n'.encode('ascii'))
+        for source_file in [None] + entry_sets.keys():
+            if source_file is None:
+                vimtypes_entries = unscoped_entries
+                prefix = ''
+            else:
+                prefix = '\t'
+                vimtypes_entries = entry_sets[source_file]
+
+            if source_file is not None and not options['ignore_file_scope']:
+                formatted_file = os.path.normpath(source_file).replace(os.path.sep, '/')
+                fh.write('" Matches for file %s:\n' % source_file)
+                fh.write('if b:TagHighlightPrivate["NormalisedPath"] == "%s"\n' % formatted_file)
+            for line in vimtypes_entries:
+                try:
+                    fh.write(prefix + line.encode('ascii'))
+                except UnicodeDecodeError:
+                    Debug("Error decoding line '{0!r}'".format(line), "Error")
+                    fh.write('echoerr "Types generation error"\n'.encode('ascii'))
+                fh.write('\n'.encode('ascii'))
+            if source_file is not None and not options['ignore_file_scope']:
+                fh.write('endif\n')
     except IOError:
         Debug("ERROR: Couldn't write {file} contents\n".format(file=outfile), "Error")
         sys.exit(1)

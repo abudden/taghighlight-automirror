@@ -460,6 +460,9 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		SkipVimKeywords                  Link:|TagHL-SkipVimKeywords|
 			Don't include vim keywords in highlighter.
 
+		IgnoreFileScope                  Link:|TagHL-IgnoreFileScope|
+			Highlight everything everywhere, ignoring file-scope.
+
 	Customisation:
 
 		PreReadHooks                     Link:|TagHL-PreReadHooks|
@@ -886,6 +889,17 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 
 		Option Type: List
 		Default: [] (empty list)
+
+	IgnoreFileScope                      *TagHL-IgnoreFileScope*
+		Where ctags detects that a variable is limited in scope to only be
+		valid in one source file (for example functions declared with the
+		static keyword in C), TagHighlight will normally only highlight those
+		keywords in the source file in which they're defined.  Setting this
+		option to True or 1 will disable this feature and the keywords will be
+		highlighted in all files in the project.
+
+		Option Type: Boolean
+		Default: False
 
 	IncludeLocals                        *TagHL-IncludeLocals*
 		If set to True or 1, local variables will be included in the types
@@ -1887,6 +1901,9 @@ x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
 	  generating types files.  Initially the reserved keywords have been
 	  recorded for C++, Python, Java and C#.  Thanks to Alexey Radkov and Alan
 	  Warren for the suggestions.
+	* File-scope variables are only highlighted in the file in which their
+	  scope is valid (thanks to Kévin Brodsky for the suggestion).  An option
+	  called IgnoreFileScope disables this feature.
 	
 	Bug fixes:
 	

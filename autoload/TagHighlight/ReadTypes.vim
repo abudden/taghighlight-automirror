@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-" Copyright: Copyright (C) 2009-2012 A. S. Budden
+" Copyright: Copyright (C) 2009-2013 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
 "            notice is copied with it. Like anything else that's free,
@@ -190,6 +190,13 @@ function! s:ReadTypes(suffix)
 	let type_files = TagHighlight#ReadTypes#FindTypeFiles(a:suffix)
 	for fname in type_files
 		call TagHLDebug("Loading type highlighter file " . fname, 'Information')
+		let types_path = fnamemodify(fname, ':p')
+		let old_dir = getcwd()
+		let b:TagHighlightPrivate['NormalisedPath'] = substitute(
+					\ fnamemodify(file, ':p:.'),
+					\ '\\', '/', 'g')
+		exe 'cd' old_dir
+
 		exe 'so' fname
 		let b:TagHighlightLoadedLibraries +=
 					\ [{
