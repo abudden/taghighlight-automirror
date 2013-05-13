@@ -1523,6 +1523,8 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 	the available standard libraries are:
 
 	* "Android SDK": Android Software Development Kit (Java)
+	* "C POSIX Library": Standard POSIX libc (C)
+	* "C++ Standard Library": Standard C++ library - libc++ (C++)
 	* "JDK": Java Development Kit (Java)
 	* "PySide": PySide framework (Python; limited support)
 	* "Qt4": Qt4 (C++)
@@ -1537,6 +1539,9 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 	achieved either by deleting the standard libraries (or not installing them
 	in the first place), or by setting |TagHL-DisableStandardLibraries| to
 	True or 1.
+
+	Thanks to Kévin Brodsky for providing the scripts to generate the libc and
+	libc++ libraries.
 
 ------------------------------------------------------------------------------
 
@@ -1904,6 +1909,8 @@ x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
 	* File-scope variables are only highlighted in the file in which their
 	  scope is valid (thanks to Kévin Brodsky for the suggestion).  An option
 	  called IgnoreFileScope disables this feature.
+	* New standard highlighting libraries: libc and libc++ (thanks to Kévin
+	  Brodsky for producing the scripts that generate these libraries).
 	
 	Bug fixes:
 	
