@@ -190,10 +190,12 @@ function! s:ReadTypes(suffix)
 	let type_files = TagHighlight#ReadTypes#FindTypeFiles(a:suffix)
 	for fname in type_files
 		call TagHLDebug("Loading type highlighter file " . fname, 'Information')
-		let types_path = fnamemodify(fname, ':p')
+		let types_path = fnamemodify(fname, ':p:h')
 		let old_dir = getcwd()
+
+		exe 'cd' types_path
 		let b:TagHighlightPrivate['NormalisedPath'] = substitute(
-					\ fnamemodify(file, ':p:.'),
+					\ fnamemodify(fullname, ':.'),
 					\ '\\', '/', 'g')
 		exe 'cd' old_dir
 
