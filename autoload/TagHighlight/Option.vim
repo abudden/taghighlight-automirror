@@ -44,6 +44,7 @@ function! TagHighlight#Option#LoadOptions()
 	endif
 
 	let g:TagHighlightPrivate['PluginOptions'] = []
+	let g:TagHighlightPrivate['FullOptionList'] = []
 	let options = TagHighlight#LoadDataFile#LoadDataFile('options.txt')
 
 	for option_dest in keys(options)
@@ -51,8 +52,10 @@ function! TagHighlight#Option#LoadOptions()
 			let option = deepcopy(options[option_dest])
 			let option['Destination'] = option_dest
 			let g:TagHighlightPrivate['PluginOptions'] += [option]
+			let g:TagHighlightPrivate['FullOptionList'] += [option['VimOptionMap']]
 		endif
 	endfor
+
 endfunction
 
 function! TagHighlight#Option#GetOption(name)
@@ -60,16 +63,11 @@ function! TagHighlight#Option#GetOption(name)
 	call TagHighlight#Option#LoadOptions()
 
 	" Check this option exists
-	let found = 0
-	for option in g:TagHighlightPrivate['PluginOptions']
-		if option['VimOptionMap'] == a:name
-			let found = 1
-			break
-		endif
-	endfor
-	if ! found
+	let opt_index = index(g:TagHighlightPrivate['FullOptionList'], a:name)
+	if opt_index < 0
 		throw "Unrecognised option:" .a:name
 	endif
+	let option = g:TagHighlightPrivate['PluginOptions'][opt_index]
 
 	" Option priority (highest first):
 	" * buffer dictionary,
