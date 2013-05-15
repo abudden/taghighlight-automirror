@@ -15,7 +15,7 @@ int main(void)
 	return 0;
 }
 EOF
-SEARCH_PATH=$(gcc -o a.out -v TAGHL_GCC_TEST.c 2>&1 \
+SEARCH_PATH=$(LANG=C gcc -o a.out -v TAGHL_GCC_TEST.c 2>&1 \
 	| grep -A 10000 "^#include.*search starts here:" \
 	| grep -B 10000 "^End of search list." \
 	| grep "^ " \
