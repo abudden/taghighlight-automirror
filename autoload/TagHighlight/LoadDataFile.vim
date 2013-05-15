@@ -84,7 +84,13 @@ function! s:ParseEntries(entries, indent_level)
 			if ! exists('result')
 				let result = {}
 			endif
-			let result[key] = parse_results['Result']
+			if has_key(result, key) &&
+						\ (type(result[key]) == type({})) &&
+						\ (type(parse_results['Result']) == type({}))
+				let result[key] = extend(result[key], parse_results['Result'])
+			else
+				let result[key] = parse_results['Result']
+			endif
 			let index += parse_results['Index'] - 1
 		endif
 		let index += 1
@@ -97,5 +103,13 @@ endfunction
 
 function! TagHighlight#LoadDataFile#LoadFile(filename)
 	let entries = readfile(a:filename)
+	let index = match(entries, '^%INCLUDE ')
+	while index > -1
+		let filename = matchstr(entries[index], '^%INCLUDE\s\+\zs.*')
+		let filename = substitute(filename, '\${\(\k\+\)}', '\=eval("$".submatch(1))', 'g')
+		let new_entries = entries[:index-1] + readfile(filename) + entries[index+1:]
+		let entries = new_entries
+		let index = match(entries, '^%INCLUDE ')
+	endwhile
 	return s:ParseEntries(entries, 0)['Result']
 endfunction
