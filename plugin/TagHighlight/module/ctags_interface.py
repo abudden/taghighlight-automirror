@@ -148,9 +148,7 @@ def ParseTags(options):
                         if new_entry is None:
                             continue
 
-                        if m.group('scope') is None:
-                            if new_entry.startswith('AMS'):
-                                Debug("No scope: " + new_entry, "Information")
+                        if m.group('scope') is None or options['ignore_file_scope']:
                             ctags_entries[key][kind].add(new_entry)
                         else:
                             if m.group('filename') not in file_entries:
