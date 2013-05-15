@@ -165,8 +165,13 @@ endfor
 
 if ! has_key(g:TagHighlightPrivate, 'AutoCommandsLoaded')
 	let g:TagHighlightPrivate['AutoCommandsLoaded'] = 1
-	autocmd BufRead,BufNewFile * call TagHighlight#ReadTypes#ReadTypesByExtension()
-	autocmd Syntax * call TagHighlight#ReadTypes#ReadTypesBySyntax()
-	autocmd FileType * call TagHighlight#ReadTypes#ReadTypesByFileType()
+	augroup TagHighlight
+		autocmd!
+		autocmd BufRead,BufNewFile * call TagHighlight#ReadTypes#ReadTypesByExtension()
+		autocmd Syntax * call TagHighlight#ReadTypes#ReadTypesBySyntax()
+		autocmd FileType * call TagHighlight#ReadTypes#ReadTypesByFileType()
+		autocmd BufEnter * call TagHighlight#BufferEntry#BufEnter(expand("<afile>:p"))
+		autocmd BufLeave * call TagHighlight#BufferEntry#BufLeave(expand("<afile>:p"))
+	augroup END
 endif
 command! ReadTypes call TagHighlight#ReadTypes#ReadTypesByOption()
