@@ -96,6 +96,7 @@ vim -c '%s/\v(\/usr\S*)(\.h)@<!\t/\1.h\t/g' -c 'wq' $TAGS
 echo Generating $TYPES
 vim -c "let g:TagHighlightSettings['TypesFileNameForce']='$TYPES'" \
 	-c "let g:TagHighlightSettings['Languages']=['c']" \
+	-c "let g:TagHighlightSettings['IgnoreFileScope']='True'" \
 	-c "let g:TagHighlightSettings['TagFileName']='$TAGS'" \
 	-c "UpdateTypesFileOnly" \
 	-c "q"
