@@ -59,6 +59,7 @@ command! -bar UpdateTypesFileOnly
 command! -nargs=1 UpdateTypesFileDebug 
 			\ call TagHighlight#Debug#DebugUpdateTypesFile(<f-args>)
 
+
 function! s:LoadLanguages()
 	" This loads the language data files.
 	let language_files = split(glob(g:TagHighlightPrivate['PluginPath'] . '/data/languages/*.txt'), '\n')
@@ -137,8 +138,23 @@ function! TagHLDebug(str, level)
 	endif
 endfunction
 
+function s:LoadTagHLConfig(filename, report_error)
+	if filereadable(a:filename)
+		let g:TagHighlightSettings = extend(g:TagHighlightSettings, TagHighlight#LoadDataFile#LoadFile(a:filename))
+	elseif report_error
+		echoerr "Cannot read config file " . a:filename
+	endif
+endfunction
+
 call s:LoadLanguages()
 call s:LoadKinds()
+
+let s:auto_config_files = split(globpath(&rtp, 'TagHighlightConfig.txt'), '\n')
+for f in s:auto_config_files
+	call s:LoadTagHLConfig(f, 0)
+endfor
+
+command! -nargs=1 -complete=file LoadTagHLConfig call s:LoadTagHLConfig(<q-args>, 1)
 
 for tagname in g:TagHighlightPrivate['AllTypes']
 	let simplename = substitute(tagname, '^CTags', '', '')
