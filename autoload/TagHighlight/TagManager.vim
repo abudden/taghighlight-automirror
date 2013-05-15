@@ -1,6 +1,6 @@
 " Tag Highlighter:
 "   Author:  A. S. Budden <abudden _at_ gmail _dot_ com>
-" Copyright: Copyright (C) 2009-2012 A. S. Budden
+" Copyright: Copyright (C) 2009-2013 A. S. Budden
 "            Permission is hereby granted to use and distribute this code,
 "            with or without modifications, provided that this copyright
 "            notice is copied with it. Like anything else that's free,
@@ -51,4 +51,14 @@ function! TagHighlight#TagManager#ConfigureTags()
 		let newtagsoption .= ',' . escape(tagfile, ' ')
 	endfor
 	let &l:tags = newtagsoption
+endfunction
+
+function! TagHighlight#TagManager#GetProjects()
+	let projects = TagHighlight#Option#GetOption('Projects')
+	for project in keys(projects)
+		if type(projects[project]) == type("")
+			projects[project] = {'SourceDir': projects[project]}
+		endif
+	endfor
+	return projects
 endfunction
