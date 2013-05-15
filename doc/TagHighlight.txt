@@ -239,13 +239,22 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 	are overridden by project options, which in turn are overridden by
 	buffer-specific options.
 
-	Global Options                   *g:TagHighlightSettings*
+	Global Options                   *g:TagHighlightSettings* / *TagHLConfig.txt*
 
 		Global options are set in a global |Dictionary|.  The variable
 		name is |g:TagHighlightSettings|.  The keys in the dictionary are
-		the option names and the values are the option values.  The safest
-		way to set a value in this dictionary is to use something like
-		this:
+		the option names and the values are the option values.
+
+		The easiest way to set up these settings is to use a configuration
+		file called |TagHLConfig.txt| in your ~/.vim or vimfiles directory.
+		The format of this is explained under |taghl_config.txt|, but a simple
+		example follows:
+>
+			TagFileName:tagfile
+			CtagsExecutable:etags.exe
+<
+		If you want to do this from your vimrc, the safest way to set a value
+		in this dictionary is to use something like this:
 >
 			if ! exists('g:TagHighlightSettings')
 				let g:TagHighlightSettings = {}
@@ -1863,14 +1872,20 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		Oleg Lebedev - Fortran Support
 		Piotr Yordanov - Javascript support (and other suggestions)
 
+	Libraries:
+
+		Kévin Brodsky: libc and libc++ standard libraries
+
 	Suggestions for Improvement and Testing:
 
 		Alan Warren - Suggestions for Improvement
 		Alexey Radkov - Suggestions for Improvement
 		Hong Xu - Suggestions for Improvement
+		Kévin Brodsky - Testing & Suggestions
 		Marcus Martin - Testing & Suggestions
 		Mishail - Testing & Suggestions
 		Prasun Ratn - Testing & Suggestions
+		Walker Inman - Suggestion for Improvement
 		Yongwei Wu - Testing & Suggestions
 
 	Additional credits from the predecessor (ctags_highlighting):
@@ -1885,6 +1900,8 @@ x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
 
 	New features:
 	
+	* Global configuration can now be set using a text file in the ~/.vim or
+	  vimfiles directory (|TagHLConfig.txt|).
 	* Added support for Javascript (thanks to Piotr Yordanov).
 	* Added support for custom ctags argument lists (option CtagsArguments) in
 	  order to allow use with versions of ctags (like jsctags) that don't

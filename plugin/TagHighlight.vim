@@ -149,7 +149,7 @@ endfunction
 call s:LoadLanguages()
 call s:LoadKinds()
 
-let s:auto_config_files = split(globpath(&rtp, 'TagHighlightConfig.txt'), '\n')
+let s:auto_config_files = split(globpath(&rtp, 'TagHLConfig.txt'), '\n')
 for f in s:auto_config_files
 	call s:LoadTagHLConfig(f, 0)
 endfor
