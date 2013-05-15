@@ -25,75 +25,91 @@ function! TagHighlight#LoadDataFile#LoadDataFile(filename)
 	return TagHighlight#LoadDataFile#LoadFile(filename)
 endfunction
 
-function! TagHighlight#LoadDataFile#LoadFile(filename)
-	let result = {}
-	let entries = readfile(a:filename)
-	
-	let top_key = ''
-	for entry in entries
-		if entry[0] == '#'
-		elseif entry[0] =~ '\k'
-			" Keyword character, so not sub entry or comment
-			if entry[len(entry)-1:] == ":"
-				" Beginning of a field, but we don't know whether
-				" it's a list or a dict yet
-				let top_key = entry[:len(entry)-2]
-			elseif stridx(entry, ':') != -1
-				" This is key:value, so it's a simple dictionary entry
-				let parts = split(entry, ':')
-				" Rather coarse replacement of split(x,y,n)
-				if len(parts) > 2
-					let parts[1] = join(parts[1:], ':')
+function! s:SingleSplit(string, pattern)
+	let result = []
+	let parts = split(a:string, a:pattern)
+	if len(parts) > 1
+		let parts[1] = join(parts[1:], a:pattern)
+	endif
+	if len(parts) > 1 && stridx(parts[1], ',') != -1
+		" List
+		let results = [parts[0], split(parts[1], ',')]
+	else
+		let results = parts[0:1]
+	endif
+	return results
+endfunction
+
+function! s:ParseEntries(entries, indent_level)
+	let index = 0
+	while index < len(a:entries)
+		let entry = a:entries[index]
+		let this_indent_level = len(substitute(entry, '^\t*\zs.*', '', ''))
+		let unindented = substitute(entry, '^'.repeat('\t',a:indent_level), '', '')
+		if len(substitute(entry, '^\s*\(.\{-}\)\s*$', '\1', '')) == 0
+			" Empty line
+		elseif substitute(entry, '^\s*\(.\).*$', '\1', '') == '#'
+			" Comment
+		elseif this_indent_level < a:indent_level
+			" End of indented section
+			return {'Index': index, 'Result': result}
+		elseif this_indent_level == a:indent_level
+			if stridx(unindented, ':') != -1
+				let parts = s:SingleSplit(unindented, ':')
+				let key = parts[0]
+				if ! exists('result')
+					let result = {}
+				elseif type(result) != type({})
+					echoerr type(result)
+					echoerr entry
+					throw "Dictionary/List mismatch"
 				endif
-				if stridx(parts[1], ',') != -1
-					" This entry is a list
-					let result[parts[0]] = split(parts[1], ',')
-				else
-					let result[parts[0]] = parts[1]
-				endif
-				" Clear the top key as this isn't a multi-line entry
-				let top_key = ''
-			else
-				call TagHLDebug("  Unhandled line: '" . entry . "'", "Error")
-			endif
-		elseif entry[0] == "\t" && top_key != ''
-			" This is a continuation of a top level key
-			if stridx(entry, ':') != -1
-				" The key is a dictionary, check for mismatch:
-				if has_key(result, top_key)
-					if type(result[top_key]) != type({})
-						call TagHLDebug("Type mismatch on line '".entry."': expected key:value", "Error")
-					endif
-				else
-					let result[top_key] = {}
-				endif
-				" Handle the entry (without the preceding tab)
-				let parts = split(entry[1:], ':')
-				" Rather coarse replacement of split(x,y,n)
-				if len(parts) > 2
-					let parts[1] = join(parts[1:], ':')
-				endif
-				if stridx(parts[1], ',') != -1
-					" This entry is a list
-					let result[top_key][parts[0]] = split(parts[1], ',')
-				else
-					let result[top_key][parts[0]] = parts[1]
+				if len(parts) > 1
+					let result[key] = parts[1]
 				endif
 			else
-				" This is a list of strings, check for mismatch
-				if has_key(result, top_key)
-					if type(result[top_key]) != type([])
-						call TagHLDebug("Type mismatch on line '".entry."': didn't expect key:value", "Error")
-					endif
-				else
-					let result[top_key] = []
+				if ! exists('result')
+					let result = []
+				elseif type(result) != type([])
+					echoerr entry
+					echoerr type(result)
+					throw "Dictionary/List mismatch"
 				endif
-				" Add to the list (without the preceding tag)
-				let result[top_key] += [entry[1:]]
+				let result += [unindented]
 			endif
 		else
-			" Probably a comment or blank line
+			let sublist = a:entries[index :]
+			let subindent = a:indent_level + 1
+			let parse_results = s:ParseEntries(sublist, subindent)
+			if ! exists('result')
+				let result = {}
+			endif
+			if has_key(result, key) &&
+						\ (type(result[key]) == type({})) &&
+						\ (type(parse_results['Result']) == type({}))
+				let result[key] = extend(result[key], parse_results['Result'])
+			else
+				let result[key] = parse_results['Result']
+			endif
+			let index += parse_results['Index'] - 1
 		endif
-	endfor
-	return result
+		let index += 1
+	endwhile
+	if ! exists('result')
+		let result = {}
+	endif
+	return {'Index': index, 'Result': result}
+endfunction
+
+function! TagHighlight#LoadDataFile#LoadFile(filename)
+	let entries = readfile(a:filename)
+	let index = match(entries, '^%INCLUDE ')
+	while index > -1
+		let filename = matchstr(entries[index], '^%INCLUDE\s\+\zs.*')
+		let filename = substitute(filename, '\${\(\k\+\)}', '\=eval("$".submatch(1))', 'g')
+		let new_entries = entries[:index-1] + readfile(filename) + entries[index+1:]
+		let entries = new_entries
+		let index = match(entries, '^%INCLUDE ')
+	endwhile
+	return s:ParseEntries(entries, 0)['Result']
 endfunction
