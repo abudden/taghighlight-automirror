@@ -198,6 +198,10 @@ def ExuberantGetCommandArgs(options):
     if options['recurse']:
         args += ['--recurse']
 
+    args += ['--fields=+iaSszt']
+    args += ['--c-kinds=+p', '--c++-kinds=+p']
+    args += ['--extra=+q']
+
     # If user specified extra arguments are required, add them
     # immediately before the file list
     if 'ctags_extra_arguments' in options:
