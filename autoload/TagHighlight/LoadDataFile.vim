@@ -26,7 +26,6 @@ function! TagHighlight#LoadDataFile#LoadDataFile(filename)
 endfunction
 
 function! s:SingleSplit(string, pattern)
-	let result = []
 	let parts = split(a:string, a:pattern)
 	if len(parts) > 1
 		let parts[1] = join(parts[1:], a:pattern)
