@@ -15,58 +15,88 @@
 from __future__ import print_function
 import os
 import glob
+import re
 
 data_directory = None
+
+leadingTabRE = re.compile(r'^\t*')
 
 def SetLoadDataDirectory(directory):
     global data_directory
     data_directory = directory
 
-def LoadFile(filename, list_entries=[]):
-    results = {}
-    fh = open(filename, 'r')
-    key = None
-    for line in fh:
-        if line.strip().endswith(':') and line[0] not in [' ','\t',':','#']:
-            key = line.strip()[:-1]
-        elif key is not None and line.startswith('\t'):
-            if ':' in line:
-                # Dict entry, split onto multiple lines
-                parts = line.strip().split(':',1)
-                if key not in results:
-                    results[key] = {}
-                elif not isinstance(results[key], dict):
-                    raise ValueError("Mixed data types in data file {file} for entry {key}".format(filename, key))
-                if parts[0] in list_entries:
-                    results[key][parts[0]] = parts[1].split(',')
-                else:
-                    results[key][parts[0]] = parts[1]
-            else:
-                # List entry, split onto multiple lines
-                if key not in results:
-                    results[key] = []
-                elif not isinstance(results[key], list):
-                    raise ValueError("Mixed data types in data file {file} for entry {key}".format(filename, key))
-                results[key].append(line.strip())
-        elif ':' in line and line[0] not in [' ','\t',':','#']:
-            # End of previous list: was it a real list or
-            # an empty entry?
-            if key not in results:
-                # Empty entry: add as such
-                if key in list_entries:
-                    results[key] = []
-                else:
-                    results[key] = ''
-            key = None
-            parts = line.strip().split(':',1)
-            if parts[0] in list_entries:
-                # Registered list entry: split on commas
-                results[parts[0]] = parts[1].split(',')
-            else:
-                # Treat as a string
-                results[parts[0]] = parts[1]
-    return results
+def EntrySplit(entry, pattern):
+    result = []
+    parts = entry.strip().split(pattern, 1)
+    if len(parts) == 1:
+        result = parts
+    elif ',' in parts[1]:
+        result = [parts[0], parts[1].split(',')]
+    else:
+        result = parts
+    return result
 
+def ParseEntries(entries, list_entries, indent_level=0):
+    index = 0
+    while index < len(entries):
+        line = entries[index]
+        m = leadingTabRE.match(line)
+        this_indent_level = len(m.group(0))
+        unindented = line[this_indent_level:]
+
+        if len(line.strip()) == 0:
+            # Empty line
+            pass
+        elif line.lstrip()[0] == '#':
+            # Comment
+            pass
+        elif this_indent_level < indent_level:
+            return {'Index': index, 'Result': result}
+        elif this_indent_level == indent_level:
+            if ':' in unindented:
+                parts = EntrySplit(unindented, ':')
+                key = parts[0]
+                try:
+                    result
+                except NameError:
+                    result = {}
+                if not isinstance(result, dict):
+                    raise TypeError("Dictionary/List mismatch")
+                if len(parts) > 1:
+                    result[key] = parts[1]
+            else:
+                try:
+                    result
+                except NameError:
+                    result = []
+                if not isinstance(result, list):
+                    raise TypeError("Dictionary/List mismatch")
+                result += [unindented]
+        else:
+            sublist = entries[index:]
+            subindent = indent_level+1
+            parsed = ParseEntries(sublist, list_entries, subindent)
+            try:
+                result
+            except NameError:
+                result = {}
+            if key in result and isinstance(result[key], dict) and isinstance(parsed['Result'], dict):
+                result[key] = dict(result[key].items() + parsed['Result'].items())
+            else:
+                result[key] = parsed['Result']
+            index += parsed['Index'] - 1
+        index += 1
+    try:
+        result
+    except NameError:
+        result = {}
+    return {'Index': index, 'Result': result}
+
+def LoadFile(filename, list_entries=[]):
+    fh = open(filename, 'r')
+    entries = fh.readlines()
+    fh.close()
+    return ParseEntries(entries, list_entries)['Result']
 
 def LoadDataFile(relative, list_entries=[]):
     filename = os.path.join(data_directory,relative)
