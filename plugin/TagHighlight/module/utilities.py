@@ -85,7 +85,10 @@ class FileTagDB(dict):
 def GenerateValidKeywordRange(iskeyword):
     # Generally obeys Vim's iskeyword setting, but
     # only allows characters in ascii range
-    ValidKeywordSets = iskeyword.split(',')
+    if isinstance(iskeyword, list):
+        ValidKeywordSets = iskeyword
+    else:
+        ValidKeywordSets = iskeyword.split(',')
     rangeMatcher = re.compile('^(?P<from>(?:\d+|\S))-(?P<to>(?:\d+|\S))$')
     falseRangeMatcher = re.compile('^^(?P<from>(?:\d+|\S))-(?P<to>(?:\d+|\S))$')
     validList = []

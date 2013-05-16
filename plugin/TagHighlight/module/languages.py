@@ -30,14 +30,14 @@ class Languages():
 
         # Import language specific modules: this will make them be parsed
         # and will add to the registry
-        self.defaults = LoadDataFile('language_defaults.txt', language_list_entries)
+        self.defaults = LoadDataFile('language_defaults.txt')
         for entry in language_list_entries:
             if entry in self.defaults:
                 if not isinstance(self.defaults[entry], list):
                     self.defaults[entry] = self.defaults[entry].split(',')
 
         for language_file in GlobData('languages/*.txt'):
-            language_dict = LoadDataFile(language_file, language_list_entries)
+            language_dict = LoadDataFile(language_file)
 
             for entry in language_list_entries:
                 if entry in language_dict:

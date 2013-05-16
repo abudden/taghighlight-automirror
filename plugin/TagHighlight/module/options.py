@@ -23,9 +23,12 @@ def LoadOptionSpecification():
     RequiredKeys = ['CommandLineSwitches', 'Type', 'Default', 'Help']
 
     global AllOptions
-    AllOptions = LoadDataFile('options.txt', ListKeys)
+    AllOptions = LoadDataFile('options.txt')
 
     for dest in AllOptions.keys():
+        for key in ListKeys:
+            if key in AllOptions and not isinstance(AllOptions[key], list):
+                AllOptions[key] = [AllOptions[key]]
         # Check we've got all of the required keys
         for key in RequiredKeys:
             if key not in AllOptions[dest]:
@@ -43,7 +46,7 @@ def LoadOptionSpecification():
         elif AllOptions[dest]['Type'] == 'list':
             if AllOptions[dest]['Default'] == '[]':
                 AllOptions[dest]['Default'] = []
-            else:
+            elif not isinstance(AllOptions[dest]['Default'], list):
                 AllOptions[dest]['Default'] = AllOptions[dest]['Default'].split(',')
 
 LoadOptionSpecification()
