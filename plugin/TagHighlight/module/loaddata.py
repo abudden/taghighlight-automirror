@@ -36,7 +36,7 @@ def EntrySplit(entry, pattern):
         result = parts
     return result
 
-def ParseEntries(entries, list_entries, indent_level=0):
+def ParseEntries(entries, indent_level=0):
     index = 0
     while index < len(entries):
         line = entries[index]
@@ -75,7 +75,7 @@ def ParseEntries(entries, list_entries, indent_level=0):
         else:
             sublist = entries[index:]
             subindent = indent_level+1
-            parsed = ParseEntries(sublist, list_entries, subindent)
+            parsed = ParseEntries(sublist, subindent)
             try:
                 result
             except NameError:
@@ -92,15 +92,15 @@ def ParseEntries(entries, list_entries, indent_level=0):
         result = {}
     return {'Index': index, 'Result': result}
 
-def LoadFile(filename, list_entries=[]):
+def LoadFile(filename, ):
     fh = open(filename, 'r')
     entries = fh.readlines()
     fh.close()
-    return ParseEntries(entries, list_entries)['Result']
+    return ParseEntries(entries)['Result']
 
-def LoadDataFile(relative, list_entries=[]):
+def LoadDataFile(relative):
     filename = os.path.join(data_directory,relative)
-    return LoadFile(filename, list_entries)
+    return LoadFile(filename)
 
 def GlobData(matcher):
     files = glob.glob(os.path.join(data_directory, matcher))
