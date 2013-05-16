@@ -219,6 +219,12 @@ reload_colour_scheme:
 	Default:False
 	Help:Reload the colour scheme after reading types file (in case colours don't work properly)
 
+set_working_dir:
+	VimOptionMap:SetWorkingDir
+	Type:bool
+	Default:False
+	Help:When loading a highlight file, set the working directory for the buffer to the types file path.
+
 ##########################
 # Python script options: #
 ##########################

@@ -242,6 +242,17 @@ function! s:ReadTypes(suffix)
 		exe 'call' postread_hook . '(fullname, a:suffix)'
 	endfor
 
+	if TagHighlight#Option#GetOption('SetWorkingDir') == 1
+		for entry in b:TagHighlightLoadedLibraries
+			if entry['Name'] == 'Local'
+				let lcdpath = fnamemodify(entry['Path'], ':h')
+				call TagHLDebug("Setting local working directory to " . lcdpath, "Information")
+				exe 'lcd' lcdpath
+				break
+			endif
+		endfor
+	endif
+
 	let reload_colours = TagHighlight#Option#GetOption('ReloadColourScheme')
 	if reload_colours
 		exe "colorscheme" g:colors_name

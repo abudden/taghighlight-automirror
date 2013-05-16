@@ -486,6 +486,9 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		PostUpdateHooks                  Link:|TagHL-PostUpdateHooks|
 			List of functions to call after updating types.
 
+		SetWorkingDir                    Link:|TagHL-SetWorkingDir|
+			When loading types highlighting, set the current directory.
+
 	Disabling built-in functionality:
 
 		DisableTypeParsing               Link:|TagHL-DisableTypeParsing|
@@ -1160,6 +1163,19 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		versions of gvim whereby the colours aren't shown properly on startup.
 		I haven't got to the bottom of this bug, so am providing this
 		work-around as a fix in the meantime.
+
+		Option Type: Boolean
+		Default: False (don't reload colour scheme)
+
+	SetWorkingDir                        *TagHL-SetWorkingDir*
+		If this option is set to True or 1, the current working directory for
+		the buffer is set (using the |lcd| command) to the path containing the
+		types highlighting file.  This can be useful if you want your current
+		directory to be the root of a project regardless of how you open a
+		file.
+
+		Option Type: Boolean
+		Default: False (don't change current directory)
 
 	SkipPatterns                         *TagHL-SkipPatterns*
 		Any (python) regular expressions listed in this option will be matched
@@ -1928,6 +1944,8 @@ x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
 	  called IgnoreFileScope disables this feature.
 	* New standard highlighting libraries: libc and libc++ (thanks to Kévin
 	  Brodsky for producing the scripts that generate these libraries).
+	* Added SetWorkingDir option to allow control of the working directory for
+	  a buffer with tags highlighted.
 	
 	Bug fixes:
 	
