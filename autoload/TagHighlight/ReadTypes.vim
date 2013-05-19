@@ -138,13 +138,15 @@ function! s:ReadTypes(suffix)
 
 	call TagHighlight#Option#LoadOptionFileIfPresent()
 
-	if len(a:suffix) == 0
-		return
-	endif
-
 	let file = expand('<afile>')
 	if len(file) == 0
 		let file = expand('%')
+	endif
+
+	call TagHighlight#Projects#LoadProjectOptions(file)
+
+	if len(a:suffix) == 0
+		return
 	endif
 
 	call TagHLDebug("Reading types of suffix " . a:suffix . " for file " . file, "Information")

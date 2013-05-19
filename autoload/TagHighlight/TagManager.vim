@@ -52,19 +52,3 @@ function! TagHighlight#TagManager#ConfigureTags()
 	endfor
 	let &l:tags = newtagsoption
 endfunction
-
-function! TagHighlight#TagManager#GetProjects()
-	let projects = TagHighlight#Option#GetOption('Projects')
-	for project in keys(projects)
-		if type(projects[project]) == type("")
-			projects[project] = {'SourceDir': projects[project]}
-		elseif type(projects[project]) == type({}) && 
-					\ has_key(projects[project], 'SourceDir')
-			" Okay
-		else
-			call TagHLDebug("Invalid entry '".project."' in Projects list", "Warning")
-			call remove(projects, project)
-		endif
-	endfor
-	return projects
-endfunction

@@ -2,6 +2,12 @@
 # Vim-only options: #
 #####################
 
+projects:
+	VimOptionMap:Projects
+	Type:dict
+	Default:{}
+	Help:Project-specific configuration options.
+
 language_detection_method:
 	VimOptionMap:LanguageDetectionMethods
 	Type:list

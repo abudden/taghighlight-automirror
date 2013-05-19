@@ -23,8 +23,16 @@ let g:loaded_TagHLBufferEntry = 1
 
 function! TagHighlight#BufferEntry#BufEnter(filename)
 
+	if ! exists('b:TagHighlightPrivate')
+		let b:TagHighlightPrivate = {}
+	endif
+	let b:TagHighlightPrivate['BufEnterInitialised'] = 1
 endfunction
 
 function! TagHighlight#BufferEntry#BufLeave(filename)
 
+	if ! exists('b:TagHighlightPrivate')
+		let b:TagHighlightPrivate = {}
+	endif
+	let b:TagHighlightPrivate['BufLeaveInitialised'] = 1
 endfunction
