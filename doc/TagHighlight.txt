@@ -27,6 +27,7 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 	2.4.2 Example Configurations             |TagHighlight-example-configs|
 	2.4.3 Option Summary                     |TagHighlight-option-list|
 	2.4.4 Option Details                     |TagHighlight-option-details|
+	2.4.5 Options That I Use                 |TagHighlight-options-i-use|
 	2.5   Integration with Other Software    |TagHighlight-integration|
 	2.5.1 Tagbar Integration                 |TagHighlight-tagbar|
 	2.5.2 Git Integration                    |TagHighlight-git|
@@ -1360,9 +1361,35 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		Option Type: String
 		Default: "." (use current directory)
 
+2.4.5 Options That I Use                 *TagHighlight-option-i-use*        {{{3
+
+	The vast majority of the testing of TagHighlight is carried out by me, so
+	I thought it would be useful to list the settings that I use when doing
+	normal TagHighlight development and testing.  I try to test the other
+	options as much as I can, but there can never be as much testing of the
+	settings that aren't part of my normal day-to-day Vim use.  I use Vim
+	mostly for embedded C programming on small microcontrollers, so the
+	projects are entirely self-contained with no "library" code.
+
+	I currently use a |TagHLConfig.txt| file to set global options.  This is
+	stored in my ~/.vim directory on Linux and my c:\vim\vimfiles directory on
+	Windows.  The contents are as follows:
+>
+		ReloadColourScheme:True
+		SetWorkingDir:True
+<
+	For all other options I use the defaults.  I use |TagHL-ReloadColourScheme|
+	because on one of my PCs I've had an occasional issue (I think it depends
+	how I start Vim) where the colours aren't highlighted properly unless I
+	reload the colour scheme.  I think this is an issue with that build of Vim
+	and the |hi-default| operation, but I could be wrong.
+
+	I use the SetWorkingDir option as I find it quite convenient to have Vim's
+	working directory at the root of the project I'm working on.
+
 ------------------------------------------------------------------------------
 
-2.4 Integration with Other Software      *TagHighlight-integration*         {{{2
+2.5 Integration with Other Software      *TagHighlight-integration*         {{{2
 
 2.5.1 Tagbar Integration                 *TagHighlight-tagbar*              {{{3
 
@@ -1961,6 +1988,7 @@ x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
                             
 	* Transferred source repository from git to mercurial.
 	* Added a reference (in the documentation) to the new wiki.
+	* Added information on how I use TagHighlight to the documentation.
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 
