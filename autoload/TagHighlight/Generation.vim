@@ -67,6 +67,10 @@ function! s:UpdateTypesFile()
 		call TagHLDebug("CtagsExecutable set without path delimiter, searching in path", "Information")
 		let b:TagHighlightSettings['CtagsExeFull'] = TagHighlight#RunPythonScript#FindExeInPath(ctags_option)
 	endif
+	
+	if TagHighlight#Option#GetOption('EnableCscope')
+		call TagHighlight#Cscope#FindCscopeExe()
+	endif
 
 	let tag_file_info = TagHighlight#Find#LocateFile('TAGS', '')
 	if tag_file_info['Found'] == 1
@@ -144,8 +148,25 @@ function! s:UpdateTypesFile()
 			call TagHLDebug(" - " . var . ": UNSET", "Information")
 		endif
 	endfor
+
 	let RunOptions = TagHighlight#Option#CopyOptions()
+	if TagHighlight#Option#GetOption('EnableCscope')
+		call TagHighlight#Cscope#PauseCscope()
+		if TagHighlight#Option#GetOption('CscopeOnlyIfPresent')
+			if ! has_key(b:TagHighlightPrivate, 'CscopeFileInfo')
+				let b:TagHighlightPrivate['CscopeFileInfo'] = TagHighlight#Find#LocateFile('CSCOPE', '')
+			endif
+			if ! b:TagHighlightPrivate['CscopeFileInfo']['Exists']
+				let RunOptions['EnableCscope'] = 1
+			endif
+		endif
+	endif
+
 	call TagHighlight#RunPythonScript#RunGenerator(RunOptions)
+
+	if TagHighlight#Option#GetOption('EnableCscope')
+		call TagHighlight#Cscope#ResumeCscope()
+	endif
 
 	let postupdate_hooks = TagHighlight#Option#GetOption('PostUpdateHooks')
 	for postupdate_hook in postupdate_hooks

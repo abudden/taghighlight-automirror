@@ -29,11 +29,12 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 	2.4.4 Option Details                     |TagHighlight-option-details|
 	2.4.5 Options That I Use                 |TagHighlight-options-i-use|
 	2.5   Integration with Other Software    |TagHighlight-integration|
-	2.5.1 Tagbar Integration                 |TagHighlight-tagbar|
-	2.5.2 Git Integration                    |TagHighlight-git|
-	2.5.3 Bazaar Integration                 |TagHighlight-bazaar|
-	2.5.4 Mercurial Integration              |TagHighlight-mercurial|
-	2.5.5 Subversion Integration             |TagHighlight-subversion|
+	2.5.1 Cscope Integration                 |TagHighlight-cscope|
+	2.5.2 Tagbar Integration                 |TagHighlight-tagbar|
+	2.5.3 Git Integration                    |TagHighlight-git|
+	2.5.4 Bazaar Integration                 |TagHighlight-bazaar|
+	2.5.5 Mercurial Integration              |TagHighlight-mercurial|
+	2.5.6 Subversion Integration             |TagHighlight-subversion|
 	2.6   Installation                       |TagHighlight-install|
 	2.6.1 Requirements                       |TagHighlight-requirements|
 	2.6.2 Installation Guide                 |TagHighlight-install-guide|
@@ -530,6 +531,17 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		CtagsExtraArguments              Link:|TagHL-CtagsExtraArguments|
 			Specify a list of extra arguments to pass to ctags.
 
+	Cscope Interface:
+
+		EnableCscope                     Link:|TagHL-EnableCscope|
+			Enable the cscope manager.
+		
+		CscopeExecutable                 Link:|TagHL-CscopeExecutable|
+			Specify the name of (or full path to) cscope.
+
+		CscopeOnlyIfPresent              Link:|TagHL-CscopeOnlyIfPresent|
+			Only generate a new cscope database if one exists already.
+
 	Locations of Files (normal):
 
 		DefaultDirModeSearchWildcards    Link:|TagHL-DirModeSearchWildcards|
@@ -567,6 +579,20 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 			File name for tag file.
 
 		TagFileSearchWildcards           Link:|TagHL-DirModeSearchWildcards|
+			What to search for when deciding which directory to use.
+
+	Location and name of cscope file:
+
+		CscopeFileDirModePriority        Link:|TagHL-CscopeFileDirModePriority|
+			Which directories to search for cscope database.
+
+		CscopeFileDirectory              Link:|TagHL-CscopeFileDirectory|
+			Explicit location for cscope database.
+
+		CscopeFileName                   Link:|TagHL-CscopeFileName|
+			File name for cscope database.
+
+		CscopeFileSearchWildcards        Link:|TagHL-DirModeSearchWildcards|
 			What to search for when deciding which directory to use.
 
 	Location and name of types file:
@@ -619,6 +645,9 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		CtagsExeFull                     Link:|TagHL-CtagsExeFull|
 			Internal use only.
 
+		CscopeExeFull                    Link:|TagHL-CscopeExeFull|
+			Internal use only.
+
 		CtagsFileLocation                Link:|TagHL-CtagsFileLocation|
 			Internal use only.
 
@@ -626,6 +655,58 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 			Internal use only.
 
 2.4.4 Option Details                     *TagHighlight-option-details*      {{{3
+
+	CscopeExecutable                     *TagHL-CscopeExecutable*
+		This option allows you to specify which cscope executable to run.  You
+		can either specify an absolute path (e.g. "/usr/bin/cscope") or the
+		name of an executable in the system path (e.g. "cscope").  By default
+		it will take the name from the 'cscopeprg' option.  It is probably
+		best to leave it this way as cscope probably won't work for you if
+		'cscopeprg' isn't set correctly.  Only relevant if
+		|TagHL-EnableCscope| is set; see |TagHighlight-cscope| for more
+		information.
+
+		Option Type: String
+		Default: Whatever 'cscopeprg' is set to or "cscope".
+
+	CscopeExeFull                        *TagHL-CscopeExeFull*
+		Used internally to tell the python part of the application where
+		cscope is.  Do not use this option as it will be automatically
+		overwritten.  Instead, see |TagHL-CscopeExecutable|.
+
+	CscopeFileDirectory                  *TagHL-CscopeFileDirectory*
+		This option is used to determine which directories to look in for a
+		cscope database or in which directory to place a cscope database when
+		it is generated.  See |TagHL-DefaultDirModePriority| for details.
+
+		Option Type: List
+		Default: ["Default"] (use DefaultDirModePriority value)
+
+	CscopeFileDirModePriority            *TagHL-CscopeFileDirModePriority*
+		If the dir mode priority for cscope databases (see the option
+		|TagHL-CscopeFileDirModePriority|) contains the mode "Explicit", the
+		directory specified in this option will be used unconditionally if the
+		option has been set.
+
+		Option Type: String
+		Default: None (no explicit directory)
+
+	CscopeFileName                       *TagHL-CscopeFileName*
+		By default, the file generated by cscope containing the database is
+		named "cscope.out".  If you wish to change this, adjust this option
+		appropriately.
+
+		Option Type: String
+		Default: "cscope"
+
+	CscopeOnlyIfPresent                  *TagHL-CscopeOnlyIfPresent*
+		If the cscope interface is enabled (see |TagHL-EnableCscope| and this
+		option is set to True or 1, a new cscope database will only be
+		generated if one exists already.  Otherwise, whenever tags and types
+		are generated, a cscope database will be generated as well.
+
+		Option Type: Boolean
+		Default: False
 
 	CtagsArguments                       *TagHL-CtagsArguments*
 		This option allows advanced users to specify an explicit list of
@@ -645,11 +726,6 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		Option Type: List
 		Default: [] (empty list)
 
-	CtagsExeFull                         *TagHL-CtagsExeFull*
-		Used internally to tell the python part of the application where ctags
-		is.  Do not use this option as it will be automatically overwritten.
-		Instead, see |TagHL-CtagsExecutable|.
-
 	CtagsExecutable                      *TagHL-CtagsExecutable*
 		This option allows you to specify which exuberant ctags executable to
 		run.  You can either specify an absolute path (e.g. "/usr/bin/ctags")
@@ -658,6 +734,11 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 
 		Option Type: String
 		Default: "ctags"
+
+	CtagsExeFull                         *TagHL-CtagsExeFull*
+		Used internally to tell the python part of the application where ctags
+		is.  Do not use this option as it will be automatically overwritten.
+		Instead, see |TagHL-CtagsExecutable|.
 
 	CtagsExtraArguments                  *TagHL-CtagsExtraArguments*
 		This can be used to add a list of extra arguments for ctags to the
@@ -846,6 +927,14 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 
 		Option Type: Boolean
 		Default: False (always generate tags)
+
+	EnableCscope                         *TagHL-EnableCscope*
+		If this option is set to True or 1, the cscope manager is enabled.
+		For more information, see |TagHighlight-cscope|.  For additional control, see
+		also |TagHL-CscopeOnlyIfPresent|.
+
+		Option Type: Boolean
+		Default: False
 
 	ExtensionLanguageOverrides           *TagHL-ExtensionLanguageOverrides*
 		If there are any entries in this dictionary, they will be used to
@@ -1274,8 +1363,8 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 
 	TagFileName                          *TagHL-TagFileName*
 		By default, the file generated by ctags containing the tags
-		definitions are stored in a file named "tags".  If you wish to change
-		this, adjust this option appropriately.
+		definitions is named "tags".  If you wish to change this, adjust this
+		option appropriately.
 
 		Option Type: String
 		Default: "tags"
@@ -1391,7 +1480,42 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 
 2.5 Integration with Other Software      *TagHighlight-integration*         {{{2
 
-2.5.1 Tagbar Integration                 *TagHighlight-tagbar*              {{{3
+2.5.1 Cscope Integration                 *TagHighlight-cscope*              {{{3
+
+	|TagHighlight| comes with support for |cscope| as standard.  This is only
+	available if vim is compiled with support and is disabled by default.  To
+	turn it on, use the option |TagHL-EnableCscope|.  The support for cscope
+	is not designed to be buffer-specific in the way that many other settings
+	can be, so |TagHighlight| works round this by dynamically reconfiguring
+	the databases when switching between buffers.
+
+	Another common problem with cscope is that if you use
+>
+		cs add cscope.out
+<
+	and then try to regenerate the database because of changes made to your
+	code, cscope cannot write to cscope.out as the instance of cscope
+	connected to Vim has still got the existing file open.  If TagHighlight's
+	cscope support is enabled, when you generate a new types file with
+	|UpdateTypesFile|, the cscope connection will be closed, the cscope
+	database regenerated and the cscope connection re-opened, thereby making
+	the use of cscope transparent with tags and types highlighting updates.
+	To speed up the process, cscope and ctags are run in parallel in separate
+	threads.
+
+	In practice, the only options likely to be needed are |TagHL-EnableCscope|
+	and |TagHL-CscopeOnlyIfPresent|.  The latter option allows the cscope
+	interface to be turned on permanently and cscope databases will only be
+	generated automatically after the first one has been generated manually by
+	navigating to the project root and running "cscope -b".  This is mainly
+	useful if you work on C projects and on projects in other languages (for
+	which cscope probably isn't really useful so generating a database is
+	pointless).
+
+	In addition to the |TagHighlight| options, it is important to ensure that
+	Vim's 'cscopeprg' is set appropriately.
+
+2.5.2 Tagbar Integration                 *TagHighlight-tagbar*              {{{3
 
 	|TagHighlight| can be used to highlight the names of classes etc in the
 	tagbar window (thanks to Alexey Radkov for reporting this).  Tagbar uses
@@ -1415,7 +1539,7 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 <
 	This assumes that you are writing C code; customise as appropriate.
 
-2.5.2 Git Integration                    *TagHighlight-git*                 {{{3
+2.5.3 Git Integration                    *TagHighlight-git*                 {{{3
 
 	A similar method to that used with tagbar can be used to highlight git
 	commit messages.  Use something like this in your |taghl_config.txt|
@@ -1429,21 +1553,21 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 <
 	This assumes that you are writing python code; customise as required.
 
-2.5.3 Bazaar Integration                 *TagHighlight-bazaar*              {{{3
+2.5.4 Bazaar Integration                 *TagHighlight-bazaar*              {{{3
 
 	Unfortunately, there is no easy way to highlight tags in Bazaar projects
 	as the commit message is stored in a temporary directory rather than
 	within the project.  If anyone has a suggestion of how to work round this,
 	please let me know.
 
-2.5.4 Mercurial Integration              *TagHighlight-mercurial*           {{{3
+2.5.5 Mercurial Integration              *TagHighlight-mercurial*           {{{3
 
 	Unfortunately, there is no easy way to highlight tags in Mercurial projects
 	as the commit message is stored in a temporary directory rather than
 	within the project.  If anyone has a suggestion of how to work round this,
 	please let me know.
 
-2.5.5 Subversion Integration             *TagHighlight-subversion*          {{{3
+2.5.6 Subversion Integration             *TagHighlight-subversion*          {{{3
 
 	A similar method to that used with tagbar can be used to highlight
 	subversion commit messages (thanks to Alexey Radkov for reporting this).
@@ -1943,6 +2067,8 @@ x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
 
 	New features:
 	
+	* Added cscope support - update cscope database at the same time as ctags
+	  one.  Also automatically manage cscope connections.
 	* Global configuration can now be set using a text file in the ~/.vim or
 	  vimfiles directory (|TagHLConfig.txt|).
 	* Added support for Javascript (thanks to Piotr Yordanov).

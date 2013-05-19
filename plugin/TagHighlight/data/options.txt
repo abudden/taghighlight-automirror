@@ -81,6 +81,12 @@ config_dir_mode_priority:
 	Default:Default
 	Help:Optional override for dir mode priority for project config files specifically
 
+cscope_dir_mode_priority:
+	VimOptionMap:CscopeFileDirModePriority
+	Type:list
+	Default:Default
+	Help:Optional override for dir mode priority for cscope files specifically
+
 tag_file_directory:
 	VimOptionMap:TagFileDirectory
 	Type:string
@@ -108,7 +114,7 @@ config_file_directory:
 default_dir_mode_search_wildcards:
 	VimOptionMap:DefaultDirModeSearchWildcards
 	Type:list
-	Default:OPT(TagFileName),OPT(ProjectConfigFileName)
+	Default:OPT(TagFileName),OPT(ProjectConfigFileName),OPT(CscopeFileName)
 	Help:When searching directories, wildcards to match against (if any matches, we'll use this directory)
 
 config_dir_mode_search_wildcards:
@@ -116,6 +122,12 @@ config_dir_mode_search_wildcards:
 	Type:list
 	Default:Default
 	Help:When searching directories for project config files, wildcards to match against (if any matches, we'll use this directory)
+
+cscope_dir_mode_search_wildcards:
+	VimOptionMap:CscopeFileSearchWildcards
+	Type:list
+	Default:Default
+	Help:When searching directories for cscope files, wildcards to match against (if any matches, we'll use this directory)
 
 tag_dir_mode_search_wildcards:
 	VimOptionMap:TagFileSearchWildcards
@@ -134,6 +146,12 @@ ctags_executable:
 	Type:string
 	Default:None
 	Help:Name of the ctags executable, or full path to it
+
+cscope_executable:
+	VimOptionMap:CscopeExecutable
+	Type:string
+	Default:None
+	Help:Name of the cscope executable, or full path to it
 
 forced_python_variant:
 	VimOptionMap:ForcedPythonVariant
@@ -231,6 +249,12 @@ set_working_dir:
 	Default:False
 	Help:When loading a highlight file, set the working directory for the buffer to the types file path.
 
+only_generate_cscope_db_if_present:
+	VimOptionMap:CscopeOnlyIfPresent
+	Type:bool
+	Default:False
+	Help:Only generate cscope database if one already exists
+
 ##########################
 # Python script options: #
 ##########################
@@ -241,6 +265,27 @@ debug_level:
 	Type:string
 	Default:Error
 	Help:Debug level for printing (how much debug output to produce)
+
+enable_cscope:
+	CommandLineSwitches:--enable-cscope
+	VimOptionMap:EnableCscope
+	Type:bool
+	Default:False
+	Help:Enable cscope support in TagHighlight
+
+cscope_file_name:
+	CommandLineSwitches:--cscope-filename
+	VimOptionMap:CscopeFileName
+	Type:string
+	Default:cscope.out
+	Help:Filename for cscope database
+
+cscope_file_directory:
+	CommandLineSwitches:--cscope-file-directory
+	VimOptionMap:CscopeFileDirectory
+	Type:string
+	Default:None
+	Help:Explicitly specified location for cscope file (corresponding to Explicit search mode)
 
 debug_file:
 	CommandLineSwitches:--debug-file
@@ -339,6 +384,13 @@ ctags_exe_full:
 	Type:string
 	Default:ctags
 	Help:CTAGS Executable Directory
+
+cscope_exe_full:
+	CommandLineSwitches:--cscope-exe-full-path
+	VimOptionMap:CscopeExeFull
+	Type:string
+	Default:cscope
+	Help:Cscope Executable Directory
 
 ctags_arguments:
 	CommandLineSwitches:--add-ctags-argument

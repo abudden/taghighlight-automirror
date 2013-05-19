@@ -47,6 +47,10 @@ def RunWithOptions(options):
     from .ctags_interface import GenerateTags, ParseTags
     from .generation import CreateTypesFile
 
+    if config['enable_cscope']:
+        from .cscope_interface import StartCscopeDBGeneration, CompleteCscopeDBGeneration
+        StartCscopeDBGeneration(config)
+
     if not config['use_existing_tagfile']:
         Debug("Generating tag file", "Information")
         GenerateTags(config)
@@ -55,5 +59,8 @@ def RunWithOptions(options):
     for language in config['language_list']:
         if language in tag_db:
             CreateTypesFile(config, language, tag_db[language], file_tag_db[language])
+
+    if config['enable_cscope']:
+        CompleteCscopeDBGeneration()
 
     os.chdir(start_directory)

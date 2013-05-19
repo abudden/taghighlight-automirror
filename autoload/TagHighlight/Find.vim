@@ -40,6 +40,7 @@ let g:loaded_TagHLFind = 1
 "	TagFileDirModePriority:["Default"] or as above
 "	TypesFileDirModePriority:As tag file
 "	ConfigFileDirModePriority:As tag file
+"	CscopeFileDirModePriority:As tag file
 "	DefaultDirModeSearchWildcard:'' (look for tags file) or something specific (*.uvopt)?
 "	MaxDirSearchLevels: (integer)
 "
@@ -52,6 +53,8 @@ let g:loaded_TagHLFind = 1
 "    TypesPrefix:str (types)
 "    ProjectConfigFileName:str (taghl_config.txt)
 "    ProjectConfigFileDirectory:str (NONE)
+"    CscopeFileName: str (cscope.out)
+"    CscopeFileDirectory: str (NONE)
 
 function! TagHighlight#Find#LocateFile(which, suffix)
 	call TagHLDebug("Locating file " . a:which . " with suffix " . a:suffix, 'Information')
@@ -86,6 +89,12 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 		let search_priority = TagHighlight#Option#GetOption('ProjectConfigFileDirModePriority')
 		let explicit_location = TagHighlight#Option#GetOption('ProjectConfigFileDirectory')
 		let search_wildcards = TagHighlight#Option#GetOption('ProjectConfigFileSearchWildcards')
+	elseif a:which == 'CSCOPE'
+		" Suffix is ignored here
+		let filename = TagHighlight#Option#GetOption('CscopeFileName')
+		let search_priority = TagHighlight#Option#GetOption('CscopeFileDirModePriority')
+		let explicit_location = TagHighlight#Option#GetOption('CscopeFileDirectory')
+		let search_wildcards = TagHighlight#Option#GetOption('CscopeFileSearchWildcards')
 	else
 		throw "Unrecognised file"
 	endif
