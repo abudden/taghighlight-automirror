@@ -5,7 +5,6 @@ VimExtensionMatcher:\(c\|cc\|cpp\|h\|hpp\|cxx\|hxx\|hh\)
 VimSyntaxes:c,cpp
 VimFileTypes:c,cpp
 Suffix:c
-SkipList:p
 SpecialSyntaxHandlers:TagHighlight#SpecialHandlers#CRainbowHandler
 # Note that these keywords are for C++ - TagHighlight does not
 # distinguish between C and C++ so uses the (longer) C++ list here.

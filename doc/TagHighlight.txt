@@ -1892,8 +1892,8 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 
 		SkipList -  Any specific ctags "kinds" (single characters referring
 					to types of tags) that you want to omit from the types
-					file.  For example, for C code, function prototypes are
-			       	omitted (function definitions are included) by setting
+					file.  For example, for C code, function prototypes can be
+					omitted (function definitions are included) by setting
 			       	SkipList to p.  To include multiple items, separate
 			       	each item with a comma.  To see a list of kinds for a
 			       	language, use:
@@ -2142,6 +2142,9 @@ x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
 	  Inman).
 	* Corrected bug with SkipList operation (thanks to Bruno Jiménez for
 	  reporting this).
+	* Improved priority handling: remove duplicates rather than relying on
+	  Vim's priority handling.  This enables non-duplicated function
+	  prototypes (in C code) to be included.
 	
 	Other changes:
                             

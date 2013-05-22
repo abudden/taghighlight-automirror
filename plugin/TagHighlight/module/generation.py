@@ -64,12 +64,10 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
         #vimtypes_entries.append(clear_string)
 
         # Get the priority list from the language handler
+        # Highest priority is first
         priority = language_handler['Priority'][:]
-        # Reverse the priority such that highest priority
-        # is last.
-        priority.reverse()
 
-        fullTypeList = list(reversed(sorted(tags.keys())))
+        fullTypeList = list(sorted(tags.keys()))
         # Reorder type list according to priority sort order
         allTypes = []
         for thisType in priority:
@@ -77,7 +75,7 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
                 allTypes.append(thisType)
                 fullTypeList.remove(thisType)
         # Add the ones not specified in priority
-        allTypes = fullTypeList + allTypes
+        allTypes += fullTypeList
 
         Debug("Type priority list: " + repr(allTypes), "Information")
 
@@ -85,11 +83,18 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
         for pattern in options['skip_patterns']:
             patternREs.append(re.compile(pattern))
 
+        all_keywords = []
         for thisType in allTypes:
             keystarter = 'syn keyword ' + thisType
             keycommand = keystarter
             for keyword in tags[thisType]:
                 skip_this = False
+
+                if keyword in all_keywords:
+                    # Duplicate: skip
+                    continue
+                all_keywords.append(keyword)
+
                 if options['skip_reserved_keywords']:
                     if keyword in language_handler['ReservedKeywords']:
                         Debug('Skipping reserved word ' + keyword, 'Information')
@@ -151,6 +156,8 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
         if (len(matchEntries) + len(vimtypes_entries)) == 0:
             # All keywords have been filtered out, give up
             return
+
+        vimtypes_entries.reverse()
 
         vimtypes_entries.append('')
         vimtypes_entries += matchEntries
