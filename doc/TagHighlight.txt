@@ -309,6 +309,10 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		to separate them, or you can put one entry on each subsequeunt
 		line with a tab character at the start of the line.
 
+		An alternative method of setting project-specific options is to use
+		the |TagHL-Projects| option: see the documentation for this option for
+		more information.
+
 	Buffer Options                   *b:TagHighlightSettings*
 
 		Buffer specific options are set in a buffer-local |Dictionary| in
@@ -473,6 +477,11 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 
 		IgnoreFileScope                  Link:|TagHL-IgnoreFileScope|
 			Highlight everything everywhere, ignoring file-scope.
+
+	Project Configuration
+
+		Projects                         Link:|TagHL-Projects|
+			Project-specific configuration.
 
 	Customisation:
 
@@ -1225,6 +1234,42 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 
 		Option Type: String
 		Default: "taghl_config.txt"
+
+	Projects                             *TagHL-Projects*
+		This is a special option that contains a nested dictionary.  It is
+		typically used through the of a |TagHLConfig.txt| file.  The option
+		allows you to specify that a directory (and all subdirectories of that
+		directory) holds a project.  In combination with the option to
+		automatically set the working directory (|TagHL-SetWorkingDir|), this
+		will ensure that Vim's current working directory is correct for your
+		projects.  More importantly, it allows project-specific configuration
+		to be specified outside of the project directory.
+
+		The dictionary should contain keys denoting project names and values
+		that are dictionaries of other options as appropriate, but the
+		|TagHL-SourceDir| option is mandatory.  If you only want to use
+		|TagHL-SetWorkingDir|, you can use a simpler form where the project
+		name is the key and the working directory is the value.  This is
+		probably better explained by an example, so here is a possible
+		|TagHLConfig.txt| file:
+>
+			# Global Options
+			EnableCscope:True
+			ReloadColourScheme:True
+			SetWorkingDir:True
+			# Project options
+			Projects:
+				# A simple project just using SetWorkingDir
+				DevProj1:/home/al/dev_project1
+				# A more complex project: set these options for
+				# this project
+				DevProj2:
+					SourceDir:/home/al/dev_proj_2
+					IncludeSynMatches:True
+<
+
+		Option Type: Dictionary
+		Default: {}
 
 	PythonVariantPriority                *TagHL-PythonVariantPriority*
 		The python part of |TagHighlight| can be run in a number of ways,
@@ -2102,6 +2147,8 @@ x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
 	
 	* Added cscope support - update cscope database at the same time as ctags
 	  one.  Also automatically manage cscope connections.
+	* Added project configuration feature (set options per project based on
+	  the location of those projects rather than local taghl_config.txt).
 	* Global configuration can now be set using a text file in the ~/.vim or
 	  vimfiles directory (|TagHLConfig.txt|).
 	* Added support for Javascript (thanks to Piotr Yordanov).
