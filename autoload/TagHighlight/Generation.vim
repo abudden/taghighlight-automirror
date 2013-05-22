@@ -149,18 +149,34 @@ function! s:UpdateTypesFile()
 		endif
 	endfor
 
-	let RunOptions = TagHighlight#Option#CopyOptions()
 	if TagHighlight#Option#GetOption('EnableCscope')
 		call TagHighlight#Cscope#PauseCscope()
+		if ! has_key(b:TagHighlightPrivate, 'CscopeFileInfo')
+			let b:TagHighlightPrivate['CscopeFileInfo'] = TagHighlight#Find#LocateFile('CSCOPE', '')
+		endif
+		if b:TagHighlightPrivate['CscopeFileInfo']['Found'] == 1
+			let b:TagHighlightSettings['CscopeFileLocation'] = b:TagHighlightPrivate['CscopeFileInfo']['Directory']
+		endif
+	endif
+
+	let RunOptions = TagHighlight#Option#CopyOptions()
+	if TagHighlight#Option#GetOption('EnableCscope')
 		if TagHighlight#Option#GetOption('CscopeOnlyIfPresent')
-			if ! has_key(b:TagHighlightPrivate, 'CscopeFileInfo')
-				let b:TagHighlightPrivate['CscopeFileInfo'] = TagHighlight#Find#LocateFile('CSCOPE', '')
-			endif
 			if ! b:TagHighlightPrivate['CscopeFileInfo']['Exists']
 				let RunOptions['EnableCscope'] = 1
 			endif
 		endif
 	endif
+
+	call TagHLDebug("Running generator with options:", "Information")
+	for var in ["g:TagHighlightSettings","b:TagHighlightConfigFileOptions","b:TagHighlightSettings"]
+		if exists(var)
+			call TagHLDebug(" - " . var . ": " . string(eval(var)), "Information")
+		else
+			call TagHLDebug(" - " . var . ": UNSET", "Information")
+		endif
+	endfor
+
 
 	call TagHighlight#RunPythonScript#RunGenerator(RunOptions)
 

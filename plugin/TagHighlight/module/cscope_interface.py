@@ -17,6 +17,8 @@ import subprocess
 import os
 import threading
 
+from .debug import Debug
+
 class CscopeThread(threading.Thread):
     def __init__(self, root, command):
         self.root = root
@@ -44,14 +46,14 @@ def StartCscopeDBGeneration(options):
     global cscopeThread
     root = options['source_root']
 
-    args = ['-b', '-f', options['cscope_file_name']]
+    args = ['-b', '-f', options['cscope_file_full']]
 
     if options['recurse']:
         args.append('-R')
 
     cscope_cmd = [options['cscope_exe_full']] + args
 
-    #Debug("cscope command is " + repr(cscope_cmd), "Information")
+    Debug("cscope command is " + repr(cscope_cmd), "Information")
 
     cscopeThread = CscopeThread(root, cscope_cmd)
     cscopeThread.start()

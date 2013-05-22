@@ -273,6 +273,12 @@ enable_cscope:
 	Default:False
 	Help:Enable cscope support in TagHighlight
 
+only_generate_cscope_db_for_c_code:
+	VimOptionMap:CscopeOnlyIfCCode
+	Type:bool
+	Default:True
+	Help:Only generate cscope database if one exists or if code is C code.
+
 cscope_file_name:
 	CommandLineSwitches:--cscope-filename
 	VimOptionMap:CscopeFileName
@@ -342,6 +348,13 @@ ctags_file_dir:
 	Type:string
 	Default:.
 	Help:Location in which to store or find CTAGS output file
+
+cscope_file_dir:
+	CommandLineSwitches:--cscope-file-dir
+	VimOptionMap:CscopeFileLocation
+	Type:string
+	Default:.
+	Help:Location in which to store or find cscope output file
 
 types_file_name_override:
 	CommandLineSwitches:--types-file-name-override

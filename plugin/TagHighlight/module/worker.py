@@ -47,9 +47,17 @@ def RunWithOptions(options):
     from .ctags_interface import GenerateTags, ParseTags
     from .generation import CreateTypesFile
 
+    cscope_check_c = False
     if config['enable_cscope']:
-        from .cscope_interface import StartCscopeDBGeneration, CompleteCscopeDBGeneration
-        StartCscopeDBGeneration(config)
+        cscope_file = os.path.join(config['cscope_file_dir'], config['cscope_file_name'])
+        config['cscope_file_full'] = cscope_file
+        if os.path.exists(cscope_file) or not config['only_generate_cscope_db_for_c_code']:
+            Debug("Running cscope", "Information")
+            from .cscope_interface import StartCscopeDBGeneration, CompleteCscopeDBGeneration
+            StartCscopeDBGeneration(config)
+        else:
+            Debug("Deferring cscope until C code detected", "Information")
+            cscope_check_c = True
 
     if not config['use_existing_tagfile']:
         Debug("Generating tag file", "Information")
@@ -61,6 +69,10 @@ def RunWithOptions(options):
             CreateTypesFile(config, language, tag_db[language], file_tag_db[language])
 
     if config['enable_cscope']:
+        if cscope_check_c and 'c' in tag_db:
+            Debug("Running cscope as C code detected", "Information")
+            from .cscope_interface import StartCscopeDBGeneration, CompleteCscopeDBGeneration
+            StartCscopeDBGeneration(config)
         CompleteCscopeDBGeneration()
 
     os.chdir(start_directory)
