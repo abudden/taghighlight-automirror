@@ -91,31 +91,30 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 		let handled_options = []
 		" We're using the custom interpreter: create an options object
 		" All options supported by both Vim and the Python script must
-		" have VimOptionMap and CommandLineSwitches keys
+		" have CommandLineSwitches key and not have PythonOnly set to True
 		for option in g:TagHighlightPrivate['PluginOptions']
-			if has_key(option, 'VimOptionMap') && 
-						\ has_key(option, 'CommandLineSwitches') &&
-						\ has_key(a:options, option['VimOptionMap'])
+			if has_key(option, 'CommandLineSwitches') &&
+						\ has_key(a:options, option['Destination'])
 				" We can handle this one automatically
 				let pyoption = 'options["'.option['Destination'].'"]'
 				if option['Type'] == 'bool'
-					let handled_options += [option['VimOptionMap']]
-					let value = a:options[option['VimOptionMap']]
+					let handled_options += [option['Destination']]
+					let value = a:options[option['Destination']]
 					if (value == 1) || (value == 'True')
 						exe PY pyoption '= True'
 					else
 						exe PY pyoption '= False'
 					endif
 				elseif option['Type'] == 'string'
-					let handled_options += [option['VimOptionMap']]
-					exe PY pyoption '= r"""'.a:options[option['VimOptionMap']].'"""'
+					let handled_options += [option['Destination']]
+					exe PY pyoption '= r"""'.a:options[option['Destination']].'"""'
 				elseif option['Type'] == 'int'
-					let handled_options += [option['VimOptionMap']]
-					exe PY pyoption '= ' . a:options[option['VimOptionMap']]
+					let handled_options += [option['Destination']]
+					exe PY pyoption '= ' . a:options[option['Destination']]
 				elseif option['Type'] == 'list'
-					let handled_options += [option['VimOptionMap']]
+					let handled_options += [option['Destination']]
 					exe PY pyoption '= []'
-					for entry in a:options[option['VimOptionMap']]
+					for entry in a:options[option['Destination']]
 						exe PY pyoption '+= [r"""' . entry . '"""]'
 					endfor
 				endif
@@ -131,9 +130,8 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 		let args = s:python_cmd[:]
 		" We're calling the script externally, build a list of arguments
 		for option in g:TagHighlightPrivate['PluginOptions']
-			if has_key(option, 'VimOptionMap') && 
-						\ has_key(option, 'CommandLineSwitches') &&
-						\ has_key(a:options, option['VimOptionMap'])
+			if has_key(option, 'CommandLineSwitches') &&
+						\ has_key(a:options, option['Destination'])
 				if type(option['CommandLineSwitches']) == type([])
 					let switch = option['CommandLineSwitches'][0]
 				else
@@ -144,11 +142,11 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 				elseif switch[:0] == "-"
 					let as_one = 0
 				else
-					call TagHLDebug("Invalid configuration for option " . option['VimOptionMap'], "Error")
+					call TagHLDebug("Invalid configuration for option " . option['Destination'], "Error")
 				endif
 				" We can handle this one automatically
 				if option['Type'] == 'bool'
-					if (a:options[option['VimOptionMap']] == 1) || (a:options[option['VimOptionMap']] == 'True')
+					if (a:options[option['Destination']] == 1) || (a:options[option['Destination']] == 'True')
 						let bvalue = 1
 					else
 						let bvalue = 0
@@ -159,18 +157,18 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 					endif
 				elseif option['Type'] == 'string'
 					if as_one == 1
-						let args += [switch . '=' . a:options[option['VimOptionMap']]]
+						let args += [switch . '=' . a:options[option['Destination']]]
 					else
-						let args += [switch, a:options[option['VimOptionMap']]]
+						let args += [switch, a:options[option['Destination']]]
 					endif
 				elseif option['Type'] == 'int'
 					if as_one == 1
-						let args += [switch . '=' . a:options[option['VimOptionMap']]]
+						let args += [switch . '=' . a:options[option['Destination']]]
 					else
-						let args += [switch, a:options[option['VimOptionMap']]]
+						let args += [switch, a:options[option['Destination']]]
 					endif
 				elseif option['Type'] == 'list'
-					for entry in a:options[option['VimOptionMap']]
+					for entry in a:options[option['Destination']]
 						if as_one == 1
 							let args += [switch . '=' . entry]
 						else

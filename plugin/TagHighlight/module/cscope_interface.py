@@ -44,14 +44,14 @@ cscopeThread = None
 
 def StartCscopeDBGeneration(options):
     global cscopeThread
-    root = options['source_root']
+    root = options['SourceDir']
 
-    args = ['-b', '-f', options['cscope_file_full']]
+    args = ['-b', '-f', options['CscopeFileFull']]
 
-    if options['recurse']:
+    if options['Recurse']:
         args.append('-R')
 
-    cscope_cmd = [options['cscope_exe_full']] + args
+    cscope_cmd = [options['CscopeExeFull']] + args
 
     Debug("cscope command is " + repr(cscope_cmd), "Information")
 

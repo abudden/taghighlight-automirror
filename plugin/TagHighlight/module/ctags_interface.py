@@ -56,18 +56,18 @@ def GenerateTags(options):
 
     # Change the working directory to the source root
     # now so that argument globs work correctly.
-    os.chdir(options['source_root'])
+    os.chdir(options['SourceDir'])
 
-    if 'ctags_arguments' in options:
-        args = options['ctags_arguments']
+    if 'CtagsArguments' in options:
+        args = options['CtagsArguments']
     else:
-        if 'ctags_variant' in options:
-            variant = options['ctags_variant']
+        if 'CtagsVariant' in options:
+            variant = options['CtagsVariant']
         else:
             variant = 'exuberant'
         args = ctags_variant_args[variant](options)
 
-    ctags_cmd = [options['ctags_exe_full']] + args
+    ctags_cmd = [options['CtagsExeFull']] + args
 
     Debug("ctags command is " + repr(ctags_cmd), "Information")
 
@@ -83,14 +83,14 @@ def GenerateTags(options):
             )#, shell=True)
     (sout, serr) = process.communicate()
 
-    tagFile = open(os.path.join(options['ctags_file_dir'], options['ctags_file']), 'r')
+    tagFile = open(os.path.join(options['CtagsFileLocation'], options['TagFileName']), 'r')
     tagLines = [line.strip() for line in tagFile]
     tagFile.close()
 
     # Also sort the file a bit better (tag, then kind, then filename)
     tagLines.sort(key=ctags_key)
 
-    tagFile = open(os.path.join(options['ctags_file_dir'],options['ctags_file']), 'w')
+    tagFile = open(os.path.join(options['CtagsFileLocation'],options['TagFileName']), 'w')
     for line in tagLines:
         tagFile.write(line + "\n")
     tagFile.close()
@@ -100,7 +100,7 @@ def ParseTags(options):
 
     Each entry is a list of tags with all the required details.
     """
-    languages = options['language_handler']
+    languages = options['LanguageHandler']
     kind_list = languages.GetKindList()
 
     # Language: {Type: set([keyword, keyword, keyword])}
@@ -115,7 +115,7 @@ def ParseTags(options):
                 languages.GetLanguageHandler(key)['PythonExtensionMatcher'] +
                 ')\t')
 
-    p = open(os.path.join(options['ctags_file_dir'],options['ctags_file']), 'r')
+    p = open(os.path.join(options['CtagsFileLocation'],options['TagFileName']), 'r')
     while 1:
         try:
             line = p.readline()
@@ -134,13 +134,13 @@ def ParseTags(options):
                         short_kind = 'ctags_' + m.group('kind')
                         kind = kind_list[key][short_kind]
                         keyword = m.group('keyword')
-                        if options['parse_constants'] and \
+                        if options['ParseConstants'] and \
                                 (key == 'c') and \
                                 (kind == 'CTagsGlobalVariable'):
                             if field_const.search(m.group('search')) is not None:
                                 kind = 'CTagsConstant'
-                        if key in options['language_tag_types']:
-                            if m.group('kind') in options['language_tag_types'][key]:
+                        if key in options['LanguageTagTypes']:
+                            if m.group('kind') in options['LanguageTagTypes'][key]:
                                 new_entry = keyword
                         elif m.group('kind') not in languages.GetLanguageHandler(key)['SkipList']:
                             new_entry = keyword
@@ -148,7 +148,7 @@ def ParseTags(options):
                         if new_entry is None:
                             continue
 
-                        if m.group('scope') is None or options['ignore_file_scope']:
+                        if m.group('scope') is None or options['IgnoreFileScope']:
                             ctags_entries[key][kind].add(new_entry)
                         else:
                             if m.group('filename') not in file_entries:
@@ -164,20 +164,20 @@ def ParseTags(options):
 def ExuberantGetCommandArgs(options):
     args = []
 
-    ctags_languages = [l['CTagsName'] for l in options['language_handler'].GetAllLanguageHandlers()]
+    ctags_languages = [l['CTagsName'] for l in options['LanguageHandler'].GetAllLanguageHandlers()]
     if 'c' in ctags_languages:
         ctags_languages.append('c++')
     args += ["--languages=" + ",".join(ctags_languages)]
 
-    if options['ctags_file']:
-        args += ['-f', os.path.join(options['ctags_file_dir'], options['ctags_file'])]
+    if options['TagFileName']:
+        args += ['-f', os.path.join(options['CtagsFileLocation'], options['TagFileName'])]
 
-    if not options['include_docs']:
+    if not options['IncludeDocs']:
         args += ["--exclude=docs", "--exclude=Documentation"]
 
-    if options['include_locals']:
+    if options['IncludeLocals']:
         Debug("Including local variables in tag generation", "Information")
-        kinds = options['language_handler'].GetKindList()
+        kinds = options['LanguageHandler'].GetKindList()
         def FindLocalVariableKinds(language_kinds):
             """Finds the key associated with a value in a dictionary.
 
@@ -193,7 +193,7 @@ def ExuberantGetCommandArgs(options):
             else:
                 Debug("Skipping language: " + language, "Information")
 
-    if options['recurse']:
+    if options['Recurse']:
         args += ['--recurse']
 
     args += ['--fields=+iaSszt']
@@ -202,14 +202,14 @@ def ExuberantGetCommandArgs(options):
 
     # If user specified extra arguments are required, add them
     # immediately before the file list
-    if 'ctags_extra_arguments' in options:
-        args += options['ctags_extra_arguments']
+    if 'CtagsExtraArguments' in options:
+        args += options['CtagsExtraArguments']
 
     # Must be last as it includes the file list:
-    if options['recurse']:
+    if options['Recurse']:
         args += ['.']
     else:
-        args += glob.glob(os.path.join(options['source_root'],'*'))
+        args += glob.glob(os.path.join(options['SourceDir'],'*'))
 
     Debug("Command arguments: " + repr(args), "Information")
 
@@ -217,13 +217,13 @@ def ExuberantGetCommandArgs(options):
 
 def JSCtagsGetCommandArgs(options):
     args = []
-    if options['ctags_file']:
-        args += ['-f', os.path.join(options['ctags_file_dir'], options['ctags_file'])]
+    if options['TagFileName']:
+        args += ['-f', os.path.join(options['CtagsFileLocation'], options['TagFileName'])]
 
     # If user specified extra arguments are required, add them
     # immediately before the file list
-    if 'ctags_extra_arguments' in options:
-        args += options['ctags_extra_arguments']
+    if 'CtagsExtraArguments' in options:
+        args += options['CtagsExtraArguments']
 
     # jsctags isn't very ctags-compatible: if you give it a directory
     # and expect it to recurse, it fails on the first non-javascript
@@ -231,7 +231,7 @@ def JSCtagsGetCommandArgs(options):
     # extensions and we have to find them ourselves.  This may well fail
     # on Windows if there are a lot of them due to the limited command
     # length on Windows.
-    if options['recurse']:
+    if options['Recurse']:
         args += rglob('.', '*.js')
     else:
         args += glob.glob('*.js')

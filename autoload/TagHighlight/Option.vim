@@ -48,11 +48,16 @@ function! TagHighlight#Option#LoadOptions()
 	let options = TagHighlight#LoadDataFile#LoadDataFile('options.txt')
 
 	for option_dest in keys(options)
-		if has_key(options[option_dest], 'VimOptionMap')
+		if has_key(options[option_dest], 'PythonOnly')
+			if (options[option_dest]['PythonOnly'] == 'True') || (options[option_dest]['PythonOnly'] == 1)
+				" Skip this one
+				continue
+			endif
+		else
 			let option = deepcopy(options[option_dest])
 			let option['Destination'] = option_dest
 			let g:TagHighlightPrivate['PluginOptions'] += [option]
-			let g:TagHighlightPrivate['FullOptionList'] += [option['VimOptionMap']]
+			let g:TagHighlightPrivate['FullOptionList'] += [option_dest]
 		endif
 	endfor
 

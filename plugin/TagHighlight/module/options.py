@@ -32,7 +32,7 @@ def LoadOptionSpecification():
         # Check we've got all of the required keys
         for key in RequiredKeys:
             if key not in AllOptions[dest]:
-                if 'VimOptionMap' in AllOptions[dest]:
+                if 'CommandLineSwitches' not in AllOptions[dest]:
                     # This is probably just a Vim option: ignore
                     pass
                 else:

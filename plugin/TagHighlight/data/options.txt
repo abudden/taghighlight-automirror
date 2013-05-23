@@ -2,255 +2,213 @@
 # Vim-only options: #
 #####################
 
-projects:
-	VimOptionMap:Projects
+Projects:
 	Type:dict
 	Default:{}
 	Help:Project-specific configuration options.
 
-language_detection_method:
-	VimOptionMap:LanguageDetectionMethods
+LanguageDetectionMethods:
 	Type:list
 	Default:Extension
 	Help:Specify methods to use for determining language for the file when reading highlight definitions.
 
-filetype_language_overrides:
-	VimOptionMap:FileTypeLanguageOverrides
+FileTypeLanguageOverrides:
 	Type:dict
 	Default:{}
 	Help:Match file types to languages manually (if FileType language detection method is enabled).
 
-extension_language_overrides:
-	VimOptionMap:ExtensionLanguageOverrides
+ExtensionLanguageOverrides:
 	Type:dict
 	Default:{}
 	Help:Match extensions to languages manually (if Extension language detection method is enabled).
 
-syntax_language_overrides:
-	VimOptionMap:SyntaxLanguageOverrides
+SyntaxLanguageOverrides:
 	Type:dict
 	Default:{}
 	Help:Match syntaxes to languages manually (if Syntax language detection method is enabled).
 
-disable_type_parsing:
-	VimOptionMap:DisableTypeParsing
+DisableTypeParsing:
 	Type:bool
 	Default:False
 	Help:Do not read types when opening a file
 
-parsing_skip_list:
-	VimOptionMap:ParsingSkipList
+ParsingSkipList:
 	Type:list
 	Default:[]
 	Help:List of files for which the type reading should be disabled
 
-def_dir_mode_priority:
-	VimOptionMap:DefaultDirModePriority
+DefaultDirModePriority:
 	Type:list
 	Default:[]
 	Help:List of methods (in order) to use when searching for tags/types etc
 	Note:Default is overridden in TagHighlight#Option#GetOption()
 
-max_dir_search_levels:
-	VimOptionMap:MaxDirSearchLevels
+MaxDirSearchLevels:
 	Type:int
 	Default:0
 	Help:How far up to search in UpFromFile or UpFromCurrent mode
 
-config_file_name:
-	VimOptionMap:ProjectConfigFileName
+ProjectConfigFileName:
 	Type:string
 	Default:taghl_config.txt
 	Help:File name for project specific configuration items
 
-tag_dir_mode_priority:
-	VimOptionMap:TagFileDirModePriority
+TagFileDirModePriority:
 	Type:list
 	Default:Default
 	Help:Optional override for dir mode priority for tag files specifically
 
-types_dir_mode_priority:
-	VimOptionMap:TypesFileDirModePriority
+TypesFileDirModePriority:
 	Type:list
 	Default:Default
 	Help:Optional override for dir mode priority for types files specifically
 
-config_dir_mode_priority:
-	VimOptionMap:ProjectConfigFileDirModePriority
+ProjectConfigFileDirModePriority:
 	Type:list
 	Default:Default
 	Help:Optional override for dir mode priority for project config files specifically
 
-cscope_dir_mode_priority:
-	VimOptionMap:CscopeFileDirModePriority
+CscopeFileDirModePriority:
 	Type:list
 	Default:Default
 	Help:Optional override for dir mode priority for cscope files specifically
 
-tag_file_directory:
-	VimOptionMap:TagFileDirectory
+TagFileDirectory:
 	Type:string
 	Default:None
 	Help:Explicitly specified location for tag file (corresponding to Explicit search mode)
 
-disable_tag_manager:
-	VimOptionMap:DisableTagManager
+DisableTagManager:
 	Type:bool
 	Default:False
 	Help:Disable automatic management of tags option
 
-types_file_directory:
-	VimOptionMap:TypesFileDirectory
+TypesFileDirectory:
 	Type:string
 	Default:None
 	Help:Explicitly specified location for types file (corresponding to Explicit search mode)
 
-config_file_directory:
-	VimOptionMap:ProjectConfigFileDirectory
+ProjectConfigFileDirectory:
 	Type:string
 	Default:None
 	Help:Explicitly specified location for project config file (corresponding to Explicit search mode)
 
-default_dir_mode_search_wildcards:
-	VimOptionMap:DefaultDirModeSearchWildcards
+DefaultDirModeSearchWildcards:
 	Type:list
 	Default:OPT(TagFileName),OPT(ProjectConfigFileName),OPT(CscopeFileName)
 	Help:When searching directories, wildcards to match against (if any matches, we'll use this directory)
 
-config_dir_mode_search_wildcards:
-	VimOptionMap:ProjectConfigFileSearchWildcards
+ProjectConfigFileSearchWildcards:
 	Type:list
 	Default:Default
 	Help:When searching directories for project config files, wildcards to match against (if any matches, we'll use this directory)
 
-cscope_dir_mode_search_wildcards:
-	VimOptionMap:CscopeFileSearchWildcards
+CscopeFileSearchWildcards:
 	Type:list
 	Default:Default
 	Help:When searching directories for cscope files, wildcards to match against (if any matches, we'll use this directory)
 
-tag_dir_mode_search_wildcards:
-	VimOptionMap:TagFileSearchWildcards
+TagFileSearchWildcards:
 	Type:list
 	Default:Default
 	Help:When searching directories for tag files, wildcards to match against (if any matches, we'll use this directory)
 
-types_dir_mode_search_wildcards:
-	VimOptionMap:TypesFileSearchWildcards
+TypesFileSearchWildcards:
 	Type:list
 	Default:Default
 	Help:When searching directories for types files, wildcards to match against (if any matches, we'll use this directory)
 
-ctags_executable:
-	VimOptionMap:CtagsExecutable
+CtagsExecutable:
 	Type:string
 	Default:None
 	Help:Name of the ctags executable, or full path to it
 
-cscope_executable:
-	VimOptionMap:CscopeExecutable
+CscopeExecutable:
 	Type:string
 	Default:None
 	Help:Name of the cscope executable, or full path to it
 
-forced_python_variant:
-	VimOptionMap:ForcedPythonVariant
+ForcedPythonVariant:
 	Type:string
 	Default:None
 	Help:Force the use of a specific variant (see help for PythonVariantPriority)
 
-python_variant_priority:
-	VimOptionMap:PythonVariantPriority
+PythonVariantPriority:
 	Type:list
 	Default:if_pyth3,if_pyth,python,compiled
 	Help:Search order for deciding which variant to use
 
-path_to_python:
-	VimOptionMap:PathToPython
+PathToPython:
 	Type:string
 	Default:None
 	Help:Location of the python executable or None to search the path
 
-pre_read_hooks:
-	VimOptionMap:PreReadHooks
+PreReadHooks:
 	Type:list
 	Default:[]
 	Help:List of function names to run before reading types.
 
-post_read_hooks:
-	VimOptionMap:PostReadHooks
+PostReadHooks:
 	Type:list
 	Default:[]
 	Help:List of function names to run after reading types.
 
-pre_update_hooks:
-	VimOptionMap:PreUpdateHooks
+PreUpdateHooks:
 	Type:list
 	Default:[]
 	Help:List of function names to run before updating types.
 
-post_update_hooks:
-	VimOptionMap:PostUpdateHooks
+PostUpdateHooks:
 	Type:list
 	Default:[]
 	Help:List of function names to run after updating types.
 
-hooks:
-	VimOptionMap:Hooks
+Hooks:
 	Type:dict
 	Default:{'PreUpdate': [], 'PostUpdate': [], 'PreRead': [], 'PostRead': []}
 	Help:Hooks dictionary (each entry is a list of strings containing functions to call; read functions take current file name and types suffix as parameters).
 
-forced_standard_libraries:
-	VimOptionMap:ForcedStandardLibraries
+ForcedStandardLibraries:
 	Type:list
 	Default:[]
 	Help:List of standard libraries which we should load regardless of whether the matchers match (as long as suffix is correct).
 
-disable_standard_libraries:
-	VimOptionMap:DisableStandardLibraries
+DisableStandardLibraries:
 	Type:bool
 	Default:False
 	Help:Don't try to load standard libraries.
 
-user_libraries:
-	VimOptionMap:UserLibraries
+UserLibraries:
 	Type:list
 	Default:[]
 	Help:List of user libraries to load (either relative to UserLibraryDir or absolute).
 
-user_library_dir:
-	VimOptionMap:UserLibraryDir
+UserLibraryDir:
 	Type:string
 	Default:.
 	Help:Location of user libraries that are specified with relative paths.
 
-use_existing_tagfile_if_present:
-	VimOptionMap:DoNotGenerateTagsIfPresent
+DoNotGenerateTagsIfPresent:
 	Type:bool
 	Default:False
 	Help:Do not generate tags if a tag file already exists.
 
-only_generate_types_if_present:
-	VimOptionMap:OnlyGenerateTypesIfPresent
+OnlyGenerateTypesIfPresent:
 	Type:bool
 	Default:False
 	Help:Only generate tags/types if a types file already exists.
 
-reload_colour_scheme:
-	VimOptionMap:ReloadColourScheme
+ReloadColourScheme:
 	Type:bool
 	Default:False
 	Help:Reload the colour scheme after reading types file (in case colours don't work properly)
 
-set_working_dir:
-	VimOptionMap:SetWorkingDir
+SetWorkingDir:
 	Type:bool
 	Default:False
 	Help:When loading a highlight file, set the working directory for the buffer to the types file path.
 
-only_generate_cscope_db_if_present:
-	VimOptionMap:CscopeOnlyIfPresent
+CscopeOnlyIfPresent:
 	Type:bool
 	Default:False
 	Help:Only generate cscope database if one already exists
@@ -259,241 +217,217 @@ only_generate_cscope_db_if_present:
 # Python script options: #
 ##########################
 
-debug_level:
+DebugLevel:
 	CommandLineSwitches:--debug
-	VimOptionMap:DebugLevel
 	Type:string
 	Default:Error
 	Help:Debug level for printing (how much debug output to produce)
 
-enable_cscope:
+EnableCscope:
 	CommandLineSwitches:--enable-cscope
-	VimOptionMap:EnableCscope
 	Type:bool
 	Default:False
 	Help:Enable cscope support in TagHighlight
 
-only_generate_cscope_db_for_c_code:
-	VimOptionMap:CscopeOnlyIfCCode
+CscopeOnlyIfCCode:
+	CommandLineSwitches:--cscope-only-if-c-code
 	Type:bool
 	Default:True
 	Help:Only generate cscope database if one exists or if code is C code.
 
-cscope_file_name:
+CscopeFileName:
 	CommandLineSwitches:--cscope-filename
-	VimOptionMap:CscopeFileName
 	Type:string
 	Default:cscope.out
 	Help:Filename for cscope database
 
-cscope_file_directory:
+CscopeFileDirectory:
 	CommandLineSwitches:--cscope-file-directory
-	VimOptionMap:CscopeFileDirectory
 	Type:string
 	Default:None
 	Help:Explicitly specified location for cscope file (corresponding to Explicit search mode)
 
-debug_file:
+DebugFile:
 	CommandLineSwitches:--debug-file
-	VimOptionMap:DebugFile
 	Type:string
 	Default:None
 	Help:Debug log file into which messages should be stored
 
-language_tag_types:
+LanguageTagTypes:
 	CommandLineSwitches:--language-tag-types
-	VimOptionMap:LanguageTagTypes
 	Type:dict
 	Default:{}
 	Help:Explicit filter on tag types for a given language
 
-debug_print_time:
+DebugPrintTime:
 	CommandLineSwitches:--print-time-with-debug
-	VimOptionMap:DebugPrintTime
 	Type:bool
 	Default:False
 	Help:Print the time with each debug message in the log
 
-ignore_file_scope:
+IgnoreFileScope:
 	CommandLineSwitches:--ignore-file-scope
-	VimOptionMap:IgnoreFileScope
 	Type:bool
 	Default:False
 	Help:Ignore file-scope specified in tags file
 
-source_root:
+SourceDir:
 	CommandLineSwitches:-d,--source-root
-	VimOptionMap:SourceDir
 	Type:string
 	Default:None
 	Help:Location of source files to scan
 
-recurse:
+Recurse:
 	CommandLineSwitches:--no-recurse
-	VimOptionMap:Recurse
 	Type:bool
 	Default:True
 	Help:Recurse into subdirectories
  
-ctags_file:
+TagFileName:
 	CommandLineSwitches:--ctags-file
-	VimOptionMap:TagFileName
 	Type:string
 	Default:tags
 	Help:CTAGS output filename
 
-ctags_file_dir:
+CtagsFileLocation:
 	CommandLineSwitches:--ctags-file-dir
-	VimOptionMap:CtagsFileLocation
 	Type:string
 	Default:.
 	Help:Location in which to store or find CTAGS output file
 
-cscope_file_dir:
+CscopeFileLocation:
 	CommandLineSwitches:--cscope-file-dir
-	VimOptionMap:CscopeFileLocation
 	Type:string
 	Default:.
 	Help:Location in which to store or find cscope output file
 
-types_file_name_override:
+TypesFileNameForce:
 	CommandLineSwitches:--types-file-name-override
-	VimOptionMap:TypesFileNameForce
 	Type:string
 	Default:None
 	Help:Force types filename to be a specific string (as opposed to prefix + _ + suffix + . + extension).
 
-types_file_prefix:
+TypesFilePrefix:
 	CommandLineSwitches:--types-file-prefix
-	VimOptionMap:TypesFilePrefix
 	Type:string
 	Default:types
 	Help:Vim Types file prefix
 
-types_file_extension:
+TypesFileExtension:
 	CommandLineSwitches:--types-file-extension
-	VimOptionMap:TypesFileExtension
 	Type:string
 	Default:taghl
 	Help:Extension for types file (by default 'taghl', which with default prefix gives types_c.taghl for C files).
 
-skip_patterns:
+SkipPatterns:
 	CommandLineSwitches:--add-skip-pattern
-	VimOptionMap:SkipPatterns
 	Type:list
 	Default:[]
 	Help:List of (Python) regular expressions to match against keywords which should be excluded from the types file.
 
-skip_reserved_keywords:
+SkipReservedKeywords:
 	CommandLineSwitches:--skip-reserved-keywords
-	VimOptionMap:SkipReservedKeywords
 	Type:bool
 	Default:True
 	Help:Don't highlight keywords that are reserved in a given language.
  
-ctags_exe_full:
+CtagsExeFull:
 	CommandLineSwitches:--ctags-exe-full-path
-	VimOptionMap:CtagsExeFull
 	Type:string
 	Default:ctags
 	Help:CTAGS Executable Directory
 
-cscope_exe_full:
+CscopeExeFull:
 	CommandLineSwitches:--cscope-exe-full-path
-	VimOptionMap:CscopeExeFull
 	Type:string
 	Default:cscope
 	Help:Cscope Executable Directory
 
-ctags_arguments:
+CtagsArguments:
 	CommandLineSwitches:--add-ctags-argument
-	VimOptionMap:CtagsArguments
 	Type:list
 	Default:[]
 	Help:Explicit list of arguments to pass to ctags (for use with non-recognised ctags implementations).
 
-ctags_extra_arguments:
+CtagsExtraArguments:
 	CommandLineSwitches:--add-extra-ctags-argument
-	VimOptionMap:CtagsExtraArguments
 	Type:list
 	Default:[]
 	Help:List of extra arguments to pass to ctags.
 
-ctags_variant:
+CtagsVariant:
 	CommandLineSwitches:--ctags-variant
-	VimOptionMap:CtagsVariant
 	Type:string
 	Default:exuberant
 	Help:Tells TagHighlight which variant of ctags is being used: some have different requirements for their arguments.
  
-include_docs:
+IncludeDocs:
 	CommandLineSwitches:--include-docs
+	PythonOnly:True
 	Type:bool
 	Default:False
 	Help:Include docs or Documentation directory (stripped by default for speed)
  
-check_keywords:
+CheckKeywords:
 	CommandLineSwitches:--do-not-check-keywords
+	PythonOnly:True
 	Type:bool
 	Default:True
 	Help:Do not check validity of keywords (for speed)
  
-include_matches:
+IncludeSynMatches:
 	CommandLineSwitches:--include-invalid-keywords-as-matches
-	VimOptionMap:IncludeSynMatches
 	Type:bool
 	Default:False
 	Help:Include invalid keywords as regular expression matches (may slow it loading)
  
-skip_vimkeywords:
+SkipVimKeywords:
 	CommandLineSwitches:--exclude-vim-keywords
-	VimOptionMap:SkipVimKeywords
 	Type:bool
 	Default:False
 	Help:Don't include Vim keywords (they have to be matched with regular expression matches, which is slower)
  
-parse_constants:
+ParseConstants:
 	CommandLineSwitches:--do-not-analyse-constants
+	PythonOnly:True
 	Type:bool
 	Default:True
 	Help:Do not treat constants as separate entries
  
-languages:
+Languages:
 	CommandLineSwitches:--include-language
-	VimOptionMap:Languages
 	Type:list
 	Default:[]
 	Help:Only include specified languages
  
-types_file_location:
+TypesFileLocation:
 	CommandLineSwitches:--types-file-location
-	VimOptionMap:TypesFileLocation
 	Type:string
 	Default:.
 	Help:Specify the location for the generated types files
  
-include_locals:
+IncludeLocals:
 	CommandLineSwitches:--include-locals
-	VimOptionMap:IncludeLocals
 	Type:bool
 	Default:False
 	Help:Include local variables in the database
  
-use_existing_tagfile:
+DoNotGenerateTags:
 	CommandLineSwitches:--use-existing-tagfile
-	VimOptionMap:DoNotGenerateTags
 	Type:bool
 	Default:False
 	Help:Do not generate tags: use an existing file
  
-print_py_version:
+PrintPyVersion:
 	CommandLineSwitches:--pyversion
+	PythonOnly:True
 	Type:bool
 	Default:False
 	Help:Just print the version of python
 
-print_config:
+PrintConfig:
 	CommandLineSwitches:--print-config
+	PythonOnly:True
 	Type:bool
 	Default:False
 	Help:Parse the various options and then print the configuration and exit (for debugging)

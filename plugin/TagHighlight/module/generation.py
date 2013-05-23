@@ -47,16 +47,16 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
         tag_types = list(tags.keys())
         tag_types.sort()
 
-        language_handler = options['language_handler'].GetLanguageHandler(language)
+        language_handler = options['LanguageHandler'].GetLanguageHandler(language)
 
-        if options['check_keywords']:
+        if options['CheckKeywords']:
             iskeyword = GenerateValidKeywordRange(language_handler['IsKeyword'])
             Debug("Is Keyword is {0!r}".format(iskeyword), "Information")
 
         matchEntries = set()
         vimtypes_entries = []
 
-        typesUsedByLanguage = list(options['language_handler'].GetKindList(language).values())
+        typesUsedByLanguage = list(options['LanguageHandler'].GetKindList(language).values())
         # TODO: This may be included elsewhere, but we'll leave it in for now
         #clear_string = 'silent! syn clear ' + " ".join(typesUsedByLanguage)
 
@@ -80,7 +80,7 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
         Debug("Type priority list: " + repr(allTypes), "Information")
 
         patternREs = []
-        for pattern in options['skip_patterns']:
+        for pattern in options['SkipPatterns']:
             patternREs.append(re.compile(pattern))
 
         all_keywords = []
@@ -95,7 +95,7 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
                     continue
                 all_keywords.append(keyword)
 
-                if options['skip_reserved_keywords']:
+                if options['SkipReservedKeywords']:
                     if keyword in language_handler['ReservedKeywords']:
                         Debug('Skipping reserved word ' + keyword, 'Information')
                         # Ignore this keyword
@@ -107,7 +107,7 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
                 if skip_this:
                     continue
 
-                if options['check_keywords']:
+                if options['CheckKeywords']:
                     # In here we should check that the keyword only matches
                     # vim's \k parameter (which will be different for different
                     # languages).  This is quite slow so is turned off by
@@ -116,7 +116,7 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
                     # be worth optimising IsValidKeyword at some point.
                     if not IsValidKeyword(keyword, iskeyword):
                         matchDone = False
-                        if options['include_matches']:
+                        if options['IncludeSynMatches']:
 
                             patternCharacters = "/@#':"
                             charactersToEscape = '\\' + '~[]*.$^'
@@ -126,7 +126,7 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
                                     escapedKeyword = keyword
                                     for ch in charactersToEscape:
                                         escapedKeyword = escapedKeyword.replace(ch, '\\' + ch)
-                                    if options['include_matches']:
+                                    if options['IncludeSynMatches']:
                                         matchEntries.add('syn match ' + thisType + ' ' + patChar + escapedKeyword + patChar)
                                     matchDone = True
                                     break
@@ -138,7 +138,7 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
 
 
                 if keyword.lower() in vim_synkeyword_arguments:
-                    if not options['skip_vimkeywords']:
+                    if not options['SkipVimKeywords']:
                         matchEntries.add('syn match ' + thisType + ' /' + keyword + '/')
                     continue
 
@@ -167,16 +167,16 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
         else:
             entry_sets[source_file] = vimtypes_entries[:]
 
-    if options['include_locals']:
+    if options['IncludeLocals']:
         LocalTagType = ',CTagsLocalVariable'
     else:
         LocalTagType = ''
 
-    if options['types_file_name_override'] is not None and options['types_file_name_override'] != 'None':
-        type_file_name = options['types_file_name_override']
+    if options['TypesFileNameForce'] is not None and options['TypesFileNameForce'] != 'None':
+        type_file_name = options['TypesFileNameForce']
     else:
-        type_file_name = options['types_file_prefix'] + '_' + language_handler['Suffix'] + '.' + options['types_file_extension']
-    filename = os.path.join(options['types_file_location'], type_file_name)
+        type_file_name = options['TypesFilePrefix'] + '_' + language_handler['Suffix'] + '.' + options['TypesFileExtension']
+    filename = os.path.join(options['TypesFileLocation'], type_file_name)
     Debug("Filename is {0}\n".format(filename), "Information")
 
     try:
@@ -196,7 +196,7 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
                 prefix = '\t'
                 vimtypes_entries = entry_sets[source_file]
 
-            if source_file is not None and not options['ignore_file_scope']:
+            if source_file is not None and not options['IgnoreFileScope']:
                 formatted_file = os.path.normpath(source_file).replace(os.path.sep, '/')
                 fh.write('" Matches for file %s:\n' % source_file)
                 fh.write('if b:TagHighlightPrivate["NormalisedPath"] == "%s"\n' % formatted_file)
@@ -207,7 +207,7 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
                     Debug("Error decoding line '{0!r}'".format(line), "Error")
                     fh.write('echoerr "Types generation error"\n'.encode('ascii'))
                 fh.write('\n'.encode('ascii'))
-            if source_file is not None and not options['ignore_file_scope']:
+            if source_file is not None and not options['IgnoreFileScope']:
                 fh.write('endif\n')
     except IOError:
         Debug("ERROR: Couldn't write {file} contents\n".format(file=outfile), "Error")

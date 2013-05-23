@@ -24,23 +24,23 @@ def RunWithOptions(options):
     SetInitialOptions(options)
 
     Debug("Running types highlighter generator", "Information")
-    Debug("Release:" + config['release'], "Information")
-    Debug("Version:" + repr(config['version']), "Information")
+    Debug("Release:" + config['Release'], "Information")
+    Debug("Version:" + repr(config['Version']), "Information")
     Debug("Options:" + repr(options), "Information")
 
-    tag_file_absolute = os.path.join(config['ctags_file_dir'], config['ctags_file'])
-    if config['use_existing_tagfile'] and not os.path.exists(tag_file_absolute):
+    tag_file_absolute = os.path.join(config['CtagsFileLocation'], config['TagFileName'])
+    if config['DoNotGenerateTags'] and not os.path.exists(tag_file_absolute):
         Debug("Cannot use existing tagfile as it doesn't exist (checking for " + tag_file_absolute + ")", "Error")
         return
 
     LoadLanguages()
 
-    if config['print_config']:
+    if config['PrintConfig']:
         import pprint
         pprint.pprint(config)
         return
 
-    if config['print_py_version']:
+    if config['PrintPyVersion']:
         print(sys.version)
         return
 
@@ -48,10 +48,10 @@ def RunWithOptions(options):
     from .generation import CreateTypesFile
 
     cscope_check_c = False
-    if config['enable_cscope']:
-        cscope_file = os.path.join(config['cscope_file_dir'], config['cscope_file_name'])
-        config['cscope_file_full'] = cscope_file
-        if os.path.exists(cscope_file) or not config['only_generate_cscope_db_for_c_code']:
+    if config['EnableCscope']:
+        cscope_file = os.path.join(config['CscopeFileLocation'], config['CscopeFileName'])
+        config['CscopeFileFull'] = cscope_file
+        if os.path.exists(cscope_file) or not config['CscopeOnlyIfCCode']:
             Debug("Running cscope", "Information")
             from .cscope_interface import StartCscopeDBGeneration, CompleteCscopeDBGeneration
             StartCscopeDBGeneration(config)
@@ -59,16 +59,16 @@ def RunWithOptions(options):
             Debug("Deferring cscope until C code detected", "Information")
             cscope_check_c = True
 
-    if not config['use_existing_tagfile']:
+    if not config['DoNotGenerateTags']:
         Debug("Generating tag file", "Information")
         GenerateTags(config)
     tag_db, file_tag_db = ParseTags(config)
 
-    for language in config['language_list']:
+    for language in config['LanguageList']:
         if language in tag_db:
             CreateTypesFile(config, language, tag_db[language], file_tag_db[language])
 
-    if config['enable_cscope']:
+    if config['EnableCscope']:
         if cscope_check_c and 'c' in tag_db:
             Debug("Running cscope as C code detected", "Information")
             from .cscope_interface import StartCscopeDBGeneration, CompleteCscopeDBGeneration
