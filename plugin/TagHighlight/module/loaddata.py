@@ -17,9 +17,17 @@ import os
 import glob
 import re
 
+try:
+    from .debug import Debug
+except ValueError:
+    def Debug(text, level):
+        print(text)
+
 data_directory = None
 
 leadingTabRE = re.compile(r'^\t*')
+includeRE = re.compile(r'^%INCLUDE (?P<filename>.*)$')
+envRE = re.compile(r'\$\{(?P<envname>[A-Za-z0-9_]+)\}')
 
 def SetLoadDataDirectory(directory):
     global data_directory
@@ -39,7 +47,7 @@ def EntrySplit(entry, pattern):
 def ParseEntries(entries, indent_level=0):
     index = 0
     while index < len(entries):
-        line = entries[index]
+        line = entries[index].rstrip()
         m = leadingTabRE.match(line)
         this_indent_level = len(m.group(0))
         unindented = line[this_indent_level:]
@@ -61,7 +69,7 @@ def ParseEntries(entries, indent_level=0):
                 except NameError:
                     result = {}
                 if not isinstance(result, dict):
-                    raise TypeError("Dictionary/List mismatch")
+                    raise TypeError("Dictionary/List mismatch in '%s'" % key)
                 if len(parts) > 1:
                     result[key] = parts[1]
             else:
@@ -70,7 +78,7 @@ def ParseEntries(entries, indent_level=0):
                 except NameError:
                     result = []
                 if not isinstance(result, list):
-                    raise TypeError("Dictionary/List mismatch")
+                    raise TypeError("Dictionary/List mismatch: %r" % result)
                 result += [unindented]
         else:
             sublist = entries[index:]
@@ -92,9 +100,33 @@ def ParseEntries(entries, indent_level=0):
         result = {}
     return {'Index': index, 'Result': result}
 
-def LoadFile(filename, ):
+def LoadFile(filename):
     fh = open(filename, 'r')
     entries = fh.readlines()
+    index = 0
+    while index < len(entries):
+        m = includeRE.match(entries[index])
+        if m is not None:
+            # Include line
+            inc_file = m.group('filename').strip()
+            e = envRE.search(inc_file)
+            try:
+                while e is not None:
+                    inc_file = inc_file[:e.start()] + \
+                            os.environ[e.group('envname')] + \
+                            inc_file[e.end():]
+                    e = envRE.search(inc_file)
+            except KeyError:
+                raise
+                pass
+            if os.path.exists(inc_file):
+                fhinc = open(inc_file, 'r')
+                extra_entries = fhinc.readlines()
+                fhinc.close()
+                entries = entries[:index] + extra_entries + entries[index+1:]
+            else:
+                Debug("No such file: '%s'" % inc_file, "Warning")
+        index += 1
     fh.close()
     return ParseEntries(entries)['Result']
 
@@ -105,3 +137,7 @@ def LoadDataFile(relative):
 def GlobData(matcher):
     files = glob.glob(os.path.join(data_directory, matcher))
     return [os.path.relpath(i,data_directory) for i in files]
+
+if __name__ == "__main__":
+    import pprint
+    pprint.pprint(LoadFile('testfile.txt'))
