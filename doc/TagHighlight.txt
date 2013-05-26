@@ -255,6 +255,14 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 			TagFileName:tagfile
 			CtagsExecutable:etags.exe
 <
+		Within the |TagHLConfig.txt| configuration file, additional files can
+		be included using "%INCLUDE filename".  This must be at the start of a
+		line.  Within the filename, environment variables can be included
+		using "${NAME}" syntax.  An example is below:
+>
+			ReloadColourScheme:True
+			%INCLUDE ${HOSTNAME}_Config.txt
+<
 		If you want to do this from your vimrc, the safest way to set a value
 		in this dictionary is to use something like this:
 >
