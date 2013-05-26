@@ -90,11 +90,11 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
             for keyword in tags[thisType]:
                 skip_this = False
 
-				if not options['DisableDuplicateCheck']:
-					if keyword in all_keywords:
-						# Duplicate: skip
-						continue
-					all_keywords.append(keyword)
+                if not options['DisableDuplicateCheck']:
+                    if keyword in all_keywords:
+                        # Duplicate: skip
+                        continue
+                    all_keywords.append(keyword)
 
                 if options['SkipReservedKeywords']:
                     if keyword in language_handler['ReservedKeywords']:
