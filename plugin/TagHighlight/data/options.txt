@@ -253,6 +253,12 @@ DebugFile:
 	Default:None
 	Help:Debug log file into which messages should be stored
 
+DisableDuplicateCheck:
+	CommandLineSwitches:--disable-duplicate-check
+	Type:bool
+	Default:False
+	Help:Don't check for duplicates (may speed up generation on large code-bases).
+
 LanguageTagTypes:
 	CommandLineSwitches:--language-tag-types
 	Type:dict

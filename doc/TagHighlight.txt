@@ -920,6 +920,19 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		Option Type: List
 		Default: [value of TagFileName option, value of ProjectConfigFileName option]
 
+	DisableDuplicateCheck                |TagHL-DisableDuplicateCheck|
+		By default, where keywords are duplicated as different types (for
+		example a function prototype and a function definition), only the
+		highest priority one (as specified in the language configuration) is
+		included in the types highlight file.  On large code-bases, this can
+		slow the generation down a bit (although it reduces the size of the
+		highlighter file and may speed Vim up somewhat).  To disable this
+		check, set this option to True or 1: in this case duplicated keywords
+		will be duplicated in the highlighter file.
+
+		Option Type: Boolean
+		Default: False (check for duplicates)
+
 	DisableStandardLibraries             *TagHL-DisableStandardLibraries*
 		If installed, the standard libraries will automatically be loaded if
 		the conditions specified in their configuration file match.  Setting
