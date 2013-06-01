@@ -112,10 +112,11 @@ endfunction
 
 function! s:ReadTypesImplementation(type, lookup, reference, check_function)
 	let result = 0
-	if TagHighlight#Debug#DebugLevelIncludes('Information')
-		call TagHLDebug("Reading types with " . a:lookup . " at " . strftime("%Y%m%d-%H%M%S"), "Information")
-	endif
 	let user_overrides = TagHighlight#Option#GetOption(a:type . 'LanguageOverrides')
+	if TagHighlight#Debug#DebugLevelIncludes('Information')
+		call TagHLDebug("Reading types with " . a:lookup . " with ref '" . a:reference . "' at " . strftime("%Y%m%d-%H%M%S"), "Information")
+		call TagHLDebug("User overrides: " . string(user_overrides), "Information")
+	endif
 	for dictionary in [user_overrides, g:TagHighlightPrivate[a:lookup]]
 		for key in keys(dictionary)
 			if eval(a:check_function . '(a:reference, key)') == 1
@@ -260,6 +261,10 @@ function! s:ReadTypes(suffix)
 		exe "colorscheme" g:colors_name
 	endif
 
+	if has_key(b:TagHighlightPrivate, 'NormalisedPath')
+		let b:TagHighlightPrivate['ReadTypesCompleted'] = 1
+	endif
+
 	" Restore the view
 	call winrestview(savedView)
 	call TagHLDebug("ReadTypes complete", "Information")
@@ -269,7 +274,11 @@ function! TagHighlight#ReadTypes#FindTypeFiles(suffix)
 	let results = []
 	let search_result = TagHighlight#Find#LocateFile('TYPES', a:suffix)
 	if search_result['Found'] == 1 && search_result['Exists'] == 1
-		let results += [search_result['FullPath']]
+		if tolower(a:suffix) == "all"
+			let results += search_result['AllEntries']
+		else
+			let results += [search_result['FullPath']]
+		endif
 	endif
 	return results
 endfunction

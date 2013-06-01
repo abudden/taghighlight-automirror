@@ -77,8 +77,13 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 		let explicit_location = TagHighlight#Option#GetOption('TagFileDirectory')
 		let search_wildcards = TagHighlight#Option#GetOption('TagFileSearchWildcards')
 	elseif a:which == 'TYPES'
+		if tolower(a:suffix) == 'all'
+			let search_suffix = '*'
+		else
+			let search_suffix = a:suffix
+		endif
 		let filename = TagHighlight#Option#GetOption('TypesFilePrefix') . '_' .
-					\ a:suffix . "." .
+					\ search_suffix . "." .
 					\ TagHighlight#Option#GetOption('TypesFileExtension')
 		let search_priority = TagHighlight#Option#GetOption('TypesFileDirModePriority')
 		let explicit_location = TagHighlight#Option#GetOption('TypesFileDirectory')
@@ -162,6 +167,7 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 						if filereadable(entry)
 							let result['FullPath'] = entry
 							let result['Exists'] = 1
+							let result['AllEntries'] = expansion
 							let wildcard_match = 1
 							break
 						endif

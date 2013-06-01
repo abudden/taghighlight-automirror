@@ -134,7 +134,7 @@ function! TagHighlight#Libraries#FindLibraryFiles(suffix)
 	for library in values(g:TagHighlightPrivate['Libraries'])
 		call TagHLDebug("Checking " . library['LibraryName'], "Information")
 		let load = 0
-		if index(library['TypesSuffixes'], a:suffix) != -1
+		if index(library['TypesSuffixes'], a:suffix) != -1 || tolower(a:suffix) == 'all'
 			" Suffix is in the list of acceptable ones
 			if index(forced_standard_libraries, library['LibraryName']) != -1
 				call TagHLDebug("Library(".library['LibraryName']."): Forced", "Information")
