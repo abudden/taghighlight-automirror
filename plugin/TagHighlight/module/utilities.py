@@ -161,12 +161,19 @@ def rglob(path, pattern):
     return matches
 
 if __name__ == "__main__":
-    import pprint
-    test_obj = SetDict()
-    # Should be able to add an item to the list
-    pprint.pprint(test_obj)
-    test_obj['MyIndex'].add('Hello')
-    test_obj['SetList'] = ['This', 'Is', 'A', 'List']
-    test_obj['SetString'] = 'This is a string'
-    # These should all be lists:
-    pprint.pprint(test_obj)
+    with open(__file__, 'r') as fh:
+        keywords = fh.read().split()
+    isk = GenerateValidKeywordRange('@,48-57,_,192-255')
+
+def _keyword_test():
+    import timeit
+    # Get some random keywords
+    global keywords, isk
+    print("Timing GVKR:")
+    print(timeit.timeit("GenerateValidKeywordRange('@,48-57,_,192-255')", number=10000, setup="from __main__ import GenerateValidKeywordRange"))
+    isk = GenerateValidKeywordRange('@,48-57,_,192-255')
+    print("Timing IVK:")
+    print(timeit.timeit("for k in keywords: IsValidKeyword(k, isk)", number=1000, setup="from __main__ import IsValidKeyword, isk, keywords"))
+
+if __name__ == "__main__":
+    _keyword_test()
