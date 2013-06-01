@@ -142,14 +142,14 @@ def GenerateValidKeywordRange(iskeyword):
         else:
             raise ValueError('Unrecognised iskeyword part: ' + valid)
 
-    return validList
+    kRE = re.compile(r'^['+re.escape(''.join(validList))+r']+$')
+    return kRE
 
 
 def IsValidKeyword(keyword, iskeyword):
-    for char in keyword:
-        if not char in iskeyword:
-            return False
-    return True
+    if iskeyword.match(keyword) is not None:
+        return True
+    return False
 
 def rglob(path, pattern):
     # Tweaked version of the stackoverflow answer:
