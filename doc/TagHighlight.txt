@@ -263,8 +263,9 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 			ReloadColourScheme:True
 			%INCLUDE ${HOSTNAME}_Config.txt
 <
-		If you want to do this from your vimrc, the safest way to set a value
-		in this dictionary is to use something like this:
+		If you want to do this from your vimrc rather than using a
+		|TagHLConfig.txt| file, the safest way to set a value in the options
+		dictionary is to use something like this:
 >
 			if ! exists('g:TagHighlightSettings')
 				let g:TagHighlightSettings = {}
@@ -1012,7 +1013,8 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 					\ {'svn': 'c'}
 <
 		To disable an extension from matching against a language, set the
-		dictionary value to an empty string ("").
+		dictionary value to an empty string ("").  To make it match every
+		language for which there's a types highlighter file, set it to "all".
 
 		This override will only work if 'Extension' is in the list of
 		|TagHL-LanguageDetectionMethods|.
@@ -1026,7 +1028,8 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		and ".taghl" in the generated type highlighter file).
 
 		To disable a file type from matching against a language, set the
-		dictionary value to an empty string ("").
+		dictionary value to an empty string ("").  To make it match every
+		language for which there's a types highlighter file, set it to "all".
 
 		This override will only work if 'FileType' is in the list of
 		|TagHL-LanguageDetectionMethods|.
@@ -1435,7 +1438,8 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		use |TagHL-FileTypeLanguageOverrides|.
 
 		To disable a syntax type from matching against a language, set the
-		dictionary value to an empty string ("").
+		dictionary value to an empty string ("").  To make it match every
+		language for which there's a types highlighter file, set it to "all".
 
 		This override will only work if 'Syntax' is in the list of
 		|TagHL-LanguageDetectionMethods|.
@@ -1546,7 +1550,7 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		Option Type: String
 		Default: "." (use current directory)
 
-2.4.5 Options That I Use                 *TagHighlight-option-i-use*        {{{3
+2.4.5 Options That I Use                 *TagHighlight-options-i-use*       {{{3
 
 	The vast majority of the testing of TagHighlight is carried out by me, so
 	I thought it would be useful to list the settings that I use when doing
@@ -1562,6 +1566,10 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 >
 		ReloadColourScheme:True
 		SetWorkingDir:True
+		EnableCscope:True
+		ExtensionLanguageOverrides:
+			hg:all
+			diff:all
 <
 	For all other options I use the defaults.  I use |TagHL-ReloadColourScheme|
 	because on one of my PCs I've had an occasional issue (I think it depends
@@ -1571,6 +1579,13 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 
 	I use the SetWorkingDir option as I find it quite convenient to have Vim's
 	working directory at the root of the project I'm working on.
+
+	I use |TagHL-EnableCscope| as I find it significantly improves the user
+	experience with cscope and saves me having to think about generating
+	cscope databases or connecting to them.
+
+	The extension language overrides are for operation with Mercurial.  See
+	|TagHighlight-mercurial| for more information.
 
 ------------------------------------------------------------------------------
 
@@ -1650,7 +1665,8 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 			gitcommit:python
 		# vim:ff=unix,noet
 <
-	This assumes that you are writing python code; customise as required.
+	This assumes that you are writing python code; customise as required or
+	use "all" to highlight all keywords from any language.
 
 2.5.4 Bazaar Integration                 *TagHighlight-bazaar*              {{{3
 
@@ -1661,10 +1677,38 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 
 2.5.5 Mercurial Integration              *TagHighlight-mercurial*           {{{3
 
-	Unfortunately, there is no easy way to highlight tags in Mercurial projects
-	as the commit message is stored in a temporary directory rather than
-	within the project.  If anyone has a suggestion of how to work round this,
-	please let me know.
+	Highlighting tags in a Mercurial commit window can be achieved using a
+	simple $HGEDITOR script.  There are some examples of the scripts used to
+	achieve this in doc/TagHighlight-examples.  The principle is fairly
+	simple: use a custom script as your editor (using the HGEDITOR environment
+	variable) and that script can set the current working directory of the Vim
+	instance to be the project directory.  Since the defaults for TagHighlight
+	search the file location followed by the current working directory, it
+	should find the types highlighting file.
+
+	To make this work correctly, you'll need to ensure that the types files
+	are read for the file type of the Mercurial commit window.  This can
+	easily be achieved by using the Extension override option in combination
+	with the "all" keyword which associates a given file type or extension
+	with every available types highlighter file:
+>
+		ExtensionLanguageOverrides:
+			hg:all
+			diff:all
+<
+	The provided example HGEDITOR scripts open up a vertically split preview
+	window with the changes about to be committed: I find this useful when
+	composing my commit messages.  Note that hgeditor-lin is intended for
+	Linux environments with gvim in the path (change the editor command to vim
+	if you'd prefer to use the command line one) whereas hgeditor-win is
+	intended for Windows environments WITH Cygwin installed (although it opens
+	the Windows version of gvim).  The batch file allows the Windows (rather
+	than cygwin) Mercurial to use the same editor script, but still relies on
+	Cygwin being present.  I'd welcome a contribution from any Windows
+	scripting gurus to remove the dependency on Cygwin, but I always install
+	Cygwin on any Windows PC so I've never felt the need to figure out how to
+	write one myself.  In both of these scripts, it may be necessary to tweak
+	the various paths in an appropriate manner.
 
 2.5.6 Subversion Integration             *TagHighlight-subversion*          {{{3
 
@@ -1679,7 +1723,8 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 			svn:java
 		# vim:ff=unix,noet
 <
-	This assumes that you are writing Java code; customise as required.
+	This assumes that you are writing Java code; customise as required or
+	use "all" to highlight all keywords from any language.
 
 ------------------------------------------------------------------------------
 
@@ -2219,6 +2264,8 @@ x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
 	* Transferred source repository from git to mercurial.
 	* Added a reference (in the documentation) to the new wiki.
 	* Added information on how I use TagHighlight to the documentation.
+	* Added documentation on how to use TagHighlight with Mercurial (and added
+	  the "all" option for the language overrides to make this work better).
 
 2.1.5: 20th February 2012  : Added support for Scala (thanks to Lee Gauthier).
 
