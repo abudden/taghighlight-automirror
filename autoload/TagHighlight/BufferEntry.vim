@@ -25,6 +25,11 @@ function! TagHighlight#BufferEntry#BufEnter(filename)
 	if ! exists('b:TagHighlightPrivate')
 		let b:TagHighlightPrivate = {}
 	endif
+	if ! has_key(b:TagHighlightPrivate, 'ReadTypesCompleted')
+		" In case it hasn't already been run, run the extension
+		" checker.
+		call TagHighlight#ReadTypes#ReadTypesByExtension()
+	endif
 
 	if TagHighlight#Option#GetOption('EnableCscope')
 		call TagHighlight#Cscope#BufEnter()
