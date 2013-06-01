@@ -492,6 +492,12 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		Projects                         Link:|TagHL-Projects|
 			Project-specific configuration.
 
+		ProjectRepository                Link:|TagHL-ProjectRepository|
+			Store tags and types highlighters in central repository.
+
+		UseProjectRepository             Link:|TagHL-UseProjectRepository|
+			Enable storing of tags and types files in central repository.
+
 	Customisation:
 
 		PreReadHooks                     Link:|TagHL-PreReadHooks|
@@ -1295,6 +1301,33 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		Option Type: Dictionary
 		Default: {}
 
+	ProjectRepository                    *TagHL-ProjectRepository*
+		If the option |TagHL-UseProjectRepository| is set to True or 1 and
+		this option is set to a directory in your file system, then all code
+		that is part of one of the projects documented in the |TagHL-Projects|
+		option will use a separate repository for storing tags, types
+		highlighter files, |taghl_config.txt| files and cscope databases (as
+		applicable).  This offers the possibility of keeping your project
+		folder empty of these files.  As an example, consider this
+		configuration file:
+>
+			UseProjectRepository:True
+			ProjectRepository:/home/al/.taghl
+			Projects:
+				DevProj1:/home/al/dev_project1
+				DevProj2:
+					SourceDir:/home/al/projects/dev_proj_2
+					IncludeSynMatches:True
+					EnableCscope:True
+<
+		In this case, when you run |:UpdateTypesFile|, the tags and
+		types highlighter files for DevProj1 will be stored in (and read from)
+		/home/al/.taghl/DevProj1/.  The tags, types highlighter files and
+		cscope database will be store in /home/al/.taghl/DevProj2/.
+
+		Option Type: String
+		Default: None (no project repository)
+
 	PythonVariantPriority                *TagHL-PythonVariantPriority*
 		The python part of |TagHighlight| can be run in a number of ways,
 		depending on your system configuration.  For most users, this should
@@ -1526,6 +1559,13 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 
 		Option Type: String
 		Default: "types"
+
+	UseProjectRepository                 |TagHL-UseProjectRepository|
+		This option enables the use of the projects repository.  For
+		information on this, please see |TagHL-ProjectRepository|.
+
+		Option Type: Boolean
+		Default: False
 
 	UserLibraries                        *TagHL-UserLibraries*
 		If you have some libraries that are used by your code, but which are
@@ -2245,6 +2285,9 @@ x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
 	  Brodsky for producing the scripts that generate these libraries).
 	* Added SetWorkingDir option to allow control of the working directory for
 	  a buffer with tags highlighted.
+	* Added the ability to store types and tags etc in a central repository
+	  rather than with the code itself (thanks to Alexey Radkov for the
+	  suggestion and for TagManager plugin that shows how it's done!)
 	
 	Bug fixes:
 	

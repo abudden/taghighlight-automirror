@@ -120,6 +120,26 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 	" Result contains 'Found','FullPath','Directory','Filename','Exists']
 	let result = {}
 
+	if TagHighlight#Option#GetOption('UseProjectRepository')
+		call TagHLDebug("UseProjectRepository is set", "Information")
+		let repository = TagHighlight#Option#GetOption('ProjectRepository')
+		if len(repository) > 0 && tolower(repository) != "none"
+			if has_key(b:TagHighlightPrivate, 'InProject') && b:TagHighlightPrivate['InProject']
+				let project_folder = repository
+							\ . '/'
+							\ . s:SanitiseName(b:TagHighlightPrivate['ProjectName'])
+				if ! isdirectory(project_folder)
+					" At the moment, if the repository setting is garbage,
+					" this will throw up an error message, but I'm not sure
+					" whether it can be caught with try...catch...endtry
+					call mkdir(project_folder, 'p')
+				endif
+				let search_priority = ['Explicit']
+				let explicit_location = project_folder
+			endif
+		endif
+	endif
+
 	for search_mode in search_priority
 		if search_mode == 'Explicit' && explicit_location != 'None'
 			" Use explicit location, overriding everything else
@@ -246,4 +266,9 @@ function! s:ScanUp(dir, wildcards)
 		call TagHLDebug("Reached root directory and stopped", "Information")
 	endif
 	return result
+endfunction
+
+function! s:SanitiseName(name)
+	let validChars = '-a-zA-Z0-9_'
+	return substitute(a:name, '[^'.validChars.']', '_', 'g')
 endfunction

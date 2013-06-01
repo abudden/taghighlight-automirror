@@ -22,6 +22,7 @@ let g:loaded_TagHLProjects = 1
 
 function! TagHighlight#Projects#GetProjects()
 	let projects = TagHighlight#Option#GetOption('Projects')
+	call TagHLDebug("Projects option set to ".string(projects), "Information")
 	for project in keys(projects)
 		if type(projects[project]) == type("")
 			projects[project] = {'SourceDir': projects[project]}
@@ -29,7 +30,7 @@ function! TagHighlight#Projects#GetProjects()
 					\ has_key(projects[project], 'SourceDir')
 			" Okay
 		else
-			call TagHLDebug("Invalid entry '".project."' in Projects list", "Warning")
+			call TagHLDebug("Invalid entry '".project."' in Projects list (no SourceDir)", "Warning")
 			call remove(projects, project)
 		endif
 	endfor
@@ -37,6 +38,7 @@ function! TagHighlight#Projects#GetProjects()
 endfunction
 
 function! TagHighlight#Projects#LoadProjectOptions(file)
+	call TagHLDebug("Looking for project options for " . a:file, "Information")
 	let full_path = fnamemodify(a:file, ':p')
 	let projects = TagHighlight#Projects#GetProjects()
 	if ! exists('b:TagHighlightSettings')
@@ -46,7 +48,11 @@ function! TagHighlight#Projects#LoadProjectOptions(file)
 	for name in keys(projects)
 		let project = projects[name]
 		if TagHighlight#Utilities#FileIsIn(full_path, project['SourceDir'])
+			call TagHLDebug("Found project: '".name."'", "Information")
 			let b:TagHighlightSettings = extend(b:TagHighlightSettings, project)
+			let b:TagHighlightPrivate['InProject'] = 1
+			let b:TagHighlightPrivate['ProjectName'] = name
+			break
 		endif
 	endfor
 endfunction

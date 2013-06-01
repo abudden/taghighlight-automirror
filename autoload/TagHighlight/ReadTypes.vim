@@ -23,7 +23,13 @@ let g:loaded_TagHLReadTypes = 1
 let s:all_ft_methods = ['Extension', 'Syntax', 'FileType']
 
 function! TagHighlight#ReadTypes#ReadTypesByOption()
+	let file = expand('<afile>')
+	if len(file) == 0
+		let file = expand('%')
+	endif
+	call TagHighlight#Projects#LoadProjectOptions(file)
 	call TagHighlight#Option#LoadOptionFileIfPresent()
+
 	let ft_methods = TagHighlight#Option#GetOption('LanguageDetectionMethods')
 	for method in ft_methods
 		if index(s:all_ft_methods, method) == -1
@@ -137,14 +143,13 @@ function! s:ReadTypes(suffix)
 
 	call TagHighlight#TagManager#InitialiseBufferTags()
 
-	call TagHighlight#Option#LoadOptionFileIfPresent()
-
 	let file = expand('<afile>')
 	if len(file) == 0
 		let file = expand('%')
 	endif
 
 	call TagHighlight#Projects#LoadProjectOptions(file)
+	call TagHighlight#Option#LoadOptionFileIfPresent()
 
 	if len(a:suffix) == 0
 		return
@@ -191,12 +196,17 @@ function! s:ReadTypes(suffix)
 	let b:TagHighlightLoadedLibraries = []
 	
 	let type_files = TagHighlight#ReadTypes#FindTypeFiles(a:suffix)
+	let source_dir = TagHighlight#Option#GetOption('SourceDir')
 	for fname in type_files
 		call TagHLDebug("Loading type highlighter file " . fname, 'Information')
 		let types_path = fnamemodify(fname, ':p:h')
 		let old_dir = getcwd()
 
-		exe 'cd' types_path
+		if source_dir =~ "None"
+			exe 'cd' types_path
+		else
+			exe 'cd' source_dir
+		endif
 		let b:TagHighlightPrivate['NormalisedPath'] = substitute(
 					\ fnamemodify(fullname, ':.'),
 					\ '\\', '/', 'g')
@@ -246,14 +256,18 @@ function! s:ReadTypes(suffix)
 	endfor
 
 	if TagHighlight#Option#GetOption('SetWorkingDir') == 1
-		for entry in b:TagHighlightLoadedLibraries
-			if entry['Name'] == 'Local'
-				let lcdpath = fnamemodify(entry['Path'], ':h')
-				call TagHLDebug("Setting local working directory to " . lcdpath, "Information")
-				exe 'lcd' lcdpath
-				break
-			endif
-		endfor
+		if source_dir =~ "None"
+			for entry in b:TagHighlightLoadedLibraries
+				if entry['Name'] == 'Local'
+					let lcdpath = fnamemodify(entry['Path'], ':h')
+					call TagHLDebug("Setting local working directory to " . lcdpath, "Information")
+					exe 'lcd' lcdpath
+					break
+				endif
+			endfor
+		else
+			exe 'lcd' source_dir
+		endif
 	endif
 
 	let reload_colours = TagHighlight#Option#GetOption('ReloadColourScheme')

@@ -213,6 +213,16 @@ CscopeOnlyIfPresent:
 	Default:False
 	Help:Only generate cscope database if one already exists
 
+ProjectRepository:
+	Type:string
+	Default:None
+	Help:Central repository in which to store tags and types highlighter.
+
+UseProjectRepository:
+	Type:bool
+	Default:False
+	Help:Enable storing of tags and types files in central repository.
+
 ##########################
 # Python script options: #
 ##########################
