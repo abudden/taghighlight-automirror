@@ -63,9 +63,16 @@ function! TagHighlight#Option#LoadOptions()
 
 endfunction
 
-function! TagHighlight#Option#GetOption(name)
+function! TagHighlight#Option#GetOption(name, ...)
 	" Check we've loaded the options
 	call TagHighlight#Option#LoadOptions()
+
+	" Optional arguments
+	if len(a:000) > 0
+		let force_project = a:000[0]
+	else
+		let force_project = ''
+	endif
 
 	" Check this option exists
 	let opt_index = index(g:TagHighlightPrivate['FullOptionList'], a:name)
@@ -75,10 +82,16 @@ function! TagHighlight#Option#GetOption(name)
 	let option = g:TagHighlightPrivate['PluginOptions'][opt_index]
 
 	" Option priority (highest first):
+	" * project options (if force_project specified)
 	" * buffer dictionary,
 	" * config file dictionary
 	" * global dictionary,
-	for var in ["g:TagHighlightSettings","b:TagHighlightConfigFileOptions","b:TagHighlightSettings"]
+	let option_priority = ["g:TagHighlightSettings","b:TagHighlightConfigFileOptions","b:TagHighlightSettings"]
+	if len(force_project) > 0
+		let project_options = TagHighlight#Projects#GetProject(force_project)
+		let option_priority = ["project_options"] + option_priority
+	endif
+	for var in option_priority
 		if exists(var)
 			exe 'let present = has_key(' . var . ', a:name)'
 			if present

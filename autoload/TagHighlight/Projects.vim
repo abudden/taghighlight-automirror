@@ -37,6 +37,16 @@ function! TagHighlight#Projects#GetProjects()
 	return projects
 endfunction
 
+function! TagHighlight#Projects#IsProject(name)
+	let projects = TagHighlight#Projects#GetProjects()
+	return has_key(projects, a:name)
+endfunction
+
+function! TagHighlight#Projects#GetProject(name)
+	let projects = TagHighlight#Projects#GetProjects()
+	return projects[a:name]
+endfunction
+
 function! TagHighlight#Projects#LoadProjectOptions(file)
 	call TagHLDebug("Looking for project options for " . a:file, "Information")
 	let full_path = fnamemodify(a:file, ':p')

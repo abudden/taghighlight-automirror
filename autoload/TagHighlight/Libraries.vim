@@ -90,8 +90,10 @@ function! TagHighlight#Libraries#FindUserLibraries()
 	call TagHLDebug("Library List: " . string(user_libraries), "Information")
 
 	let libraries_to_load = []
+	let projects = TagHighlight#Projects#GetProjects()
 
 	for library in user_libraries
+		let found = 0
 		" If it looks like an absolute path, just load it
 		if (library[1] == ':' || library['0'] == '/') && filereadable(library)
 			call TagHLDebug("User library is absolute path: " . library, "Information")
@@ -101,8 +103,26 @@ function! TagHighlight#Libraries#FindUserLibraries()
 						\     'Filename': fnamemodify(library, ':t'),
 						\     'Path': fnamemodify(library, '%:p'),
 						\ }]
+			let found = 1
+		endif
+		" See if it is one of the other projects
+		if found == 0&& TagHighlight#Projects#IsProject(library)
+			call TagHLDebug("User library is Project: ".library, "Information")
+			" Find where the tags/types are stored for that project...
+			let locate_result = TagHighlight#Find#LocateFile('TYPES', 'all', library)
+			if locate_result['Exists']
+				let library_path = locate_result['FullPath']
+				let libraries_to_load +=
+							\ [{
+							\     'Name': 'User Project: '.library,
+							\     'Filename': fnamemodify(library_path, ':t'),
+							\     'Path': fnamemodify(library_path, '%:p'),
+							\ }]
+				let found = 1
+			endif
+		endif
 		" Otherwise, try appending to the library dir
-		elseif filereadable(user_library_dir . '/' . library)
+		if found == 0 && filereadable(user_library_dir . '/' . library)
 			call TagHLDebug("User library is relative path: " . library, "Information")
 			let library_path = user_library_dir . '/' . library
 			let libraries_to_load +=
@@ -111,7 +131,8 @@ function! TagHighlight#Libraries#FindUserLibraries()
 						\     'Filename': fnamemodify(library_path, ':t'),
 						\     'Path': fnamemodify(library_path, '%:p'),
 						\ }]
-		else
+		endif
+		if found == 0
 			call TagHLDebug("Cannot load user library " . library, "Error")
 		endif
 	endfor

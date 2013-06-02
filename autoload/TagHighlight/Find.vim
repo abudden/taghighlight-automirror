@@ -56,50 +56,60 @@ let g:loaded_TagHLFind = 1
 "    CscopeFileName: str (cscope.out)
 "    CscopeFileDirectory: str (NONE)
 
-function! TagHighlight#Find#LocateFile(which, suffix)
+function! TagHighlight#Find#LocateFile(which, suffix, ...)
 	call TagHLDebug("Locating file " . a:which . " with suffix " . a:suffix, 'Information')
+	
+	" Optional arguments
+	if len(a:000) > 0
+		let force_project = a:000[0]
+	else
+		let force_project = ''
+	endif
 
 	" a:which is 'TAGS', 'TYPES', 'CONFIG'
-	let default_priority = TagHighlight#Option#GetOption('DefaultDirModePriority')
+	let default_priority = TagHighlight#Option#GetOption('DefaultDirModePriority', force_project)
 	call TagHLDebug("Priority: " . string(default_priority), "Information")
-	let default_search_wildcards = TagHighlight#Option#GetOption('DefaultDirModeSearchWildcards')
+	let default_search_wildcards = TagHighlight#Option#GetOption('DefaultDirModeSearchWildcards', force_project)
 
-
-	let file = expand('<afile>')
-	if len(file) == 0
-		let file = expand('%')
+	if len(force_project) > 0
+		let file = TagHighlight#Option#GetOption('SourceDir', force_project) . '/dummy.txt'
+	else
+		let file = expand('<afile>')
+		if len(file) == 0
+			let file = expand('%')
+		endif
 	endif
 
 	if a:which == 'TAGS'
 		" Suffix is ignored here
-		let filename = TagHighlight#Option#GetOption('TagFileName')
-		let search_priority = TagHighlight#Option#GetOption('TagFileDirModePriority')
-		let explicit_location = TagHighlight#Option#GetOption('TagFileDirectory')
-		let search_wildcards = TagHighlight#Option#GetOption('TagFileSearchWildcards')
+		let filename = TagHighlight#Option#GetOption('TagFileName', force_project)
+		let search_priority = TagHighlight#Option#GetOption('TagFileDirModePriority', force_project)
+		let explicit_location = TagHighlight#Option#GetOption('TagFileDirectory', force_project)
+		let search_wildcards = TagHighlight#Option#GetOption('TagFileSearchWildcards', force_project)
 	elseif a:which == 'TYPES'
 		if tolower(a:suffix) == 'all'
 			let search_suffix = '*'
 		else
 			let search_suffix = a:suffix
 		endif
-		let filename = TagHighlight#Option#GetOption('TypesFilePrefix') . '_' .
+		let filename = TagHighlight#Option#GetOption('TypesFilePrefix', force_project) . '_' .
 					\ search_suffix . "." .
-					\ TagHighlight#Option#GetOption('TypesFileExtension')
-		let search_priority = TagHighlight#Option#GetOption('TypesFileDirModePriority')
-		let explicit_location = TagHighlight#Option#GetOption('TypesFileDirectory')
-		let search_wildcards = TagHighlight#Option#GetOption('TypesFileSearchWildcards')
+					\ TagHighlight#Option#GetOption('TypesFileExtension', force_project)
+		let search_priority = TagHighlight#Option#GetOption('TypesFileDirModePriority', force_project)
+		let explicit_location = TagHighlight#Option#GetOption('TypesFileDirectory', force_project)
+		let search_wildcards = TagHighlight#Option#GetOption('TypesFileSearchWildcards', force_project)
 	elseif a:which == 'CONFIG'
 		" Suffix is ignored here
-		let filename = TagHighlight#Option#GetOption('ProjectConfigFileName')
-		let search_priority = TagHighlight#Option#GetOption('ProjectConfigFileDirModePriority')
-		let explicit_location = TagHighlight#Option#GetOption('ProjectConfigFileDirectory')
-		let search_wildcards = TagHighlight#Option#GetOption('ProjectConfigFileSearchWildcards')
+		let filename = TagHighlight#Option#GetOption('ProjectConfigFileName', force_project)
+		let search_priority = TagHighlight#Option#GetOption('ProjectConfigFileDirModePriority', force_project)
+		let explicit_location = TagHighlight#Option#GetOption('ProjectConfigFileDirectory', force_project)
+		let search_wildcards = TagHighlight#Option#GetOption('ProjectConfigFileSearchWildcards', force_project)
 	elseif a:which == 'CSCOPE'
 		" Suffix is ignored here
-		let filename = TagHighlight#Option#GetOption('CscopeFileName')
-		let search_priority = TagHighlight#Option#GetOption('CscopeFileDirModePriority')
-		let explicit_location = TagHighlight#Option#GetOption('CscopeFileDirectory')
-		let search_wildcards = TagHighlight#Option#GetOption('CscopeFileSearchWildcards')
+		let filename = TagHighlight#Option#GetOption('CscopeFileName', force_project)
+		let search_priority = TagHighlight#Option#GetOption('CscopeFileDirModePriority', force_project)
+		let explicit_location = TagHighlight#Option#GetOption('CscopeFileDirectory', force_project)
+		let search_wildcards = TagHighlight#Option#GetOption('CscopeFileSearchWildcards', force_project)
 	else
 		throw "Unrecognised file"
 	endif
@@ -120,14 +130,19 @@ function! TagHighlight#Find#LocateFile(which, suffix)
 	" Result contains 'Found','FullPath','Directory','Filename','Exists']
 	let result = {}
 
-	if TagHighlight#Option#GetOption('UseProjectRepository')
+	if TagHighlight#Option#GetOption('UseProjectRepository', force_project)
 		call TagHLDebug("UseProjectRepository is set", "Information")
-		let repository = TagHighlight#Option#GetOption('ProjectRepository')
+		let repository = TagHighlight#Option#GetOption('ProjectRepository', force_project)
 		if len(repository) > 0 && tolower(repository) != "none"
-			if has_key(b:TagHighlightPrivate, 'InProject') && b:TagHighlightPrivate['InProject']
+			if len(force_project) > 0 || (has_key(b:TagHighlightPrivate, 'InProject') && b:TagHighlightPrivate['InProject'])
+				if len(force_project) > 0
+					let project_name = force_project
+				else
+					let project_name = b:TagHighlightPrivate['ProjectName']
+				endif
 				let project_folder = repository
 							\ . '/'
-							\ . s:SanitiseName(b:TagHighlightPrivate['ProjectName'])
+							\ . s:SanitiseName(project_name)
 				if ! isdirectory(project_folder)
 					" At the moment, if the repository setting is garbage,
 					" this will throw up an error message, but I'm not sure

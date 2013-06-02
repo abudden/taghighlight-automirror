@@ -1577,7 +1577,9 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		can be relative to the directory specified in the configuration option
 		|TagHL-UserLibraryDir| (e.g. for the same file as specified above, if
 		the option |TagHL-UserLibraryDir| is set to "c:/libraries", you could
-		set this option to ["mylibrary.taghl"].
+		set this option to ["mylibrary.taghl"].  If you're using the projects
+		feature of |TagHighlight| (see |TagHL-Projects|), you can also specify
+		the name of one of your projects (e.g. DevProj1 in the examples above).
 
 		Option Type: List
 		Default: [] (no user libraries)
@@ -2288,6 +2290,7 @@ x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
 	* Added the ability to store types and tags etc in a central repository
 	  rather than with the code itself (thanks to Alexey Radkov for the
 	  suggestion and for TagManager plugin that shows how it's done!)
+	* Added the ability to use a project in place of a user library.
 	
 	Bug fixes:
 	
