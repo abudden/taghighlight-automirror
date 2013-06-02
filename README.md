@@ -36,3 +36,4 @@ Detailed documentation can be found in [doc/TagHighlight.txt][Documentation].
 [InstallGuide]: http://www.cgtk.co.uk/taghighlight/install
 [Bitbucket]: https://bitbucket.org/abudden/taghighlight
 [Documentation]: https://bitbucket.org/abudden/taghighlight/src/default/doc/TagHighlight.txt
+[UsageSurvey]: https://bitbucket.org/abudden/taghighlight/wiki/UsageSurvey
