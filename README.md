@@ -22,6 +22,8 @@ To show the benefit of this plugin, there are some screenshots and a more detail
 
   [http://www.cgtk.co.uk/taghighlight][Website]
 
+If you find this plugin useful, please help me out by writing about how you use it on the [https://bitbucket.org/abudden/taghighlight/wiki/UsageSurvey][UsageSurvey].
+
 Installation instructions are available here:
 
   [http://www.cgtk.co.uk/taghighlight/install][InstallGuide]
