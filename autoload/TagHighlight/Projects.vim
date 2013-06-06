@@ -55,6 +55,7 @@ function! TagHighlight#Projects#LoadProjectOptions(file)
 		let b:TagHighlightSettings = {}
 	endif
 
+	let b:TagHighlightPrivate['InProject'] = 0
 	for name in keys(projects)
 		let project = projects[name]
 		if TagHighlight#Utilities#FileIsIn(full_path, project['SourceDir'])
@@ -65,4 +66,9 @@ function! TagHighlight#Projects#LoadProjectOptions(file)
 			break
 		endif
 	endfor
+	if ! b:TagHighlightPrivate['InProject']
+		call TagHLDebug("Not in project: '".name."'", "Information")
+		let npo = TagHighlight#Option#GetOption("NonProjectOptions")
+		let b:TagHighlightSettings = extend(b:TagHighlightSettings, npo)
+	endif
 endfunction

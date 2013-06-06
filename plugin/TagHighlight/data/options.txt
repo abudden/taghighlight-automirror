@@ -7,6 +7,11 @@ Projects:
 	Default:{}
 	Help:Project-specific configuration options.
 
+NonProjectOptions:
+	Type:dict
+	Default:{}
+	Help:Configuration options for code that's not part of a project.
+
 LanguageDetectionMethods:
 	Type:list
 	Default:Extension

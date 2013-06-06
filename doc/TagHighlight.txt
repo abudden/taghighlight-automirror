@@ -498,6 +498,9 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		UseProjectRepository             Link:|TagHL-UseProjectRepository|
 			Enable storing of tags and types files in central repository.
 
+		NonProjectOptions                Link:|TagHL-NonProjectOptions|
+			Options to set for files that aren't part of a project.
+
 	Customisation:
 
 		PreReadHooks                     Link:|TagHL-PreReadHooks|
@@ -1174,6 +1177,16 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		Option Type: Boolean
 		Default: False (always generate types file)
 
+	NonProjectOptions                    *TagHL-NonProjectOptions*
+		This is a special option that contains a nested dictionary.  It is
+		used in combination with the |TagHL-Projects| option: see the
+		documentation for that option for more details.  This option allows
+		options to be set for any file that is not part of one of the projects
+		specified in the Projects option.
+		
+		Option Type: Dictionary
+		Default: {}
+
 	ParsingSkipList                      *TagHL-ParsingSkipList*
 		If you're editing a lot of files and for most you want tag highlight
 		to run but one or two you don't, put the filenames of the ones for
@@ -1296,8 +1309,11 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 				DevProj2:
 					SourceDir:/home/al/dev_proj_2
 					IncludeSynMatches:True
+			NonProjectOptions:
+				# Options for code that isn't in one of
+				# the projects specified above:
+				IncludeLocals:True
 <
-
 		Option Type: Dictionary
 		Default: {}
 
@@ -2291,6 +2307,8 @@ x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
 	  rather than with the code itself (thanks to Alexey Radkov for the
 	  suggestion and for TagManager plugin that shows how it's done!)
 	* Added the ability to use a project in place of a user library.
+	* Added non-project options for project users who want different options
+	  for files that aren't part of a project.
 	
 	Bug fixes:
 	
