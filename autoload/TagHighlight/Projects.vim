@@ -67,7 +67,7 @@ function! TagHighlight#Projects#LoadProjectOptions(file)
 		endif
 	endfor
 	if ! b:TagHighlightPrivate['InProject']
-		call TagHLDebug("Not in project: '".name."'", "Information")
+		call TagHLDebug("Not in project: '".a:file."'", "Information")
 		let npo = TagHighlight#Option#GetOption("NonProjectOptions")
 		let b:TagHighlightSettings = extend(b:TagHighlightSettings, npo)
 	endif
