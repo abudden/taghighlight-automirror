@@ -120,12 +120,13 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 				endif
 			endif
 		endfor
+		exe PY 'manually_set = ' string(handled_options)
 		for check_opt in keys(a:options)
 			if index(handled_options, check_opt) == -1
 				call TagHLDebug("Unhandled run option: " . check_opt, "Information")
 			endif
 		endfor
-		exe PY 'RunWithOptions(options)'
+		exe PY 'RunWithOptions(options, manually_set)'
 	elseif index(["python","compiled"], s:python_variant) != -1
 		let args = s:python_cmd[:]
 		" We're calling the script externally, build a list of arguments

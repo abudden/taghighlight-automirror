@@ -16,7 +16,7 @@ from __future__ import print_function
 
 import os
 
-debug_log_levels = ('Critical', 'Error', 'Warning', 'Status', 'Information', 'None')
+debug_log_levels = ('None', 'Critical', 'Error', 'Warning', 'Status', 'Information')
 debug_log_file = None
 debug_log_level = 'None'
 

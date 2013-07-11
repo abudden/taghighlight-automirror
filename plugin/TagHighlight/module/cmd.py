@@ -22,13 +22,19 @@ from .options import AllOptions
 
 def ProcessCommandLine():
     parser = optparse.OptionParser()
+    pyoptions = []
 
     for dest in AllOptions.keys():
         if 'CommandLineSwitches' not in AllOptions[dest]:
             # Vim-only option
             continue
+        if AllOptions[dest]['Default'] == 'None':
+            AllOptions[dest]['Default'] = None
+
+        pyoptions.append(dest)
         if not isinstance(AllOptions[dest]['CommandLineSwitches'], list):
             AllOptions[dest]['CommandLineSwitches'] = AllOptions[dest]['CommandLineSwitches'].split(',')
+
         if AllOptions[dest]['Type'] == 'bool':
             if AllOptions[dest]['Default'] == True:
                 action = 'store_false'
@@ -36,7 +42,7 @@ def ProcessCommandLine():
                 action = 'store_true'
             parser.add_option(*AllOptions[dest]['CommandLineSwitches'],
                     action=action,
-                    default=AllOptions[dest]['Default'],
+                    default='DEFAULT_OPTION_USED',
                     dest=dest,
                     help=AllOptions[dest]['Help'])
         else:
@@ -47,15 +53,24 @@ def ProcessCommandLine():
                 action='append'
             else:
                 # TODO: This needs handling somehow
+                pyoptions.remove(dest)
                 continue
                 raise Exception('Unrecognised option type: ' + AllOptions[dest]['Type'])
             parser.add_option(*AllOptions[dest]['CommandLineSwitches'],
                     action=action,
-                    default=AllOptions[dest]['Default'],
+                    default='DEFAULT_OPTION_USED',
                     type=optparse_type,
                     dest=dest,
                     help=AllOptions[dest]['Help'])
 
     options, remainder = parser.parse_args()
+    manually_set = []
+    optdict = vars(options)
 
-    return vars(options)
+    for dest in pyoptions:
+        if optdict[dest] == 'DEFAULT_OPTION_USED':
+            optdict[dest] = AllOptions[dest]['Default']
+        else:
+            manually_set.append(dest)
+
+    return optdict, manually_set

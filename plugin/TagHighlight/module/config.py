@@ -60,7 +60,7 @@ def LoadVersionInfo():
                 'revision_id': 'Unreleased',
                 }
 
-def SetInitialOptions(new_options):
+def SetInitialOptions(new_options, manual_options):
     global config
     for key in new_options:
         config[key] = new_options[key]
@@ -68,6 +68,7 @@ def SetInitialOptions(new_options):
         SetDebugLogLevel(config['DebugLevel'])
     if 'DebugFile' in config:
         SetDebugLogFile(config['DebugFile'])
+    config['ManuallySetOptions'] = manual_options
 
 def LoadLanguages():
     global config

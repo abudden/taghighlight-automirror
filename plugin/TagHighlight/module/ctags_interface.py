@@ -58,10 +58,10 @@ def GenerateTags(options):
     # now so that argument globs work correctly.
     os.chdir(options['SourceDir'])
 
-    if 'CtagsArguments' in options:
+    if 'CtagsArguments' in options['ManuallySetOptions']:
         args = options['CtagsArguments']
     else:
-        if 'CtagsVariant' in options:
+        if 'CtagsVariant' in options['ManuallySetOptions']:
             variant = options['CtagsVariant']
         else:
             variant = 'exuberant'

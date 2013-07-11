@@ -19,8 +19,8 @@ import sys
 def main():
     from module.cmd import ProcessCommandLine
     from module.worker import RunWithOptions
-    options = ProcessCommandLine()
-    RunWithOptions(options)
+    options, manually_set = ProcessCommandLine()
+    RunWithOptions(options, manually_set)
 
 if __name__ == "__main__":
     main()

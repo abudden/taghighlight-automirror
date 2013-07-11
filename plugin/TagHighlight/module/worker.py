@@ -16,12 +16,12 @@ from __future__ import print_function
 import sys
 import os
 
-def RunWithOptions(options):
+def RunWithOptions(options, manually_set=[]):
     start_directory = os.getcwd()
     from .config import config, SetInitialOptions, LoadLanguages
     from .debug import Debug
 
-    SetInitialOptions(options)
+    SetInitialOptions(options, manually_set)
 
     Debug("Running types highlighter generator", "Information")
     Debug("Release:" + config['Release'], "Information")
