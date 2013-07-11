@@ -27,6 +27,8 @@ def ProcessCommandLine():
         if 'CommandLineSwitches' not in AllOptions[dest]:
             # Vim-only option
             continue
+        if not isinstance(AllOptions[dest]['CommandLineSwitches'], list):
+            AllOptions[dest]['CommandLineSwitches'] = AllOptions[dest]['CommandLineSwitches'].split(',')
         if AllOptions[dest]['Type'] == 'bool':
             if AllOptions[dest]['Default'] == True:
                 action = 'store_false'
@@ -44,9 +46,9 @@ def ProcessCommandLine():
             elif AllOptions[dest]['Type'] == 'list':
                 action='append'
             else:
+                # TODO: This needs handling somehow
+                continue
                 raise Exception('Unrecognised option type: ' + AllOptions[dest]['Type'])
-            if not isinstance(AllOptions[dest]['CommandLineSwitches'], list):
-                AllOptions[dest]['CommandLineSwitches'].split(',')
             parser.add_option(*AllOptions[dest]['CommandLineSwitches'],
                     action=action,
                     default=AllOptions[dest]['Default'],
