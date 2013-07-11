@@ -45,6 +45,8 @@ def ProcessCommandLine():
                 action='append'
             else:
                 raise Exception('Unrecognised option type: ' + AllOptions[dest]['Type'])
+            if not isinstance(AllOptions[dest]['CommandLineSwitches'], list):
+                AllOptions[dest]['CommandLineSwitches'].split(',')
             parser.add_option(*AllOptions[dest]['CommandLineSwitches'],
                     action=action,
                     default=AllOptions[dest]['Default'],
