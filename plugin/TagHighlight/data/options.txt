@@ -278,7 +278,7 @@ LanguageTagTypes:
 	CommandLineSwitches:--language-tag-types
 	Type:dict
 	Default:{}
-	Help:Explicit filter on tag types for a given language
+	Help:Explicit filter on tag types for a given language (pass as key:value or key:value,value,value).
 
 DebugPrintTime:
 	CommandLineSwitches:--print-time-with-debug

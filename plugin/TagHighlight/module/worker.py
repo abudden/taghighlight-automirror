@@ -27,6 +27,7 @@ def RunWithOptions(options, manually_set=[]):
     Debug("Release:" + config['Release'], "Information")
     Debug("Version:" + repr(config['Version']), "Information")
     Debug("Options:" + repr(options), "Information")
+    Debug("Manually Set:" + repr(manually_set), "Information")
 
     tag_file_absolute = os.path.join(config['CtagsFileLocation'], config['TagFileName'])
     if config['DoNotGenerateTags'] and not os.path.exists(tag_file_absolute):

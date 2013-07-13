@@ -19,6 +19,10 @@ import optparse
 
 from .config import SetInitialOptions, LoadLanguages
 from .options import AllOptions
+import ast
+
+def DictHandler(option, opt_str, value, parser):
+    setattr(parser.values, option.dest, ast.literal_eval(value))
 
 def ProcessCommandLine():
     parser = optparse.OptionParser()
@@ -44,6 +48,14 @@ def ProcessCommandLine():
                     action=action,
                     default='DEFAULT_OPTION_USED',
                     dest=dest,
+                    help=AllOptions[dest]['Help'])
+        elif AllOptions[dest]['Type'] == 'dict':
+            parser.add_option(*AllOptions[dest]['CommandLineSwitches'],
+                    action="callback",
+                    type="string",
+                    default='DEFAULT_OPTION_USED',
+                    dest=dest,
+                    callback=DictHandler,
                     help=AllOptions[dest]['Help'])
         else:
             optparse_type='string'

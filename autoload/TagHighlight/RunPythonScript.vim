@@ -72,6 +72,56 @@ function! s:RunShellCommand(args)
 	return result
 endfunction
 
+function! s:GetVarType(value)
+	if type(a:value) == type(0)
+		return "int"
+	elseif type(a:value) == type("")
+		return "string"
+	elseif type(a:value) == type([])
+		return "list"
+	elseif type(a:value) == type({})
+		return "dict"
+	elseif type(a:value) == type(function("tr"))
+		return "function"
+	elseif type(a:value) == type(0.0)
+		return "float"
+	endif
+endfunction
+
+function! s:SetPyVariable(PY, pyoption, type, value)
+	let handled_option = 0
+	if a:type == 'bool'
+		let handled_option = 1
+		if (a:value == 1) || (a:value == 'True')
+			exe a:PY a:pyoption '= True'
+		else
+			exe a:PY a:pyoption '= False'
+		endif
+	elseif a:type == 'string'
+		let handled_option = 1
+		exe a:PY a:pyoption '= r"""'.a:value.'"""'
+	elseif a:type == 'int'
+		let handled_option = 1
+		exe a:PY a:pyoption '= ' . a:value
+	elseif a:type == 'list'
+		let handled_option = 1
+		exe a:PY a:pyoption '= []'
+		for entry in a:value
+			exe a:PY a:pyoption '+= [r"""' . entry . '"""]'
+		endfor
+	elseif a:type == 'dict'
+		let handled_option = 1
+		exe a:PY a:pyoption '= {}'
+		for key in keys(a:value)
+			call s:SetPyVariable(a:PY,
+						\ a:pyoption.'[r"""'.key.'"""]',
+						\ s:GetVarType(a:value[key]),
+						\ a:value[key])
+		endfor
+	endif
+	return handled_option
+endfunction
+
 function! TagHighlight#RunPythonScript#RunGenerator(options)
 	" Will only actually load the options once
 	call TagHighlight#Option#LoadOptions()
@@ -97,26 +147,11 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 						\ has_key(a:options, option['Destination'])
 				" We can handle this one automatically
 				let pyoption = 'options["'.option['Destination'].'"]'
-				if option['Type'] == 'bool'
+				let result = s:SetPyVariable(PY, pyoption,
+							\ option['Type'],
+							\ a:options[option['Destination']])
+				if result != 0
 					let handled_options += [option['Destination']]
-					let value = a:options[option['Destination']]
-					if (value == 1) || (value == 'True')
-						exe PY pyoption '= True'
-					else
-						exe PY pyoption '= False'
-					endif
-				elseif option['Type'] == 'string'
-					let handled_options += [option['Destination']]
-					exe PY pyoption '= r"""'.a:options[option['Destination']].'"""'
-				elseif option['Type'] == 'int'
-					let handled_options += [option['Destination']]
-					exe PY pyoption '= ' . a:options[option['Destination']]
-				elseif option['Type'] == 'list'
-					let handled_options += [option['Destination']]
-					exe PY pyoption '= []'
-					for entry in a:options[option['Destination']]
-						exe PY pyoption '+= [r"""' . entry . '"""]'
-					endfor
 				endif
 			endif
 		endfor
@@ -176,6 +211,11 @@ function! TagHighlight#RunPythonScript#RunGenerator(options)
 							let args += [switch, entry]
 						endif
 					endfor
+				elseif option['Type'] == 'dict'
+					" Not sure how robust this is likely to be...
+					" or for that matter how likely it is that the result
+					" will be the same as the if_pyth version...
+					let args += [switch, string(a:options[option['Destination']])]
 				endif
 			endif
 		endfor

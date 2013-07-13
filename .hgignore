@@ -2,6 +2,7 @@ syntax: glob
 
 .*.swp
 *.pyc
+_.swp
 types_*.taghl
 doc/tags
 sh.exe.stackdump

@@ -14,6 +14,7 @@
 # ---------------------------------------------------------------------
 from __future__ import print_function
 import os
+import sys
 import re
 from .utilities import GenerateValidKeywordRange, IsValidKeyword
 from .debug import Debug
@@ -33,12 +34,15 @@ vim_synkeyword_arguments = [
         'skipempty'
         ]
 
+def write(fh, value):
+    fh.write(value.encode('ascii'))
+
 def CreateTypesFile(options, language, unscoped_tags, file_tags):
     Debug("Writing types file", "Information")
 
     entry_sets = {}
 
-    for source_file in [None] + file_tags.keys():
+    for source_file in [None] + list(file_tags.keys()):
         if source_file is None:
             tags = unscoped_tags
         else:
@@ -189,7 +193,7 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
         sys.exit(1)
 
     try:
-        for source_file in [None] + entry_sets.keys():
+        for source_file in [None] + list(entry_sets.keys()):
             if source_file is None:
                 vimtypes_entries = unscoped_entries
                 prefix = ''
@@ -199,17 +203,17 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
 
             if source_file is not None and not options['IgnoreFileScope']:
                 formatted_file = os.path.normpath(source_file).replace(os.path.sep, '/')
-                fh.write('" Matches for file %s:\n' % source_file)
-                fh.write('if (has_key(b:TagHighlightPrivate, "NormalisedPath") && b:TagHighlightPrivate["NormalisedPath"] == "%s") || TagHighlight#Option#GetOption("IgnoreFileScope")\n' % formatted_file)
+                write(fh, '" Matches for file %s:\n' % source_file)
+                write(fh, 'if (has_key(b:TagHighlightPrivate, "NormalisedPath") && b:TagHighlightPrivate["NormalisedPath"] == "%s") || TagHighlight#Option#GetOption("IgnoreFileScope")\n' % formatted_file)
             for line in vimtypes_entries:
                 try:
-                    fh.write(prefix + line.encode('ascii'))
+                    write(fh, prefix + line)
                 except UnicodeDecodeError:
                     Debug("Error decoding line '{0!r}'".format(line), "Error")
-                    fh.write('echoerr "Types generation error"\n'.encode('ascii'))
-                fh.write('\n'.encode('ascii'))
+                    write(fh, 'echoerr "Types generation error"\n')
+                write(fh, '\n')
             if source_file is not None and not options['IgnoreFileScope']:
-                fh.write('endif\n')
+                write(fh, 'endif\n')
     except IOError:
         Debug("ERROR: Couldn't write {file} contents\n".format(file=outfile), "Error")
         sys.exit(1)
