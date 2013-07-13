@@ -200,7 +200,7 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
             if source_file is not None and not options['IgnoreFileScope']:
                 formatted_file = os.path.normpath(source_file).replace(os.path.sep, '/')
                 fh.write('" Matches for file %s:\n' % source_file)
-                fh.write('if b:TagHighlightPrivate["NormalisedPath"] == "%s" || TagHighlight#Option#GetOption("IgnoreFileScope")\n' % formatted_file)
+                fh.write('if (has_key(b:TagHighlightPrivate, "NormalisedPath") && b:TagHighlightPrivate["NormalisedPath"] == "%s") || TagHighlight#Option#GetOption("IgnoreFileScope")\n' % formatted_file)
             for line in vimtypes_entries:
                 try:
                     fh.write(prefix + line.encode('ascii'))
