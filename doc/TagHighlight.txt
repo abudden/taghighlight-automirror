@@ -2173,7 +2173,7 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 
 	If sending a patch, please follow these guidelines:
 
-	* Could should conform to the same general coding standard as the existing
+	* Code should conform to the same general coding standard as the existing
 	  source tree.  This isn't especially strict or well documented, but at
 	  the very least python code should be indented with four spaces and
 	  everything else should be indented with hard tabs but alignment should
@@ -2185,7 +2185,7 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		- The history in |TagHighlight-history|: if there isn't an entry there
 		  for an unreleased version, pease add one, something like:
 >
-			x.x.x: xxth Xxxxxxxx 2012  : Added support for LANGUAGE.
+			x.x.x: xxth Xxxxxxxx 2013  : Added support for LANGUAGE.
 <
 		  (leave the x characters in, I'll change these when I release the
 		  next version).
@@ -2308,7 +2308,7 @@ x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
 	  a buffer with tags highlighted.
 	* Added the ability to store types and tags etc in a central repository
 	  rather than with the code itself (thanks to Alexey Radkov for the
-	  suggestion and for TagManager plugin that shows how it's done!)
+	  suggestion and for the TagManager plugin that shows how it's done!)
 	* Added the ability to use a project in place of a user library.
 	* Added non-project options for project users who want different options
 	  for files that aren't part of a project.
