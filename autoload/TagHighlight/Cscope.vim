@@ -47,7 +47,7 @@ function! TagHighlight#Cscope#RestoreConnections(connections)
 		return
 	endif
 	for index in keys(a:connections)
-		exe 'cs add' a:connections[index]
+		exe 'silent cs add' a:connections[index]
 	endfor
 endfunction
 
@@ -63,7 +63,7 @@ function! TagHighlight#Cscope#PauseCscope()
 	let s:PausedConnections = TagHighlight#Cscope#GetConnections()
 
 	" Kill all cscope connections
-	cs kill -1
+	silent cs kill -1
 endfunction
 
 function! TagHighlight#Cscope#ResumeCscope()
@@ -76,11 +76,11 @@ function! TagHighlight#Cscope#ResumeCscope()
 
 	if has_key(b:TagHighlightPrivate, 'CscopeFileInfo') &&
 				\ b:TagHighlightPrivate['CscopeFileInfo']['Exists']
-		exe 'cs add' b:TagHighlightPrivate['CscopeFileInfo']['FullPath']
+		exe 'silent cs add' b:TagHighlightPrivate['CscopeFileInfo']['FullPath']
 	else
 		let b:TagHighlightPrivate['CscopeFileInfo'] = TagHighlight#Find#LocateFile('CSCOPE', '')
 		if b:TagHighlightPrivate['CscopeFileInfo']['Exists']
-			exe 'cs add' b:TagHighlightPrivate['CscopeFileInfo']['FullPath']
+			exe 'silent cs add' b:TagHighlightPrivate['CscopeFileInfo']['FullPath']
 		else
 			call TagHighlight#Cscope#RestoreConnections(s:PausedConnections)
 		endif
@@ -98,14 +98,14 @@ function! TagHighlight#Cscope#BufEnter()
 	let b:TagHighlightPrivate['StoredCscopeConnections'] =
 				\ TagHighlight#Cscope#GetConnections()
 	" Kill all connections
-	cs kill -1
+	silent cs kill -1
 
 	if ! has_key(b:TagHighlightPrivate, 'CscopeFileInfo')
 		let b:TagHighlightPrivate['CscopeFileInfo'] = TagHighlight#Find#LocateFile('CSCOPE', '')
 	endif
 
 	if b:TagHighlightPrivate['CscopeFileInfo']['Exists']
-		exe 'cs add' b:TagHighlightPrivate['CscopeFileInfo']['FullPath']
+		exe 'silent cs add' b:TagHighlightPrivate['CscopeFileInfo']['FullPath']
 	endif
 endfunction
 function! TagHighlight#Cscope#BufLeave()
@@ -116,7 +116,7 @@ function! TagHighlight#Cscope#BufLeave()
 		return
 	endif
 
-	cs kill -1
+	silent cs kill -1
 	if has_key(b:TagHighlightPrivate, 'StoredCscopeConnections')
 		if len(b:TagHighlightPrivate['StoredCscopeConnections']) > 0
 			call TagHighlight#Cscope#RestoreConnections(b:TagHighlightPrivate['StoredCscopeConnections'])
