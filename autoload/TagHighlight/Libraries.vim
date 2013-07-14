@@ -101,7 +101,7 @@ function! TagHighlight#Libraries#FindUserLibraries()
 						\ [{
 						\     'Name': 'User Library',
 						\     'Filename': fnamemodify(library, ':t'),
-						\     'Path': fnamemodify(library, '%:p'),
+						\     'Path': fnamemodify(library, ':p'),
 						\ }]
 			let found = 1
 		endif
@@ -116,7 +116,7 @@ function! TagHighlight#Libraries#FindUserLibraries()
 							\ [{
 							\     'Name': 'User Project: '.library,
 							\     'Filename': fnamemodify(library_path, ':t'),
-							\     'Path': fnamemodify(library_path, '%:p'),
+							\     'Path': fnamemodify(library_path, ':p'),
 							\ }]
 				let found = 1
 			endif
