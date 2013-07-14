@@ -50,14 +50,14 @@ else
 endif
 
 " Update types & tags
-command! -bar UpdateTypesFile 
+command! -bar UpdateTypesFile
 			\ silent call TagHighlight#Generation#UpdateAndRead(0)
 
-command! -bar UpdateTypesFileOnly 
+command! -bar UpdateTypesFileOnly
 			\ silent call TagHighlight#Generation#UpdateAndRead(1)
 
-command! -nargs=1 UpdateTypesFileDebug 
-			\ call TagHighlight#Debug#DebugUpdateTypesFile(<f-args>)
+command! -nargs=1 -bang UpdateTypesFileDebug
+			\ call TagHighlight#Debug#DebugUpdateTypesFile(<bang>0, <f-args>)
 
 
 function! s:LoadLanguages()

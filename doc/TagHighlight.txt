@@ -2211,8 +2211,11 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 <
 	This will generate tags (recursively), create a types highlighter file and
 	try to read the relevant types highlighter files for all open files.  All
-	debugging information will be written to /path/to/debug_log.txt.
-
+	debugging information will be appended to /path/to/debug_log.txt.  To
+	clear the file prior to starting the log, use
+>
+		:UpdateTypesFileDebug! /path/to/debug_log.txt
+<
 	If you're having difficulties getting TagHighlight to work, please try
 	running the above command and send a brief description of the symptoms
 	along with a copy of the debug log to me at abudden _AT_ gmail _DOT_ com.

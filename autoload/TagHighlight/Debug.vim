@@ -62,13 +62,16 @@ function! TagHighlight#Debug#DebugLevelIncludes(level)
 	endif
 endfunction
 
-function! TagHighlight#Debug#DebugUpdateTypesFile(filename)
+function! TagHighlight#Debug#DebugUpdateTypesFile(reset, filename)
 	" Update the types file with debugging turned on
 	if a:filename ==? 'None'
 		" Force case to be correct
 		let debug_file = 'None'
 	else
 		let debug_file = a:filename
+		if a:reset
+			call delete(a:filename)
+		endif
 	endif
 
 	let debug_options = ["DebugFile","DebugLevel"]
