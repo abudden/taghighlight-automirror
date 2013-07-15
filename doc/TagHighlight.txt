@@ -1294,7 +1294,8 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		|TagHL-SetWorkingDir|, you can use a simpler form where the project
 		name is the key and the working directory is the value.  This is
 		probably better explained by an example, so here is a possible
-		|TagHLConfig.txt| file:
+		|TagHLConfig.txt| file (note that all indentation is done with tab
+		characters, not spaces):
 >
 			# Global Options
 			EnableCscope:True
