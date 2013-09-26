@@ -35,6 +35,10 @@ def ProcessCommandLine():
         if AllOptions[dest]['Default'] == 'None':
             AllOptions[dest]['Default'] = None
 
+        # Correct erroneous conversion of help text to list
+        if isinstance(AllOptions[dest]['Help'], list):
+            AllOptions[dest]['Help'] = "".join(AllOptions[dest]['Help'])
+
         pyoptions.append(dest)
         if not isinstance(AllOptions[dest]['CommandLineSwitches'], list):
             AllOptions[dest]['CommandLineSwitches'] = AllOptions[dest]['CommandLineSwitches'].split(',')
