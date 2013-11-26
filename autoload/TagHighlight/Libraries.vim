@@ -131,6 +131,7 @@ function! TagHighlight#Libraries#FindUserLibraries()
 						\     'Filename': fnamemodify(library_path, ':t'),
 						\     'Path': fnamemodify(library_path, '%:p'),
 						\ }]
+			let found = 1
 		endif
 		if found == 0
 			call TagHLDebug("Cannot load user library " . library, "Error")
