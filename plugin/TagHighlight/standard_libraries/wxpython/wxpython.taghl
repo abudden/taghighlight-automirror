@@ -1040,11 +1040,11 @@ syn keyword CTagsClass ProcessOutputBuffer PyGridCellEditor POVGauge TreeListCtr
 syn keyword CTagsClass RichTextObjectList CalendarCtrlBase ShadowPopupWindow MouseEvent CustomPanel GeneratorI NativeStyle UltimateListItemData ProjectFileDropTarget NumberUpdatedEvent FileDirPickerHandler GridCellCoords EdBaseBook TwoButtonEvent MyCustomRenderer StaticBox HtmlSelection FlatMenuBar _EMPTYSTRING PHPService GridCellNumberRenderer GridCellEnumEditor ActionScript3Lexer ParamButtons PGPaintData JavascriptPhpLexer MySTC EditorCanvasUpdateShapeBoundariesCommand XmlDjangoLexer ListCtrl ControlBar
 syn keyword CTagsClass EdLogViewer ExtensionRegister LanguageInfo PenDialog ReadError
 
-syn match CTagsClass /Display/
-syn match CTagsGlobalVariable /FOLD/
-syn match CTagsGlobalVariable /NextGroup/
-syn match CTagsGlobalVariable /TRANSPARENT/
-syn match CTagsMember /Contains/
-syn match CTagsMember /Display/
-syn match CTagsMember /Transparent/
-syn match CTagsMember /display/
+syn match CTagsClass /\<Display\>/
+syn match CTagsGlobalVariable /\<FOLD\>/
+syn match CTagsGlobalVariable /\<NextGroup\>/
+syn match CTagsGlobalVariable /\<TRANSPARENT\>/
+syn match CTagsMember /\<Contains\>/
+syn match CTagsMember /\<Display\>/
+syn match CTagsMember /\<Transparent\>/
+syn match CTagsMember /\<display\>/

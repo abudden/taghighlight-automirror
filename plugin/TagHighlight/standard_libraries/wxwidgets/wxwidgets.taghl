@@ -2140,14 +2140,14 @@ syn keyword CTagsClass wxDirDialogBase wxComboCtrlTextCtrl wxHtmlFilterHTML Line
 syn keyword CTagsClass wxHtmlHelpHtmlWindow wxAcceleratorRefData wxSortedArray_SortFunction wxOSXCarbonPrintData
 syn keyword CTagsNamespace CmdLineOption std wxMSWMessageDialog wxdebug wxMSWButton wxPrivate Scintilla Bench wxMSWKeyboard wxMSWImpl wxGTKImpl UserNameSpace wxGTKPrivate wxMSWDateControls
 
-syn match CTagsFunction /Contains/
-syn match CTagsFunction /Display/
-syn match CTagsFunction /Extend/
-syn match CTagsFunction /Fold/
-syn match CTagsFunction /contains/
-syn match CTagsFunction /extend/
-syn match CTagsMember /display/
-syn match CTagsMember /transparent/
+syn match CTagsFunction /\<Contains\>/
+syn match CTagsFunction /\<Display\>/
+syn match CTagsFunction /\<Extend\>/
+syn match CTagsFunction /\<Fold\>/
+syn match CTagsFunction /\<contains\>/
+syn match CTagsFunction /\<extend\>/
+syn match CTagsMember /\<display\>/
+syn match CTagsMember /\<transparent\>/
 
 if exists('b:hlrainbow') && !exists('g:nohlrainbow')
 	syn cluster cBracketGroup add=CTagsStructure,CTagsMember,CTagsUnion,CTagsGlobalVariable,CTagsConstant,CTagsEnumeratorName,CTagsEnumerationValue,CTagsFunction,CTagsType,CTagsDefinedName,CTagsClass,CTagsNamespace

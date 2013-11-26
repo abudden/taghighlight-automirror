@@ -132,7 +132,7 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
                                     for ch in charactersToEscape:
                                         escapedKeyword = escapedKeyword.replace(ch, '\\' + ch)
                                     if options['IncludeSynMatches']:
-                                        matchEntries.add('syn match ' + thisType + ' ' + patChar + escapedKeyword + patChar)
+                                        matchEntries.add('syn match ' + thisType + ' ' + patChar + r'\<' + escapedKeyword + r'\>' + patChar)
                                     matchDone = True
                                     break
 
@@ -144,7 +144,7 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
 
                 if keyword.lower() in vim_synkeyword_arguments:
                     if not options['SkipVimKeywords']:
-                        matchEntries.add('syn match ' + thisType + ' /' + keyword + '/')
+                        matchEntries.add('syn match ' + thisType + r' /\<' + keyword + r'\>/')
                     continue
 
                 temp = keycommand + " " + keyword

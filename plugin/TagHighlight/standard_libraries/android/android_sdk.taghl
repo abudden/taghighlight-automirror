@@ -5942,17 +5942,17 @@ syn keyword CTagsInterface SearchSuggestionQuery Suggestion CreditCardNumber Con
 syn keyword CTagsInterface TransformationMethod PartSource PerformanceCollectorTestCase IConstructor Suppress
 syn keyword CTagsPackage dxconvext signature dot java_cup otherpackage otherpkg dxc data proguard dasm SQLite jdiff other util vogar tests
 
-syn match CTagsClass /Contains/
-syn match CTagsClass /Display/
-syn match CTagsField /CONTAINED/
-syn match CTagsField /DISPLAY/
-syn match CTagsField /TRANSPARENT/
-syn match CTagsField /display/
-syn match CTagsInterface /Display/
-syn match CTagsMethod /Contains/
-syn match CTagsMethod /Display/
-syn match CTagsMethod /contains/
-syn match CTagsMethod /display/
-syn match CTagsMethod /fold/
+syn match CTagsClass /\<Contains\>/
+syn match CTagsClass /\<Display\>/
+syn match CTagsField /\<CONTAINED\>/
+syn match CTagsField /\<DISPLAY\>/
+syn match CTagsField /\<TRANSPARENT\>/
+syn match CTagsField /\<display\>/
+syn match CTagsInterface /\<Display\>/
+syn match CTagsMethod /\<Contains\>/
+syn match CTagsMethod /\<Display\>/
+syn match CTagsMethod /\<contains\>/
+syn match CTagsMethod /\<display\>/
+syn match CTagsMethod /\<fold\>/
 
 syn cluster javaTop add=CTagsEnumeratorName,CTagsEnumerationValue,CTagsMethod,CTagsClass,CTagsField,CTagsInterface,CTagsPackage

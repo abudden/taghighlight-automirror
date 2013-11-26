@@ -6714,19 +6714,19 @@ syn keyword CTagsNamespace Foo clucene TheNamespace Qt qdesigner_internal QDecla
 syn keyword CTagsNamespace QtHelpInternal NativeEvents Ecma std fulltextsearch Int QDeclarativePrivate QSharedMemoryPrivate X86Registers QDBus MMF QDeclarativeJS NameSchpace Paths AAA StringWrapperCFAllocator Space QUnicodeTables TestConfiguration Factory Middle2 QtMultimediaInternal Middle1 WebCore MediaFeatureNames Fooish MyNS QDBusUtil A1 internal ns A QKde QDeclarativeStringConverters WTFNoncopyable NamespaceWithConstructibleClass Y XMLNames CommonNamespaces QCss XMLNSNames Rpp ObjectTree SymbianAudio
 syn keyword CTagsNamespace Yarr Private Maemo jstreams Examples QDBusPendingReplyTypes ARMRegisters Native
 
-syn match CTagsEnumerationValue /CONTAINS/
-syn match CTagsEnumerationValue /Contains/
-syn match CTagsEnumerationValue /EXTEND/
-syn match CTagsEnumerationValue /Transparent/
-syn match CTagsEnumerationValue /contains/
-syn match CTagsEnumerationValue /transparent/
-syn match CTagsEnumeratorName /Contains/
-syn match CTagsEnumeratorName /Display/
-syn match CTagsFunction /contains/
-syn match CTagsFunction /display/
-syn match CTagsFunction /extend/
-syn match CTagsFunction /transparent/
-syn match CTagsMember /contains/
-syn match CTagsMember /display/
-syn match CTagsMember /transparent/
-syn match CTagsType /Display/
+syn match CTagsEnumerationValue /\<CONTAINS\>/
+syn match CTagsEnumerationValue /\<Contains\>/
+syn match CTagsEnumerationValue /\<EXTEND\>/
+syn match CTagsEnumerationValue /\<Transparent\>/
+syn match CTagsEnumerationValue /\<contains\>/
+syn match CTagsEnumerationValue /\<transparent\>/
+syn match CTagsEnumeratorName /\<Contains\>/
+syn match CTagsEnumeratorName /\<Display\>/
+syn match CTagsFunction /\<contains\>/
+syn match CTagsFunction /\<display\>/
+syn match CTagsFunction /\<extend\>/
+syn match CTagsFunction /\<transparent\>/
+syn match CTagsMember /\<contains\>/
+syn match CTagsMember /\<display\>/
+syn match CTagsMember /\<transparent\>/
+syn match CTagsType /\<Display\>/

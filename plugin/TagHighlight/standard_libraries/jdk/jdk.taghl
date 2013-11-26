@@ -3239,16 +3239,16 @@ syn keyword CTagsInterface DropTargetContextPeer MethodAccessor Context Navigata
 syn keyword CTagsInterface Autoscroll HandshakeCompletedListener Array ScatteringByteChannel DescriptorKey UnDescribedMBean GSSNameSpi ToolkitThreadBlockedHandler LayoutEngineFactory BeanContextChild LoginModule EventListener AclEntry Future LogFactory XDragSourceProtocolListener SnmpMibRequest
 syn keyword CTagsPackage edu editors util p annot packagedir testapp j2dbench Serialize install ilib transparentruler a bootreporter apackage pkg xmlkit b indify common package1 package2 com reallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallyreallylongpackagename NonSerializable comSB comSA serialver bench test jar1 provider extension beans infos
 
-syn match CTagsClass /Contains/
-syn match CTagsEnumerationValue /DISPLAY/
-syn match CTagsEnumerationValue /fold/
-syn match CTagsField /DISPLAY/
-syn match CTagsField /contains/
-syn match CTagsField /display/
-syn match CTagsField /extend/
-syn match CTagsMethod /containedIn/
-syn match CTagsMethod /contains/
-syn match CTagsMethod /display/
-syn match CTagsMethod /extend/
+syn match CTagsClass /\<Contains\>/
+syn match CTagsEnumerationValue /\<DISPLAY\>/
+syn match CTagsEnumerationValue /\<fold\>/
+syn match CTagsField /\<DISPLAY\>/
+syn match CTagsField /\<contains\>/
+syn match CTagsField /\<display\>/
+syn match CTagsField /\<extend\>/
+syn match CTagsMethod /\<containedIn\>/
+syn match CTagsMethod /\<contains\>/
+syn match CTagsMethod /\<display\>/
+syn match CTagsMethod /\<extend\>/
 
 syn cluster javaTop add=CTagsEnumeratorName,CTagsEnumerationValue,CTagsMethod,CTagsClass,CTagsField,CTagsInterface,CTagsPackage
