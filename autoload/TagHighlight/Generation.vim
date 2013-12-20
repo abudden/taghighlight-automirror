@@ -150,7 +150,9 @@ function! s:UpdateTypesFile()
 		endif
 	endif
 
+
 	let RunOptions = TagHighlight#Option#CopyOptions()
+	let RunOptions['TagRelative'] = &tagrelative
 	if TagHighlight#Option#GetOption('EnableCscope')
 		if TagHighlight#Option#GetOption('CscopeOnlyIfPresent')
 			if ! b:TagHighlightPrivate['CscopeFileInfo']['Exists']

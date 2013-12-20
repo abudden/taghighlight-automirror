@@ -169,6 +169,13 @@ def ExuberantGetCommandArgs(options):
         ctags_languages.append('c++')
     args += ["--languages=" + ",".join(ctags_languages)]
 
+    # Vim assumes that tags are relative to the tag file location,
+    # so make sure they are!
+    if options['TagRelative']:
+        args += ['--tag-relative=yes']
+    else:
+        args += ['--tag-relative=no']
+
     if options['TagFileName']:
         args += ['-f', os.path.join(options['CtagsFileLocation'], options['TagFileName'])]
 

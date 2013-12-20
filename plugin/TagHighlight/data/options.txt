@@ -232,6 +232,12 @@ UseProjectRepository:
 # Python script options: #
 ##########################
 
+TagRelative:
+	CommandLineSwitches:--tagrelative
+	Type:bool
+	Default:False
+	Help:Used to set tagrelative for vim/ctags interaction.
+
 DebugLevel:
 	CommandLineSwitches:--debug
 	Type:string

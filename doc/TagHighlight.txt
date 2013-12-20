@@ -687,6 +687,9 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		TypesFileLocation                Link:|TagHL-TypesFileLocation|
 			Internal use only.
 
+		TagRelative                      Link:|TagHL-TagRelative|
+			Internal use only.
+
 2.4.4 Option Details                     *TagHighlight-option-details*      {{{3
 
 	CscopeExecutable                     *TagHL-CscopeExecutable*
@@ -1519,6 +1522,11 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		Option Type: String
 		Default: "tags"
 
+	TagRelative                          *TagHL-TagRelative*
+		This option is used to internally to ensure that ctags and Vim both
+		use the same setting for 'tagrelative'.  Only really works with
+		Exuberant Ctags.
+
 	TypesFileDirModePriority             *TagHL-TypesFileDirModePriority*
 		This option is used to determine which directories to look in for a
 		types highlighter file or in which directory to place a types
@@ -2326,6 +2334,10 @@ x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
 	* Improved priority handling: remove duplicates rather than relying on
 	  Vim's priority handling.  This enables non-duplicated function
 	  prototypes (in C code) to be included.
+	* Vim's tagrelative option can cause problems if the tag file isn't in
+	  the current directory and ctags wasn't called with tagrelative set.
+	  The two versions need to be synchronised (thanks to Seth for reporting
+	  this).
 	
 	Other changes:
                             
