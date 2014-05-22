@@ -196,11 +196,12 @@ function! s:ReadTypes(suffix)
 	let b:TagHighlightLoadedLibraries = []
 	
 	let type_files = TagHighlight#ReadTypes#FindTypeFiles(a:suffix)
-	let source_dir = TagHighlight#Option#GetOption('SourceDir')
+	let source_dir = fnameescape(TagHighlight#Option#GetOption('SourceDir'))
 	for fname in type_files
+		let fname = fnameescape(fname)
 		call TagHLDebug("Loading type highlighter file " . fname, 'Information')
 		let types_path = fnamemodify(fname, ':p:h')
-		let old_dir = getcwd()
+		let old_dir = fnameescape(getcwd())
 
 		if source_dir =~ "None"
 			exe 'cd' types_path
