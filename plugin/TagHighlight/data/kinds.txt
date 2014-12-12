@@ -243,6 +243,7 @@ verilog:
 vhdl:
 	c:CTagsGlobalConstant
 	t:CTagsType
+	n:CTagsEnumerationValue
 	T:CTagsTypeComponent
 	r:CTagsRecord
 	e:CTagsEntity
