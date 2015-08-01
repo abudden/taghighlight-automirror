@@ -66,7 +66,7 @@ function! TagHighlight#Find#LocateFile(which, suffix, ...)
 		let force_project = ''
 	endif
 
-	" a:which is 'TAGS', 'TYPES', 'CONFIG'
+	" a:which is 'TAGS', 'TYPES', 'CONFIG', 'AUTOSOURCE'
 	let default_priority = TagHighlight#Option#GetOption('DefaultDirModePriority', force_project)
 	call TagHLDebug("Priority: " . string(default_priority), "Information")
 	let default_search_wildcards = TagHighlight#Option#GetOption('DefaultDirModeSearchWildcards', force_project)
@@ -104,6 +104,12 @@ function! TagHighlight#Find#LocateFile(which, suffix, ...)
 		let search_priority = TagHighlight#Option#GetOption('ProjectConfigFileDirModePriority', force_project)
 		let explicit_location = TagHighlight#Option#GetOption('ProjectConfigFileDirectory', force_project)
 		let search_wildcards = TagHighlight#Option#GetOption('ProjectConfigFileSearchWildcards', force_project)
+	elseif a:which == 'AUTOSOURCE'
+		" Suffix is ignored here
+		let filename = TagHighlight#Option#GetOption('AutoSourceFileName', force_project)
+		let search_priority = TagHighlight#Option#GetOption('AutoSourceFileDirModePriority', force_project)
+		let explicit_location = TagHighlight#Option#GetOption('AutoSourceFileDirectory', force_project)
+		let search_wildcards = TagHighlight#Option#GetOption('AutoSourceFileSearchWildcards', force_project)
 	elseif a:which == 'CSCOPE'
 		" Suffix is ignored here
 		let filename = TagHighlight#Option#GetOption('CscopeFileName', force_project)

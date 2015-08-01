@@ -282,7 +282,7 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 
 		Project options are set in a text file in the project directory.
 		The location of this file can be specified using the options
-		|TagHL-ProjectConfigDirModePriority| and (if an explicit location
+		|TagHL-ProjectConfigFileDirModePriority| and (if an explicit location
 		is needed) |TagHL-ProjectConfigFileDirectory|.  By default. the
 		file name of the project config file is "taghl_config.txt".  If
 		for any reason you need to change this, it can be customised using
@@ -501,6 +501,17 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		NonProjectOptions                Link:|TagHL-NonProjectOptions|
 			Options to set for files that aren't part of a project.
 
+	Per-Project Vim Settings
+
+		AutoSource                       Link:|TagHL-AutoSource|
+			Enable automatic sourcing of taghl_source.vim.
+
+		CustomGlobals                    Link:|TagHL-CustomGlobals|
+			Global variables to set when entering a buffer.
+
+		CustomSettings                   Link:|TagHL-CustomSettings|
+			Vim settings to set when entering a buffer.
+
 	Customisation:
 
 		PreReadHooks                     Link:|TagHL-PreReadHooks|
@@ -645,6 +656,20 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		TypesFileSearchWildcards         Link:|TagHL-DirModeSearchWildcards|
 			What to search for when deciding which directory to use.
 
+	Location and name of Automatically Sourced Vim File:
+
+		AutoSourceFileDirModePriority Link:|TagHL-AutoSourceFileDirModePriority|
+			Which directories to search for file to auto source.
+
+		AutoSourceFileDirectory       Link:|TagHL-AutoSourceFileDirectory|
+			Explicit location for file to auto source.
+
+		AutoSourceFileName            Link:|TagHL-AutoSourceFileName|
+			File name for file to auto source.
+
+		AutoSourceFileSearchWildcards Link:|TagHL-DirModeSearchWildcards|
+			What to search for when deciding which directory to use.
+
 	Libraries:
 
 		DisableStandardLibraries         Link:|TagHL-DisableStandardLibraries|
@@ -691,6 +716,42 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 			Internal use only.
 
 2.4.4 Option Details                     *TagHighlight-option-details*      {{{3
+
+	AutoSource                           *TagHL-AutoSource*
+		If this option is set to True or 1, whenever a buffer is
+		entered, TagHighlight will look for a file called
+		taghl_source.vim (or whatever |TagHL-AutoSourceFileName| is
+		set to) and will |source| it.  This can be used to load custom
+		configuration for a project, although see also
+		|TagHL-CustomGlobals| and |TagHL-CustomSettings|.
+
+		Option Type: Boolean
+		Default: False
+
+	AutoSourceFileDirModePriority        *TagHL-AutoSourceFileDirModePriority*
+		This option is used to determine which directories to look in for a
+		vim file to auto-source when entering a buffer.  See
+		|TagHL-DefaultDirModePriority| for details.
+
+		Option Type: List
+		Default: ["Default"] (use DefaultDirModePriority value)
+
+	AutoSourceFileDirectory              *TagHL-AutoSourceFileDirectory*
+		If the dir mode priority for vim files to autosource (see the
+		option |TagHL-AutoSourceFileDirModePriority|) contains the
+		mode "Explicit", the directory specified in this option will
+		be used unconditionally if the option has been set.
+
+		Option Type: String
+		Default: None (no explicit directory)
+
+	AutoSourceFileName                   *TagHL-AutoSourceFileName*
+		This option allows customisation of the file name to look for
+		for vim files that should be auto-sourced when entering a
+		buffer.  The default file name is taghl_source.vim.
+
+		Option Type: String
+		Default: "taghl_source.vim"
 
 	CscopeExecutable                     *TagHL-CscopeExecutable*
 		This option allows you to specify which cscope executable to run.  You
@@ -829,6 +890,35 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		Option Type: String
 		Default: "exuberant"
 
+	CustomGlobals                        *TagHL-CustomGlobals*
+		Any variables listed in this dictionary will be set to the
+		given value when entering any buffer.  They will then be reset
+		to their original value when leaving the buffer.  Variables
+		should be specified without the |g:| prefix: this will be
+		automatically added by TagHighlight.  It is recommended that
+		this option is set in a |taghl_config.txt| file so it is
+		automatically used with all files in a project.
+
+		Example (in |taghl_config.txt|):
+		    CustomGlobals:
+			ctrlp_custom_ignore:Test[\/]build[\/].*
+
+		Option Type: Dictionary
+		Default: {}
+
+	CustomSettings                       *TagHL-CustomSettings*
+		Any settings listed in this dictionary will be set to the
+		given value when entering any buffer.  They will then be reset
+		to their original value when leaving the buffer.  See
+		|TagHL-CustomGlobals| for more information.
+
+		Example (in |taghl_config.txt|):
+		    CustomSettings:
+			expandtab:1
+
+		Option Type: Dictionary
+		Default: {}
+
 	DebugFile                            *TagHL-DebugFile*
 		If set to something other than "None" (the default), write debugging
 		messages to a file.
@@ -861,7 +951,7 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		There are several 'DirModePriority' options in addition to this one.
 		These are used to determine where to find or place the project
 		configuration file, the tags file and the types file.  The options
-		that configure each of these are |TagHL-ProjectConfigDirModePriority|,
+		that configure each of these are |TagHL-ProjectConfigFileDirModePriority|,
 		|TagHL-TagFileDirModePriority| and |TagHL-TypesFileDirModePriority|.
 
 		By default, all three of these priority settings are set simply as
@@ -2277,7 +2367,7 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 ==============================================================================
 8. TagHighlight History                *TagHighlight-history*               {{{1
 
-x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
+x.x.x: xxth Xxxxxxxx 2015  : Major new release with the following changes:
 
 	New features:
 	
@@ -2321,6 +2411,10 @@ x.x.x: xxth Xxxxxxxx 2013  : Major new release with the following changes:
 	* Added the ability to use a project in place of a user library.
 	* Added non-project options for project users who want different options
 	  for files that aren't part of a project.
+	* Added CustomGlobals and CustomSettings options to allow project-specific
+	  vim settings (as opposed to TagHighlight settings).
+	* Added ability to automatically source a given vim file when entering a
+	  buffer.
 	
 	Bug fixes:
 	

@@ -58,6 +58,26 @@ ProjectConfigFileName:
 	Default:taghl_config.txt
 	Help:File name for project specific configuration items
 
+AutoSource:
+	Type:bool
+	Default:False
+	Help:Look for an auto-source file when entering / exiting a buffer
+
+AutoSourceFileName:
+	Type:string
+	Default:taghl_source.vim
+	Help:File name for vim configuration to auto-source
+
+CustomGlobals:
+	Type:dict
+	Default:{}
+	Help:Dictionary of g: variables to set when entering a buffer and clear when leaving it
+
+CustomSettings:
+	Type:dict
+	Default:{}
+	Help:Dictionary of settings to set when entering a buffer and clear when leaving it
+
 TagFileDirModePriority:
 	Type:list
 	Default:Default
@@ -72,6 +92,11 @@ ProjectConfigFileDirModePriority:
 	Type:list
 	Default:Default
 	Help:Optional override for dir mode priority for project config files specifically
+
+AutoSourceFileDirModePriority:
+	Type:list
+	Default:Default
+	Help:Optional override for dir mode priority for auto source files specifically
 
 CscopeFileDirModePriority:
 	Type:list
@@ -98,6 +123,11 @@ ProjectConfigFileDirectory:
 	Default:None
 	Help:Explicitly specified location for project config file (corresponding to Explicit search mode)
 
+AutoSourceFileDirectory:
+	Type:string
+	Default:None
+	Help:Explicitly specified location for auto sourced files (corresponding to Explicit search mode)
+
 DefaultDirModeSearchWildcards:
 	Type:list
 	Default:OPT(TagFileName),OPT(ProjectConfigFileName),OPT(CscopeFileName)
@@ -107,6 +137,11 @@ ProjectConfigFileSearchWildcards:
 	Type:list
 	Default:Default
 	Help:When searching directories for project config files, wildcards to match against (if any matches, we'll use this directory)
+
+AutoSourceFileSearchWildcards:
+	Type:list
+	Default:Default
+	Help:When searching directories for auto sourced files, wildcards to match against (if any matches, we'll use this directory)
 
 CscopeFileSearchWildcards:
 	Type:list
