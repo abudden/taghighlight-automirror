@@ -3,7 +3,7 @@
 Author:     A. S. Budden <abuddenNOSPAM@NOSPAMgmail.com>
 			Remove NOSPAM.
 
-Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
+Copyright:  (c) 2009-2015 by A. S. Budden             *TagHighlight-copyright*
             Permission is hereby granted to use and distribute this code,
             with or without modifications, provided that this copyright
             notice is copied with it. Like anything else that's free,
@@ -21,6 +21,8 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 	2.    TagHighlight Manual                |TagHighlight-manual|
 	2.1   Introduction                       |TagHighlight-intro|
 	2.2   Commands                           |TagHighlight-commands|
+	2.2.1 Command-Line Commands              |TagHighlight-cmdline|
+	2.2.2 Autocommands                       |TagHighlight-autocmds|
 	2.3   Colouring                          |TagHighlight-colours|
 	2.4   Configuration                      |TagHighlight-config|
 	2.4.1 How to Set Options                 |TagHighlight-how-options|
@@ -130,6 +132,8 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 
 2.2 Commands                             *TagHighlight-commands*            {{{2
 
+2.2.1 Command-Line Commands              *TagHighlight-cmdline*             {{{3
+
 	The following commands are provided by this plugin:
 
 	:UpdateTypesFile                 *:UpdateTypesFile*
@@ -164,6 +168,22 @@ Copyright:  (c) 2009-2013 by A. S. Budden             *TagHighlight-copyright*
 		highlight keywords.  Generally not likely to be used as the
 		built-in autocmds should load the types files when a file is
 		loaded or the types files are updated.
+
+2.2.2 Autocommands                       *TagHighlight-autocmds*            {{{3
+
+	TagHighlight also defines the following autocommands:
+
+	TagHighlightAfterRead                *TagHighlightAfterRead*
+
+		This autocommand is run after loading the extra syntax highlighting.
+		It can be useful with other plugins that tweak the colour scheme and
+		need to run functionality after highlighting has been configured;
+		especially if the |TagHL-ReloadColourScheme| option is set.
+
+		Example usage:
+>
+			autocmd User TagHighlightAfterRead call airline#load_theme()
+<
 
 ------------------------------------------------------------------------------
 
@@ -2415,6 +2435,7 @@ x.x.x: xxth Xxxxxxxx 2015  : Major new release with the following changes:
 	  vim settings (as opposed to TagHighlight settings).
 	* Added ability to automatically source a given vim file when entering a
 	  buffer.
+	* Added autocommand for running function after reading types.
 	
 	Bug fixes:
 	
