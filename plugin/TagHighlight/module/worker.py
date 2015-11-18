@@ -66,7 +66,7 @@ def RunWithOptions(options, manually_set=[]):
     tag_db, file_tag_db = ParseTags(config)
 
     for language in config['LanguageList']:
-        if language in tag_db:
+        if language in tag_db or language in file_tag_db:
             CreateTypesFile(config, language, tag_db[language], file_tag_db[language])
 
     if config['EnableCscope']:

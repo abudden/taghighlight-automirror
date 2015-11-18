@@ -2453,6 +2453,8 @@ x.x.x: xxth Xxxxxxxx 2015  : Major new release with the following changes:
 	  the current directory and ctags wasn't called with tagrelative set.
 	  The two versions need to be synchronised (thanks to Seth for reporting
 	  this).
+	* Fix for issue with generating types where all variables are file-scope
+	  (thanks to Bruno Jiménez for reporting this and proposing the fix).
 	
 	Other changes:
                             

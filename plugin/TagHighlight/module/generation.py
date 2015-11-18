@@ -42,7 +42,11 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
 
     entry_sets = {}
 
-    for source_file in [None] + list(file_tags.keys()):
+    tagsets = list(file_tags.keys())
+    if unscoped_tags:
+        tagsets.insert(0, None)
+
+    for source_file in tagsets:
         if source_file is None:
             tags = unscoped_tags
         else:
@@ -159,8 +163,8 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
         matchEntries = sorted(list(matchEntries))
 
         if (len(matchEntries) + len(vimtypes_entries)) == 0:
-            # All keywords have been filtered out, give up
-            return
+            # All keywords have been filtered out for this file, give up
+            continue
 
         vimtypes_entries.reverse()
 
