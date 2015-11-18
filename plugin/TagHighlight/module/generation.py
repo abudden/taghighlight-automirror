@@ -197,7 +197,7 @@ def CreateTypesFile(options, language, unscoped_tags, file_tags):
         sys.exit(1)
 
     try:
-        for source_file in [None] + list(entry_sets.keys()):
+        for source_file in tagsets:
             if source_file is None:
                 vimtypes_entries = unscoped_entries
                 prefix = ''
