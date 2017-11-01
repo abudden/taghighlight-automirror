@@ -54,6 +54,9 @@ function! TagHighlight#Projects#LoadProjectOptions(file)
 	if ! exists('b:TagHighlightSettings')
 		let b:TagHighlightSettings = {}
 	endif
+	if ! exists('b:TagHighlightPrivate')
+		let b:TagHighlightPrivate = {}
+	endif
 
 	let b:TagHighlightPrivate['InProject'] = 0
 	for name in keys(projects)
