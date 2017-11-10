@@ -23,7 +23,7 @@ from .languages import Languages
 from .debug import Debug
 
 if sys.hexversion > 0x03000000:
-    openutf8 = lambda f, mode: open(f, mode, encoding="utf8")
+    openutf8 = lambda f, mode: open(f, mode, encoding="utf8", errors="ignore")
 else:
     openutf8 = lambda f, mode: open(f, mode)
 
