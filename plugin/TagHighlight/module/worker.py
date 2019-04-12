@@ -70,9 +70,9 @@ def RunWithOptions(options, manually_set=[]):
             CreateTypesFile(config, language, tag_db[language], file_tag_db[language])
 
     if config['EnableCscope']:
+        from .cscope_interface import StartCscopeDBGeneration, CompleteCscopeDBGeneration
         if cscope_check_c and 'c' in tag_db:
             Debug("Running cscope as C code detected", "Information")
-            from .cscope_interface import StartCscopeDBGeneration, CompleteCscopeDBGeneration
             StartCscopeDBGeneration(config)
         CompleteCscopeDBGeneration()
 
