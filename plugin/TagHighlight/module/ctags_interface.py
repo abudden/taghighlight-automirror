@@ -17,9 +17,15 @@ import subprocess
 import os
 import re
 import glob
+import sys
 from .utilities import TagDB, FileTagDB, rglob
 from .languages import Languages
 from .debug import Debug
+
+if sys.hexversion > 0x03000000:
+    openutf8 = lambda f, mode: open(f, mode, encoding="utf8", errors="ignore")
+else:
+    openutf8 = lambda f, mode: open(f, mode)
 
 field_processor = re.compile(
 r'''
@@ -83,14 +89,14 @@ def GenerateTags(options):
             )#, shell=True)
     (sout, serr) = process.communicate()
 
-    tagFile = open(os.path.join(options['CtagsFileLocation'], options['TagFileName']), 'r')
+    tagFile = openutf8(os.path.join(options['CtagsFileLocation'], options['TagFileName']), 'r')
     tagLines = [line.strip() for line in tagFile]
     tagFile.close()
 
     # Also sort the file a bit better (tag, then kind, then filename)
     tagLines.sort(key=ctags_key)
 
-    tagFile = open(os.path.join(options['CtagsFileLocation'],options['TagFileName']), 'w')
+    tagFile = openutf8(os.path.join(options['CtagsFileLocation'],options['TagFileName']), 'w')
     for line in tagLines:
         tagFile.write(line + "\n")
     tagFile.close()
@@ -115,7 +121,7 @@ def ParseTags(options):
                 languages.GetLanguageHandler(key)['PythonExtensionMatcher'] +
                 ')\t')
 
-    p = open(os.path.join(options['CtagsFileLocation'],options['TagFileName']), 'r')
+    p = openutf8(os.path.join(options['CtagsFileLocation'],options['TagFileName']), 'r')
     while 1:
         try:
             line = p.readline()
