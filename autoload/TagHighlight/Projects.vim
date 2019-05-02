@@ -25,7 +25,7 @@ function! TagHighlight#Projects#GetProjects()
 	call TagHLDebug("Projects option set to ".string(projects), "Information")
 	for project in keys(projects)
 		if type(projects[project]) == type("")
-			projects[project] = {'SourceDir': projects[project]}
+			let projects[project] = {'SourceDir': projects[project]}
 		elseif type(projects[project]) == type({}) && 
 					\ has_key(projects[project], 'SourceDir')
 			" Okay

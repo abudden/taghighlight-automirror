@@ -141,7 +141,7 @@ endfunction
 function s:LoadTagHLConfig(filename, report_error)
 	if filereadable(a:filename)
 		let g:TagHighlightSettings = extend(g:TagHighlightSettings, TagHighlight#LoadDataFile#LoadFile(a:filename))
-	elseif report_error
+	elseif a:report_error
 		echoerr "Cannot read config file " . a:filename
 	endif
 endfunction
