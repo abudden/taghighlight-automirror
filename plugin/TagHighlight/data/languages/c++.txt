@@ -18,5 +18,20 @@ ReservedKeywords:
 	static static_assert static_cast struct switch synchronized template this
 	thread_local throw true try typedef typeid typename union unsigned using
 	virtual void volatile wchar_t while xor xor_eq
+Priority:
+	CTagsNamespace
+	CTagsClass
+	CTagsStructure
+	CTagsEnumeratorName
+	CTagsUnion
+	CTagsType
+	CTagsEnumerationValue
+	CTagsDefinedName
+	CTagsConstant
+	CTagsMethod
+	CTagsMember
+	CTagsProperty
+	CTagsFunction
+	CTagsGlobalVariable
 
 # vim: ff=unix:noet

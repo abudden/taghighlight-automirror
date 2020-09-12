@@ -17,18 +17,18 @@
 Priority:
 	CTagsNamespace
 	CTagsClass
-	CTagsStructure
-	CTagsEnumeratorName
-	CTagsUnion
-	CTagsType
-	CTagsEnumerationValue
 	CTagsDefinedName
-	CTagsConstant
+	CTagsType
 	CTagsMethod
-	CTagsMember
-	CTagsProperty
 	CTagsFunction
+	CTagsEnumerationValue
+	CTagsEnumeratorName
+	CTagsConstant
 	CTagsGlobalVariable
+	CTagsUnion
+	CTagsProperty
+	CTagsMember
+	CTagsStructure
 SkipList:
 IsKeyword:@,48-57,_,192-255
 
