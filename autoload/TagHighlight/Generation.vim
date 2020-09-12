@@ -125,11 +125,11 @@ function! s:UpdateTypesFile()
 	if tag_file_info['Exists'] == 1
 		if TagHighlight#Option#GetOption('DoNotGenerateTagsIfPresent') == 1
 			" This will be unset in UpdateAndRead
-			call TagHLDebug("Tag file doesn't exist and DoNotGenerateTagsIfPresent set, not generating new tag file", "Information")
+			call TagHLDebug("Tag file exists and DoNotGenerateTagsIfPresent set, not generating new tag file", "Information")
 			let b:TagHighlightSettings['DoNotGenerateTags'] = 1
 		endif
 	elseif TagHighlight#Option#GetOption('DoNotGenerateTags') == 1
-		echoerr "Cannot create types file without generating tags: tags file does not exist"
+		echoerr "Cannot create types file without tags: tags file does not exist"
 		return
 	endif
 
